@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Castle.Core\Castle.Core.csproj" />
+    <ProjectReference Include="..\Castle.Windsor.Extensions.DependencyInjection\Castle.Windsor.Extensions.DependencyInjection.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="JetBrains.Annotations" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
+    <PackageReference Include="Newtonsoft.Json" />
+    <PackageReference Include="Nito.AsyncEx.Context" />
+    <PackageReference Include="Nito.AsyncEx.Coordination" />
+    <PackageReference Include="System.Collections.Immutable" />
+    <PackageReference Include="System.ComponentModel.Annotations" />
+    <PackageReference Include="System.Linq.Dynamic.Core" />
+    <PackageReference Include="TimeZoneConverter" />
+  </ItemGroup>
+</Project>

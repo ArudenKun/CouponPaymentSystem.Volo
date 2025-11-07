@@ -1,0 +1,12 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <EmitCompilterGeneratedFiles>true</EmitCompilterGeneratedFiles>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="all" />
+    <PackageReference Include="PolyfillLib" />
+  </ItemGroup>
+</Project>
