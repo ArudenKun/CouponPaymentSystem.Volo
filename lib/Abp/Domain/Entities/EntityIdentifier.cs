@@ -22,7 +22,10 @@ namespace Abp.Domain.Entities
         /// <summary>
         /// Added for serialization purposes.
         /// </summary>
-        private EntityIdentifier() { }
+        private EntityIdentifier()
+        {
+            
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="EntityIdentifier"/> class.

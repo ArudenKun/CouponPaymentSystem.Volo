@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
-public class StringStorageAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
+namespace Castle.Components.DictionaryAdapter
 {
-    public bool SetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        ref object value,
-        PropertyDescriptor property
-    )
+    using System;
+
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
+    public class StringStorageAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
     {
-        value = (value != null) ? value.ToString() : null;
-        return true;
+        public bool SetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            ref object value,
+            PropertyDescriptor property
+        )
+        {
+            value = (value != null) ? value.ToString() : null;
+            return true;
+        }
     }
 }

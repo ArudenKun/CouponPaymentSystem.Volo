@@ -12,53 +12,83 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Internal;
-
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
-internal sealed class SynchronizedDictionary<TKey, TValue> : IDisposable
+namespace Castle.Core.Internal
 {
-    private Dictionary<TKey, TValue> items;
-    private ReaderWriterLockSlim itemsLock;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
 
-    public SynchronizedDictionary()
+    internal sealed class SynchronizedDictionary<TKey, TValue> : IDisposable
     {
-        items = new Dictionary<TKey, TValue>();
-        itemsLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-    }
+        private Dictionary<TKey, TValue> items;
+        private ReaderWriterLockSlim itemsLock;
 
-    public void AddOrUpdateWithoutTakingLock(TKey key, TValue value)
-    {
-        items[key] = value;
-    }
-
-    public void Dispose()
-    {
-        itemsLock.Dispose();
-    }
-
-    public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
-    {
-        TValue value;
-
-        itemsLock.EnterReadLock();
-        try
+        public SynchronizedDictionary()
         {
-            if (items.TryGetValue(key, out value))
+            items = new Dictionary<TKey, TValue>();
+            itemsLock = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+        }
+
+        public void AddOrUpdateWithoutTakingLock(TKey key, TValue value)
+        {
+            items[key] = value;
+        }
+
+        public void Dispose()
+        {
+            itemsLock.Dispose();
+        }
+
+        public TValue GetOrAdd(TKey key, Func<TKey, TValue> valueFactory)
+        {
+            TValue value;
+
+            itemsLock.EnterReadLock();
+            try
             {
-                return value;
+                if (items.TryGetValue(key, out value))
+                {
+                    return value;
+                }
+            }
+            finally
+            {
+                itemsLock.ExitReadLock();
+            }
+
+            itemsLock.EnterUpgradeableReadLock();
+            try
+            {
+                if (items.TryGetValue(key, out value))
+                {
+                    return value;
+                }
+                else
+                {
+                    value = valueFactory.Invoke(key);
+
+                    itemsLock.EnterWriteLock();
+                    try
+                    {
+                        items.Add(key, value);
+                        return value;
+                    }
+                    finally
+                    {
+                        itemsLock.ExitWriteLock();
+                    }
+                }
+            }
+            finally
+            {
+                itemsLock.ExitUpgradeableReadLock();
             }
         }
-        finally
-        {
-            itemsLock.ExitReadLock();
-        }
 
-        itemsLock.EnterUpgradeableReadLock();
-        try
+        public TValue GetOrAddWithoutTakingLock(TKey key, Func<TKey, TValue> valueFactory)
         {
+            TValue value;
+
             if (items.TryGetValue(key, out value))
             {
                 return value;
@@ -66,54 +96,25 @@ internal sealed class SynchronizedDictionary<TKey, TValue> : IDisposable
             else
             {
                 value = valueFactory.Invoke(key);
-
-                itemsLock.EnterWriteLock();
-                try
-                {
-                    items.Add(key, value);
-                    return value;
-                }
-                finally
-                {
-                    itemsLock.ExitWriteLock();
-                }
+                items.Add(key, value);
+                return value;
             }
         }
-        finally
-        {
-            itemsLock.ExitUpgradeableReadLock();
-        }
-    }
 
-    public TValue GetOrAddWithoutTakingLock(TKey key, Func<TKey, TValue> valueFactory)
-    {
-        TValue value;
-
-        if (items.TryGetValue(key, out value))
+        public void ForEach(Action<TKey, TValue> action)
         {
-            return value;
-        }
-        else
-        {
-            value = valueFactory.Invoke(key);
-            items.Add(key, value);
-            return value;
-        }
-    }
-
-    public void ForEach(Action<TKey, TValue> action)
-    {
-        itemsLock.EnterReadLock();
-        try
-        {
-            foreach (var item in items)
+            itemsLock.EnterReadLock();
+            try
             {
-                action.Invoke(item.Key, item.Value);
+                foreach (var item in items)
+                {
+                    action.Invoke(item.Key, item.Value);
+                }
             }
-        }
-        finally
-        {
-            itemsLock.ExitReadLock();
+            finally
+            {
+                itemsLock.ExitReadLock();
+            }
         }
     }
 }

@@ -12,114 +12,118 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Castle.DynamicProxy.Tokens;
-
-internal class InvocationWithDelegateContributor : IInvocationCreationContributor
+namespace Castle.DynamicProxy.Contributors
 {
-    private readonly Type delegateType;
-    private readonly MetaMethod method;
-    private readonly INamingScope namingScope;
-    private readonly Type targetType;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Tokens;
 
-    public InvocationWithDelegateContributor(
-        Type delegateType,
-        Type targetType,
-        MetaMethod method,
-        INamingScope namingScope
-    )
+    internal class InvocationWithDelegateContributor : IInvocationCreationContributor
     {
-        Debug.Assert(delegateType.IsGenericType == false, "delegateType.IsGenericType == false");
-        this.delegateType = delegateType;
-        this.targetType = targetType;
-        this.method = method;
-        this.namingScope = namingScope;
-    }
+        private readonly Type delegateType;
+        private readonly MetaMethod method;
+        private readonly INamingScope namingScope;
+        private readonly Type targetType;
 
-    public ConstructorEmitter CreateConstructor(
-        ArgumentReference[] baseCtorArguments,
-        AbstractTypeEmitter invocation
-    )
-    {
-        var arguments = GetArguments(baseCtorArguments);
-        var constructor = invocation.CreateConstructor(arguments);
+        public InvocationWithDelegateContributor(
+            Type delegateType,
+            Type targetType,
+            MetaMethod method,
+            INamingScope namingScope
+        )
+        {
+            Debug.Assert(
+                delegateType.IsGenericType == false,
+                "delegateType.IsGenericType == false"
+            );
+            this.delegateType = delegateType;
+            this.targetType = targetType;
+            this.method = method;
+            this.namingScope = namingScope;
+        }
 
-        var delegateField = invocation.CreateField("delegate", delegateType);
-        constructor.CodeBuilder.AddStatement(new AssignStatement(delegateField, arguments[0]));
-        return constructor;
-    }
+        public ConstructorEmitter CreateConstructor(
+            ArgumentReference[] baseCtorArguments,
+            AbstractTypeEmitter invocation
+        )
+        {
+            var arguments = GetArguments(baseCtorArguments);
+            var constructor = invocation.CreateConstructor(arguments);
 
-    public MethodInfo GetCallbackMethod()
-    {
-        return delegateType.GetMethod("Invoke");
-    }
+            var delegateField = invocation.CreateField("delegate", delegateType);
+            constructor.CodeBuilder.AddStatement(new AssignStatement(delegateField, arguments[0]));
+            return constructor;
+        }
 
-    public MethodInvocationExpression GetCallbackMethodInvocation(
-        AbstractTypeEmitter invocation,
-        IExpression[] args,
-        Reference targetField,
-        MethodEmitter invokeMethodOnTarget
-    )
-    {
-        var allArgs = GetAllArgs(args, targetField);
-        var @delegate = (Reference)invocation.GetField("delegate");
+        public MethodInfo GetCallbackMethod()
+        {
+            return delegateType.GetMethod("Invoke");
+        }
 
-        return new MethodInvocationExpression(@delegate, GetCallbackMethod(), allArgs);
-    }
+        public MethodInvocationExpression GetCallbackMethodInvocation(
+            AbstractTypeEmitter invocation,
+            IExpression[] args,
+            Reference targetField,
+            MethodEmitter invokeMethodOnTarget
+        )
+        {
+            var allArgs = GetAllArgs(args, targetField);
+            var @delegate = (Reference)invocation.GetField("delegate");
 
-    public IExpression[] GetConstructorInvocationArguments(
-        IExpression[] arguments,
-        ClassEmitter proxy
-    )
-    {
-        var allArguments = new IExpression[arguments.Length + 1];
-        allArguments[0] = BuildDelegateToken(proxy);
-        Array.Copy(arguments, 0, allArguments, 1, arguments.Length);
-        return allArguments;
-    }
+            return new MethodInvocationExpression(@delegate, GetCallbackMethod(), allArgs);
+        }
 
-    private FieldReference BuildDelegateToken(ClassEmitter proxy)
-    {
-        var callback = proxy.CreateStaticField(
-            namingScope.GetUniqueName("callback_" + method.Method.Name),
-            delegateType
-        );
-        var createDelegate = new MethodInvocationExpression(
-            null,
-            DelegateMethods.CreateDelegate,
-            new TypeTokenExpression(delegateType),
-            NullExpression.Instance,
-            new MethodTokenExpression(method.MethodOnTarget)
-        );
-        var bindDelegate = new AssignStatement(
-            callback,
-            new ConvertExpression(delegateType, createDelegate)
-        );
+        public IExpression[] GetConstructorInvocationArguments(
+            IExpression[] arguments,
+            ClassEmitter proxy
+        )
+        {
+            var allArguments = new IExpression[arguments.Length + 1];
+            allArguments[0] = BuildDelegateToken(proxy);
+            Array.Copy(arguments, 0, allArguments, 1, arguments.Length);
+            return allArguments;
+        }
 
-        proxy.ClassConstructor.CodeBuilder.AddStatement(bindDelegate);
-        return callback;
-    }
+        private FieldReference BuildDelegateToken(ClassEmitter proxy)
+        {
+            var callback = proxy.CreateStaticField(
+                namingScope.GetUniqueName("callback_" + method.Method.Name),
+                delegateType
+            );
+            var createDelegate = new MethodInvocationExpression(
+                null,
+                DelegateMethods.CreateDelegate,
+                new TypeTokenExpression(delegateType),
+                NullExpression.Instance,
+                new MethodTokenExpression(method.MethodOnTarget)
+            );
+            var bindDelegate = new AssignStatement(
+                callback,
+                new ConvertExpression(delegateType, createDelegate)
+            );
 
-    private IExpression[] GetAllArgs(IExpression[] args, Reference targetField)
-    {
-        var allArgs = new IExpression[args.Length + 1];
-        args.CopyTo(allArgs, 1);
-        allArgs[0] = new ConvertExpression(targetType, targetField);
-        return allArgs;
-    }
+            proxy.ClassConstructor.CodeBuilder.AddStatement(bindDelegate);
+            return callback;
+        }
 
-    private ArgumentReference[] GetArguments(ArgumentReference[] baseCtorArguments)
-    {
-        var arguments = new ArgumentReference[baseCtorArguments.Length + 1];
-        arguments[0] = new ArgumentReference(delegateType);
-        baseCtorArguments.CopyTo(arguments, 1);
-        return arguments;
+        private IExpression[] GetAllArgs(IExpression[] args, Reference targetField)
+        {
+            var allArgs = new IExpression[args.Length + 1];
+            args.CopyTo(allArgs, 1);
+            allArgs[0] = new ConvertExpression(targetType, targetField);
+            return allArgs;
+        }
+
+        private ArgumentReference[] GetArguments(ArgumentReference[] baseCtorArguments)
+        {
+            var arguments = new ArgumentReference[baseCtorArguments.Length + 1];
+            arguments[0] = new ArgumentReference(delegateType);
+            baseCtorArguments.CopyTo(arguments, 1);
+            return arguments;
+        }
     }
 }

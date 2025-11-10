@@ -14,18 +14,12 @@ namespace Abp.Application.Navigation
         /// </summary>
         /// <param name="source">Source object</param>
         /// <param name="name">Unique name of the source</param>
-        public static MenuItemDefinition GetItemByName(
-            this IHasMenuItemDefinitions source,
-            string name
-        )
+        public static MenuItemDefinition GetItemByName(this IHasMenuItemDefinitions source, string name)
         {
             var item = GetItemByNameOrNull(source, name);
             if (item == null)
             {
-                throw new ArgumentException(
-                    "There is no source item with given name: " + name,
-                    "name"
-                );
+                throw new ArgumentException("There is no source item with given name: " + name, "name");
             }
 
             return item;
@@ -37,10 +31,7 @@ namespace Abp.Application.Navigation
         /// </summary>
         /// <param name="source">Source object</param>
         /// <param name="name">Unique name of the source</param>
-        public static MenuItemDefinition GetItemByNameOrNull(
-            this IHasMenuItemDefinitions source,
-            string name
-        )
+        public static MenuItemDefinition GetItemByNameOrNull(this IHasMenuItemDefinitions source, string name)
         {
             if (source == null)
             {

@@ -33,14 +33,12 @@ namespace Abp.Runtime.Validation
             set { this["RegularExpression"] = value; }
         }
 
-        public StringValueValidator() { }
+        public StringValueValidator()
+        {
+            
+        }
 
-        public StringValueValidator(
-            int minLength = 0,
-            int maxLength = 0,
-            string regularExpression = null,
-            bool allowNull = false
-        )
+        public StringValueValidator(int minLength = 0, int maxLength = 0, string regularExpression = null, bool allowNull = false)
         {
             MinLength = minLength;
             MaxLength = maxLength;
@@ -61,7 +59,7 @@ namespace Abp.Runtime.Validation
             }
 
             var strValue = value as string;
-
+            
             if (MinLength > 0 && strValue.Length < MinLength)
             {
                 return false;

@@ -23,8 +23,7 @@ namespace Abp.Domain.Repositories
             Type repositoryInterface,
             Type repositoryInterfaceWithPrimaryKey,
             Type repositoryImplementation,
-            Type repositoryImplementationWithPrimaryKey
-        )
+            Type repositoryImplementationWithPrimaryKey)
         {
             RepositoryInterface = repositoryInterface;
             RepositoryInterfaceWithPrimaryKey = repositoryInterfaceWithPrimaryKey;

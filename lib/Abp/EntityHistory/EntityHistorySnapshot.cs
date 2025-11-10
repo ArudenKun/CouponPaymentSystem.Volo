@@ -14,10 +14,7 @@ namespace Abp.EntityHistory
         /// </summary>
         public Dictionary<string, string> PropertyChangesStackTree { get; }
 
-        public EntityHistorySnapshot(
-            Dictionary<string, string> snapshotProperties,
-            Dictionary<string, string> propertyChangesStackTree
-        )
+        public EntityHistorySnapshot(Dictionary<string, string> snapshotProperties, Dictionary<string, string> propertyChangesStackTree)
         {
             ChangedPropertiesSnapshots = snapshotProperties;
             PropertyChangesStackTree = propertyChangesStackTree;
@@ -28,17 +25,13 @@ namespace Abp.EntityHistory
         /// </summary>
         /// <param name="propertyName"></param>
         /// <returns>Changed property. If dictionary doesn't contain key, this will return null</returns>
-        public string this[string propertyName] =>
-            ChangedPropertiesSnapshots.ContainsKey(propertyName)
-                ? ChangedPropertiesSnapshots[propertyName]
-                : null;
+        public string this[string propertyName] => ChangedPropertiesSnapshots.ContainsKey(propertyName) ? ChangedPropertiesSnapshots[propertyName] : null;
 
         /// <summary>
         /// returns whether entity property changed in this snapshot. (ChangedPropertiesSnapshots.ContainsKey(key))
         /// </summary>
         /// <param name="propertyName"></param>
         /// <returns></returns>
-        public bool IsPropertyChanged(string propertyName) =>
-            ChangedPropertiesSnapshots.ContainsKey(propertyName);
+        public bool IsPropertyChanged(string propertyName) => ChangedPropertiesSnapshots.ContainsKey(propertyName);
     }
 }

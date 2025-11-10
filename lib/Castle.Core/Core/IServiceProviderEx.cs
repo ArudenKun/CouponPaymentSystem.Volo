@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core;
-
-using System;
-
-/// <summary>
-/// Increments <c>IServiceProvider</c> with a generic service resolution operation.
-/// </summary>
-public interface IServiceProviderEx : IServiceProvider
+namespace Castle.Core
 {
-    T GetService<T>()
-        where T : class;
+    using System;
+
+    /// <summary>
+    /// Increments <c>IServiceProvider</c> with a generic service resolution operation.
+    /// </summary>
+    public interface IServiceProviderEx : IServiceProvider
+    {
+        T GetService<T>()
+            where T : class;
+    }
 }

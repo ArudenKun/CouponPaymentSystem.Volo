@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Collections.Generic;
-
-internal class FieldReferenceComparer : IComparer<Type>
+namespace Castle.DynamicProxy.Contributors
 {
-    public int Compare(Type x, Type y)
+    using System;
+    using System.Collections.Generic;
+
+    internal class FieldReferenceComparer : IComparer<Type>
     {
-        if (x == null)
+        public int Compare(Type x, Type y)
         {
-            throw new ArgumentNullException(nameof(x));
-        }
+            if (x == null)
+            {
+                throw new ArgumentNullException(nameof(x));
+            }
 
-        if (y == null)
-        {
-            throw new ArgumentNullException(nameof(y));
-        }
+            if (y == null)
+            {
+                throw new ArgumentNullException(nameof(y));
+            }
 
-        return string.CompareOrdinal(x.FullName, y.FullName);
+            return string.CompareOrdinal(x.FullName, y.FullName);
+        }
     }
 }

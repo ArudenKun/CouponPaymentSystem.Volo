@@ -11,12 +11,8 @@ namespace Abp.Reflection
     /// </summary>
     internal static class TypeHelper
     {
-        private static readonly IReadOnlyList<string> SystemAssemblyNames = new List<string>
-        {
-            "mscorlib",
-            "System.Private.CoreLib",
-        };
-
+        private static readonly IReadOnlyList<string> SystemAssemblyNames = new List<string> { "mscorlib", "System.Private.CoreLib" };
+        
         public static bool IsFunc(object obj)
         {
             if (obj == null)
@@ -38,20 +34,14 @@ namespace Abp.Reflection
             return obj != null && obj.GetType() == typeof(Func<TReturn>);
         }
 
-        public static bool IsPrimitiveExtendedIncludingNullable(
-            Type type,
-            bool includeEnums = false
-        )
+        public static bool IsPrimitiveExtendedIncludingNullable(Type type, bool includeEnums = false)
         {
             if (IsPrimitiveExtended(type, includeEnums))
             {
                 return true;
             }
 
-            if (
-                type.GetTypeInfo().IsGenericType
-                && type.GetGenericTypeDefinition() == typeof(Nullable<>)
-            )
+            if (type.GetTypeInfo().IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>))
             {
                 return IsPrimitiveExtended(type.GenericTypeArguments[0], includeEnums);
             }
@@ -71,19 +61,15 @@ namespace Abp.Reflection
                 return true;
             }
 
-            return type == typeof(string)
-                || type == typeof(decimal)
-                || type == typeof(DateTime)
-                || type == typeof(DateTimeOffset)
-                || type == typeof(TimeSpan)
-                || type == typeof(Guid);
+            return type == typeof (string) ||
+                   type == typeof (decimal) ||
+                   type == typeof (DateTime) ||
+                   type == typeof (DateTimeOffset) ||
+                   type == typeof (TimeSpan) ||
+                   type == typeof (Guid);
         }
-
-        public static StringBuilder SerializeType(
-            Type type,
-            bool withAssemblyName = true,
-            StringBuilder typeNameBuilder = null
-        )
+        
+        public static StringBuilder SerializeType(Type type, bool withAssemblyName = true, StringBuilder typeNameBuilder = null)
         {
             typeNameBuilder = typeNameBuilder ?? new StringBuilder();
 
@@ -118,12 +104,7 @@ namespace Abp.Reflection
             return typeNameBuilder;
         }
 
-        private static StringBuilder SerializeTypes(
-            Type[] types,
-            char beginTypeDelimiter = '"',
-            char endTypeDelimiter = '"',
-            StringBuilder typeNamesBuilder = null
-        )
+        private static StringBuilder SerializeTypes(Type[] types, char beginTypeDelimiter = '"', char endTypeDelimiter = '"', StringBuilder typeNamesBuilder = null)
         {
             if (types == null)
             {

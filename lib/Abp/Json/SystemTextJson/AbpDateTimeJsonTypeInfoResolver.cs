@@ -5,17 +5,9 @@ namespace Abp.Json.SystemTextJson
 {
     public class AbpDateTimeJsonTypeInfoResolver : DefaultJsonTypeInfoResolver
     {
-        public AbpDateTimeJsonTypeInfoResolver(
-            List<string> inputDateTimeFormats = null,
-            string outputDateTimeFormat = null
-        )
+        public AbpDateTimeJsonTypeInfoResolver(List<string> inputDateTimeFormats = null, string outputDateTimeFormat = null)
         {
-            Modifiers.Add(
-                new AbpDateTimeConverterModifier(
-                    inputDateTimeFormats,
-                    outputDateTimeFormat
-                ).CreateModifyAction()
-            );
+            Modifiers.Add(new AbpDateTimeConverterModifier(inputDateTimeFormats, outputDateTimeFormat).CreateModifyAction());
         }
     }
 }

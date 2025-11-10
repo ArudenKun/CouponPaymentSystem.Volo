@@ -12,45 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Runtime.CompilerServices;
+namespace Castle.Core
+{
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Runtime.CompilerServices;
 
 #if FEATURE_SERIALIZATION
-[Serializable]
+    [Serializable]
 #endif
-public class ReferenceEqualityComparer<T> : IEqualityComparer, IEqualityComparer<T>
-{
-    private static readonly ReferenceEqualityComparer<T> instance =
-        new ReferenceEqualityComparer<T>();
-
-    private ReferenceEqualityComparer() { }
-
-    public int GetHashCode(object obj)
+    public class ReferenceEqualityComparer<T> : IEqualityComparer, IEqualityComparer<T>
     {
-        return RuntimeHelpers.GetHashCode(obj);
-    }
+        private static readonly ReferenceEqualityComparer<T> instance =
+            new ReferenceEqualityComparer<T>();
 
-    bool IEqualityComparer.Equals(object x, object y)
-    {
-        return ReferenceEquals(x, y);
-    }
+        private ReferenceEqualityComparer() { }
 
-    bool IEqualityComparer<T>.Equals(T x, T y)
-    {
-        return ReferenceEquals(x, y);
-    }
+        public int GetHashCode(object obj)
+        {
+            return RuntimeHelpers.GetHashCode(obj);
+        }
 
-    int IEqualityComparer<T>.GetHashCode(T obj)
-    {
-        return RuntimeHelpers.GetHashCode(obj);
-    }
+        bool IEqualityComparer.Equals(object x, object y)
+        {
+            return ReferenceEquals(x, y);
+        }
 
-    public static ReferenceEqualityComparer<T> Instance
-    {
-        get { return instance; }
+        bool IEqualityComparer<T>.Equals(T x, T y)
+        {
+            return ReferenceEquals(x, y);
+        }
+
+        int IEqualityComparer<T>.GetHashCode(T obj)
+        {
+            return RuntimeHelpers.GetHashCode(obj);
+        }
+
+        public static ReferenceEqualityComparer<T> Instance
+        {
+            get { return instance; }
+        }
     }
 }

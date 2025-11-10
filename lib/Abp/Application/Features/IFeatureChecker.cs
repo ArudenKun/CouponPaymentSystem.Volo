@@ -45,7 +45,7 @@ namespace Abp.Application.Features
         /// <summary>
         /// Checks if a given feature is enabled.
         /// This should be used for boolean-value features.
-        ///
+        /// 
         /// This is a shortcut for <see cref="IsEnabledAsync(int, string)"/> that uses <see cref="IAbpSession.TenantId"/>.
         /// Note: This method should be used only if the TenantId can be obtained from the session.
         /// </summary>
@@ -56,7 +56,7 @@ namespace Abp.Application.Features
         /// <summary>
         /// Checks if a given feature is enabled.
         /// This should be used for boolean-value features.
-        ///
+        /// 
         /// This is a shortcut for <see cref="IsEnabled(int, string)"/> that uses <see cref="IAbpSession.TenantId"/>.
         /// Note: This method should be used only if the TenantId can be obtained from the session.
         /// </summary>

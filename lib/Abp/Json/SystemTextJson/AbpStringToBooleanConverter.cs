@@ -8,21 +8,12 @@ namespace Abp.Json.SystemTextJson
 {
     public class AbpStringToBooleanConverter : JsonConverter<bool>
     {
-        public override bool Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override bool Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
             {
-                var span = reader.HasValueSequence
-                    ? reader.ValueSequence.ToArray()
-                    : reader.ValueSpan;
-                if (
-                    Utf8Parser.TryParse(span, out bool b1, out var bytesConsumed)
-                    && span.Length == bytesConsumed
-                )
+                var span = reader.HasValueSequence ? reader.ValueSequence.ToArray() : reader.ValueSpan;
+                if (Utf8Parser.TryParse(span, out bool b1, out var bytesConsumed) && span.Length == bytesConsumed)
                 {
                     return b1;
                 }

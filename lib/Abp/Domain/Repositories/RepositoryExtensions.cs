@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Abp.Collections.Extensions;
+using Abp.Dependency;
+using Abp.Domain.Entities;
+using Abp.Domain.Uow;
+using Abp.Reflection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Abp.Collections.Extensions;
-using Abp.Dependency;
-using Abp.Domain.Entities;
-using Abp.Domain.Uow;
-using Abp.Reflection;
 
 namespace Abp.Domain.Repositories
 {
@@ -23,15 +23,10 @@ namespace Abp.Domain.Repositories
             where TEntity : class, IEntity<TPrimaryKey>
             where TProperty : class
         {
-            var repo =
-                ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
+            var repo = ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
             if (repo != null)
             {
-                await repo.EnsureCollectionLoadedAsync(
-                    entity,
-                    collectionExpression,
-                    cancellationToken
-                );
+                await repo.EnsureCollectionLoadedAsync(entity, collectionExpression, cancellationToken);
             }
         }
 
@@ -44,8 +39,7 @@ namespace Abp.Domain.Repositories
             where TEntity : class, IEntity<TPrimaryKey>
             where TProperty : class
         {
-            var repo =
-                ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
+            var repo = ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
             if (repo != null)
             {
                 repo.EnsureCollectionLoaded(entity, collectionExpression, cancellationToken);
@@ -61,8 +55,7 @@ namespace Abp.Domain.Repositories
             where TEntity : class, IEntity<TPrimaryKey>
             where TProperty : class
         {
-            var repo =
-                ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
+            var repo = ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
             if (repo != null)
             {
                 await repo.EnsurePropertyLoadedAsync(entity, propertyExpression, cancellationToken);
@@ -78,17 +71,14 @@ namespace Abp.Domain.Repositories
             where TEntity : class, IEntity<TPrimaryKey>
             where TProperty : class
         {
-            var repo =
-                ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
+            var repo = ProxyHelper.UnProxy(repository) as ISupportsExplicitLoading<TEntity, TPrimaryKey>;
             if (repo != null)
             {
                 repo.EnsurePropertyLoaded(entity, propertyExpression, cancellationToken);
             }
         }
 
-        public static IIocResolver GetIocResolver<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository
-        )
+        public static IIocResolver GetIocResolver<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository)
             where TEntity : class, IEntity<TPrimaryKey>
         {
             var repo = ProxyHelper.UnProxy(repository) as AbpRepositoryBase<TEntity, TPrimaryKey>;
@@ -97,42 +87,27 @@ namespace Abp.Domain.Repositories
                 return repo.IocResolver;
             }
 
-            throw new ArgumentException(
-                $"Given {nameof(repository)} is not inherited from {typeof(AbpRepositoryBase<TEntity, TPrimaryKey>).AssemblyQualifiedName}"
-            );
+            throw new ArgumentException($"Given {nameof(repository)} is not inherited from {typeof(AbpRepositoryBase<TEntity, TPrimaryKey>).AssemblyQualifiedName}");
         }
 
-        public static void HardDelete<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository,
-            TEntity entity
-        )
+        public static void HardDelete<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, TEntity entity)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             HardDelete(repository, null, entity);
         }
 
-        public static void HardDelete<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository,
-            Expression<Func<TEntity, bool>> predicate
-        )
+
+        public static void HardDelete<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             HardDelete(repository, predicate, null);
         }
 
-        private static void HardDelete<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository,
-            Expression<Func<TEntity, bool>> predicate,
-            TEntity entity
-        )
+        private static void HardDelete<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate, TEntity entity)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             var currentUnitOfWork = GetCurrentUnitOfWorkOrThrowException(repository);
-            var hardDeleteEntities =
-                currentUnitOfWork.Items.GetOrAdd(
-                    UnitOfWorkExtensionDataTypes.HardDelete,
-                    () => new HashSet<string>()
-                ) as HashSet<string>;
+            var hardDeleteEntities = currentUnitOfWork.Items.GetOrAdd(UnitOfWorkExtensionDataTypes.HardDelete, () => new HashSet<string>()) as HashSet<string>;
 
             var tenantId = currentUnitOfWork.GetTenantId();
 
@@ -158,37 +133,23 @@ namespace Abp.Domain.Repositories
             }
         }
 
-        public static async Task HardDeleteAsync<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository,
-            TEntity entity
-        )
+        public static async Task HardDeleteAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, TEntity entity)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             await HardDeleteAsync(repository, null, entity);
         }
 
-        public static async Task HardDeleteAsync<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository,
-            Expression<Func<TEntity, bool>> predicate
-        )
+        public static async Task HardDeleteAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             await HardDeleteAsync(repository, predicate, null);
         }
 
-        private static async Task HardDeleteAsync<TEntity, TPrimaryKey>(
-            this IRepository<TEntity, TPrimaryKey> repository,
-            Expression<Func<TEntity, bool>> predicate,
-            TEntity entity
-        )
+        private static async Task HardDeleteAsync<TEntity, TPrimaryKey>(this IRepository<TEntity, TPrimaryKey> repository, Expression<Func<TEntity, bool>> predicate, TEntity entity)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             var currentUnitOfWork = GetCurrentUnitOfWorkOrThrowException(repository);
-            var hardDeleteEntities =
-                currentUnitOfWork.Items.GetOrAdd(
-                    UnitOfWorkExtensionDataTypes.HardDelete,
-                    () => new HashSet<string>()
-                ) as HashSet<string>;
+            var hardDeleteEntities = currentUnitOfWork.Items.GetOrAdd(UnitOfWorkExtensionDataTypes.HardDelete, () => new HashSet<string>()) as HashSet<string>;
 
             var tenantId = currentUnitOfWork.GetTenantId();
 
@@ -214,25 +175,19 @@ namespace Abp.Domain.Repositories
             }
         }
 
-        private static IActiveUnitOfWork GetCurrentUnitOfWorkOrThrowException<TEntity, TPrimaryKey>(
-            IRepository<TEntity, TPrimaryKey> repository
-        )
+        private static IActiveUnitOfWork GetCurrentUnitOfWorkOrThrowException<TEntity, TPrimaryKey>(IRepository<TEntity, TPrimaryKey> repository)
             where TEntity : class, IEntity<TPrimaryKey>, ISoftDelete
         {
             var repo = ProxyHelper.UnProxy(repository) as IRepository<TEntity, TPrimaryKey>;
             if (repo == null)
             {
-                throw new ArgumentException(
-                    $"Given {nameof(repository)} is not inherited from {typeof(IRepository<TEntity, TPrimaryKey>).AssemblyQualifiedName}"
-                );
+                throw new ArgumentException($"Given {nameof(repository)} is not inherited from {typeof(IRepository<TEntity, TPrimaryKey>).AssemblyQualifiedName}");
             }
 
-            var currentUnitOfWork = ((IUnitOfWorkManagerAccessor)repo).UnitOfWorkManager.Current;
+            var currentUnitOfWork = ((IUnitOfWorkManagerAccessor) repo).UnitOfWorkManager.Current;
             if (currentUnitOfWork == null)
             {
-                throw new AbpException(
-                    $"There is no unit of work in the current context, The hard delete function can only be used in a unit of work."
-                );
+                throw new AbpException($"There is no unit of work in the current context, The hard delete function can only be used in a unit of work.");
             }
 
             return currentUnitOfWork;

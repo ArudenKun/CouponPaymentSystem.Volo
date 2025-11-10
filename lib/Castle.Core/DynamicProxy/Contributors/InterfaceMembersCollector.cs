@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Reflection;
-using Castle.DynamicProxy.Generators;
-
-internal class InterfaceMembersCollector : MembersCollector
+namespace Castle.DynamicProxy.Contributors
 {
-    public InterfaceMembersCollector(Type @interface)
-        : base(@interface) { }
+    using System;
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators;
 
-    protected override MetaMethod GetMethodToGenerate(
-        MethodInfo method,
-        IProxyGenerationHook hook,
-        bool isStandalone
-    )
+    internal class InterfaceMembersCollector : MembersCollector
     {
-        var proxyable = AcceptMethod(method, true, hook);
-        if (!proxyable && !method.IsAbstract)
-        {
-            // we don't need to do anything
-            return null;
-        }
+        public InterfaceMembersCollector(Type @interface)
+            : base(@interface) { }
 
-        return new MetaMethod(
-            method,
-            method,
-            isStandalone,
-            proxyable,
-            hasTarget: !method.IsAbstract
-        );
+        protected override MetaMethod GetMethodToGenerate(
+            MethodInfo method,
+            IProxyGenerationHook hook,
+            bool isStandalone
+        )
+        {
+            var proxyable = AcceptMethod(method, true, hook);
+            if (!proxyable && !method.IsAbstract)
+            {
+                // we don't need to do anything
+                return null;
+            }
+
+            return new MetaMethod(
+                method,
+                method,
+                isStandalone,
+                proxyable,
+                hasTarget: !method.IsAbstract
+            );
+        }
     }
 }

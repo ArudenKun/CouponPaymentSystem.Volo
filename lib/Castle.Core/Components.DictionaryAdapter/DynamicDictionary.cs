@@ -12,40 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.Collections;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-
-/// <summary>
-/// Wraps a <see cref="IDictionary"/> with a dynamic object to expose a bit better looking API.
-/// The implementation is trivial and assumes keys are <see cref="string"/>s.
-/// </summary>
-public class DynamicDictionary : DynamicObject
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly IDictionary dictionary;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.Dynamic;
+    using System.Linq;
 
-    public DynamicDictionary(IDictionary dictionary)
+    /// <summary>
+    /// Wraps a <see cref="IDictionary"/> with a dynamic object to expose a bit better looking API.
+    /// The implementation is trivial and assumes keys are <see cref="string"/>s.
+    /// </summary>
+    public class DynamicDictionary : DynamicObject
     {
-        this.dictionary = dictionary;
-    }
+        private readonly IDictionary dictionary;
 
-    public override IEnumerable<string> GetDynamicMemberNames()
-    {
-        return from object key in dictionary.Keys select key.ToString();
-    }
+        public DynamicDictionary(IDictionary dictionary)
+        {
+            this.dictionary = dictionary;
+        }
 
-    public override bool TryGetMember(GetMemberBinder binder, out object result)
-    {
-        result = dictionary[binder.Name];
-        return true;
-    }
+        public override IEnumerable<string> GetDynamicMemberNames()
+        {
+            return from object key in dictionary.Keys select key.ToString();
+        }
 
-    public override bool TrySetMember(SetMemberBinder binder, object value)
-    {
-        dictionary[binder.Name] = value;
-        return true;
+        public override bool TryGetMember(GetMemberBinder binder, out object result)
+        {
+            result = dictionary[binder.Name];
+            return true;
+        }
+
+        public override bool TrySetMember(SetMemberBinder binder, object value)
+        {
+            dictionary[binder.Name] = value;
+            return true;
+        }
     }
 }

@@ -12,20 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Identifies the dictionary adapter types.
-/// </summary>
-[AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
-public class DictionaryAdapterAttribute : Attribute
+namespace Castle.Components.DictionaryAdapter
 {
-    public DictionaryAdapterAttribute(Type interfaceType)
-    {
-        InterfaceType = interfaceType;
-    }
+    using System;
 
-    public Type InterfaceType { get; private set; }
+    /// <summary>
+    /// Identifies the dictionary adapter types.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Class, AllowMultiple = false, Inherited = false)]
+    public class DictionaryAdapterAttribute : Attribute
+    {
+        public DictionaryAdapterAttribute(Type interfaceType)
+        {
+            InterfaceType = interfaceType;
+        }
+
+        public Type InterfaceType { get; private set; }
+    }
 }

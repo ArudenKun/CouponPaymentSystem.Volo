@@ -12,45 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-[Flags]
-public enum CursorFlags
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    None = 0,
-    Elements = 1,
-    Attributes = 2,
-    Multiple = 4,
-    Mutable = 8,
-    AllNodes = Elements | Attributes,
-}
+    using System;
 
-public static class CursorFlagsExtensions
-{
-    public static CursorFlags MutableIf(this CursorFlags flags, bool mutable)
+    [Flags]
+    public enum CursorFlags
     {
-        return mutable ? (flags | CursorFlags.Mutable) : flags;
+        None = 0,
+        Elements = 1,
+        Attributes = 2,
+        Multiple = 4,
+        Mutable = 8,
+        AllNodes = Elements | Attributes,
     }
 
-    public static bool IncludesElements(this CursorFlags flags)
+    public static class CursorFlagsExtensions
     {
-        return 0 != (flags & CursorFlags.Elements);
-    }
+        public static CursorFlags MutableIf(this CursorFlags flags, bool mutable)
+        {
+            return mutable ? (flags | CursorFlags.Mutable) : flags;
+        }
 
-    public static bool IncludesAttributes(this CursorFlags flags)
-    {
-        return 0 != (flags & CursorFlags.Attributes);
-    }
+        public static bool IncludesElements(this CursorFlags flags)
+        {
+            return 0 != (flags & CursorFlags.Elements);
+        }
 
-    public static bool AllowsMultipleItems(this CursorFlags flags)
-    {
-        return 0 != (flags & CursorFlags.Multiple);
-    }
+        public static bool IncludesAttributes(this CursorFlags flags)
+        {
+            return 0 != (flags & CursorFlags.Attributes);
+        }
 
-    public static bool SupportsMutation(this CursorFlags flags)
-    {
-        return 0 != (flags & CursorFlags.Mutable);
+        public static bool AllowsMultipleItems(this CursorFlags flags)
+        {
+            return 0 != (flags & CursorFlags.Multiple);
+        }
+
+        public static bool SupportsMutation(this CursorFlags flags)
+        {
+            return 0 != (flags & CursorFlags.Mutable);
+        }
     }
 }

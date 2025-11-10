@@ -12,57 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class ConstructorInvocationStatement : IStatement
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly IExpression[] args;
-    private readonly ConstructorInfo cmethod;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public ConstructorInvocationStatement(Type baseType)
-        : this(GetDefaultConstructor(baseType)) { }
-
-    public ConstructorInvocationStatement(ConstructorInfo method, params IExpression[] args)
+    internal class ConstructorInvocationStatement : IStatement
     {
-        if (method == null)
+        private readonly IExpression[] args;
+        private readonly ConstructorInfo cmethod;
+
+        public ConstructorInvocationStatement(Type baseType)
+            : this(GetDefaultConstructor(baseType)) { }
+
+        public ConstructorInvocationStatement(ConstructorInfo method, params IExpression[] args)
         {
-            throw new ArgumentNullException(nameof(method));
-        }
-        if (args == null)
-        {
-            throw new ArgumentNullException(nameof(args));
-        }
+            if (method == null)
+            {
+                throw new ArgumentNullException(nameof(method));
+            }
+            if (args == null)
+            {
+                throw new ArgumentNullException(nameof(args));
+            }
 
-        cmethod = method;
-        this.args = args;
-    }
-
-    public void Emit(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldarg_0);
-
-        foreach (var exp in args)
-        {
-            exp.Emit(gen);
-        }
-
-        gen.Emit(OpCodes.Call, cmethod);
-    }
-
-    private static ConstructorInfo GetDefaultConstructor(Type baseType)
-    {
-        var type = baseType;
-        if (type.ContainsGenericParameters)
-        {
-            type = type.GetGenericTypeDefinition();
-            // need to get generic type definition, otherwise the GetConstructor method might throw NotSupportedException
+            cmethod = method;
+            this.args = args;
         }
 
-        var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-        return type.GetConstructor(flags, null, Type.EmptyTypes, null);
+        public void Emit(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldarg_0);
+
+            foreach (var exp in args)
+            {
+                exp.Emit(gen);
+            }
+
+            gen.Emit(OpCodes.Call, cmethod);
+        }
+
+        private static ConstructorInfo GetDefaultConstructor(Type baseType)
+        {
+            var type = baseType;
+            if (type.ContainsGenericParameters)
+            {
+                type = type.GetGenericTypeDefinition();
+                // need to get generic type definition, otherwise the GetConstructor method might throw NotSupportedException
+            }
+
+            var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+            return type.GetConstructor(flags, null, Type.EmptyTypes, null);
+        }
     }
 }

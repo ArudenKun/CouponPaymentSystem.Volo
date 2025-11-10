@@ -1,12 +1,12 @@
-﻿using System;
+﻿using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using Abp.Extensions;
+using Abp.Timing;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Abp.Domain.Entities;
-using Abp.Domain.Entities.Auditing;
-using Abp.Extensions;
-using Abp.Timing;
 
 namespace Abp.Notifications
 {
@@ -18,7 +18,7 @@ namespace Abp.Notifications
     public class UserNotificationInfo : Entity<Guid>, IHasCreationTime, IMayHaveTenant
     {
         public const int MaxTargetNotifiersLength = 1024;
-
+        
         /// <summary>
         /// Tenant Id.
         /// </summary>
@@ -49,12 +49,13 @@ namespace Abp.Notifications
         public virtual string TargetNotifiers { get; set; }
 
         [NotMapped]
-        public virtual List<string> TargetNotifiersList =>
-            TargetNotifiers.IsNullOrWhiteSpace()
-                ? new List<string>()
-                : TargetNotifiers.Split(NotificationInfo.NotificationTargetSeparator).ToList();
+        public virtual List<string> TargetNotifiersList => TargetNotifiers.IsNullOrWhiteSpace()
+            ? new List<string>()
+            : TargetNotifiers.Split(NotificationInfo.NotificationTargetSeparator).ToList();
 
-        public UserNotificationInfo() { }
+        public UserNotificationInfo()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserNotificationInfo"/> class.
@@ -69,10 +70,7 @@ namespace Abp.Notifications
 
         public virtual void SetTargetNotifiers(List<string> list)
         {
-            TargetNotifiers = string.Join(
-                NotificationInfo.NotificationTargetSeparator.ToString(),
-                list
-            );
+            TargetNotifiers = string.Join(NotificationInfo.NotificationTargetSeparator.ToString(), list);
         }
     }
 }

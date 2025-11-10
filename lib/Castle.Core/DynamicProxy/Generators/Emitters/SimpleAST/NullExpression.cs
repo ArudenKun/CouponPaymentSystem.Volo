@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class NullExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    public static readonly NullExpression Instance = new NullExpression();
+    using System.Reflection.Emit;
 
-    protected NullExpression() { }
-
-    public void Emit(ILGenerator gen)
+    internal class NullExpression : IExpression
     {
-        gen.Emit(OpCodes.Ldnull);
+        public static readonly NullExpression Instance = new NullExpression();
+
+        protected NullExpression() { }
+
+        public void Emit(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldnull);
+        }
     }
 }

@@ -28,30 +28,18 @@ namespace Abp.Application.Features
         /// <param name="description">A brief description for this feature</param>
         /// <param name="scope">Feature scope</param>
         /// <param name="inputType">Input type</param>
-        public Feature Create(
-            string name,
-            string defaultValue,
-            ILocalizableString displayName = null,
-            ILocalizableString description = null,
-            FeatureScopes scope = FeatureScopes.All,
-            IInputType inputType = null
-        )
+        public Feature Create(string name, string defaultValue, ILocalizableString displayName = null,
+            ILocalizableString description = null, FeatureScopes scope = FeatureScopes.All, IInputType inputType = null)
         {
             if (Features.ContainsKey(name))
             {
                 throw new AbpException("There is already a feature with name: " + name);
             }
 
-            var feature = new Feature(
-                name,
-                defaultValue,
-                displayName,
-                description,
-                scope,
-                inputType
-            );
+            var feature = new Feature(name, defaultValue, displayName, description, scope, inputType);
             Features[feature.Name] = feature;
             return feature;
+
         }
 
         /// <summary>

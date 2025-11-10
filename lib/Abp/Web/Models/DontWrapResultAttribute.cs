@@ -13,6 +13,9 @@ namespace Abp.Web.Models
         /// Initializes a new instance of the <see cref="DontWrapResultAttribute"/> class.
         /// </summary>
         public DontWrapResultAttribute()
-            : base(false, false) { }
+            : base(false, false)
+        {
+
+        }
     }
 }

@@ -33,7 +33,10 @@ namespace Abp.Configuration
         /// <summary>
         /// Creates a new <see cref="SettingInfo"/> object.
         /// </summary>
-        public SettingInfo() { }
+        public SettingInfo()
+        {
+            
+        }
 
         /// <summary>
         /// Creates a new <see cref="SettingInfo"/> object.

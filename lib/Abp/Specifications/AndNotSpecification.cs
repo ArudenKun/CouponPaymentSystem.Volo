@@ -15,8 +15,7 @@ namespace Abp.Specifications
         /// </summary>
         /// <param name="left">The first specification.</param>
         /// <param name="right">The second specification.</param>
-        public AndNotSpecification(ISpecification<T> left, ISpecification<T> right)
-            : base(left, right) { }
+        public AndNotSpecification(ISpecification<T> left, ISpecification<T> right) : base(left, right) { }
 
         /// <summary>
         /// Gets the LINQ expression which represents the current specification.
@@ -27,10 +26,7 @@ namespace Abp.Specifications
             var rightExpression = Right.ToExpression();
 
             var bodyNot = Expression.Not(rightExpression.Body);
-            var bodyNotExpression = Expression.Lambda<Func<T, bool>>(
-                bodyNot,
-                rightExpression.Parameters
-            );
+            var bodyNotExpression = Expression.Lambda<Func<T, bool>>(bodyNot, rightExpression.Parameters);
 
             return Left.ToExpression().And(bodyNotExpression);
         }

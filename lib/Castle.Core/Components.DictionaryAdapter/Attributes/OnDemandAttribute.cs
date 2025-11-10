@@ -12,212 +12,216 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-
-/// <summary>
-/// Support for on-demand value resolution.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
-public class OnDemandAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter
+namespace Castle.Components.DictionaryAdapter
 {
-    public OnDemandAttribute() { }
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
 
-    public OnDemandAttribute(Type type)
+    /// <summary>
+    /// Support for on-demand value resolution.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
+    public class OnDemandAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter
     {
-        if (type.GetConstructor(Type.EmptyTypes) == null)
+        public OnDemandAttribute() { }
+
+        public OnDemandAttribute(Type type)
         {
-            throw new ArgumentException("On-demand values must have a parameterless constructor");
+            if (type.GetConstructor(Type.EmptyTypes) == null)
+            {
+                throw new ArgumentException(
+                    "On-demand values must have a parameterless constructor"
+                );
+            }
+
+            Type = type;
         }
 
-        Type = type;
-    }
-
-    public OnDemandAttribute(object value)
-    {
-        Value = value;
-    }
-
-    public Type Type { get; private set; }
-
-    public object Value { get; private set; }
-
-    public object GetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        object storedValue,
-        PropertyDescriptor property,
-        bool ifExists
-    )
-    {
-        if (storedValue == null && ifExists == false)
+        public OnDemandAttribute(object value)
         {
-            IValueInitializer initializer = null;
+            Value = value;
+        }
 
-            if (Value != null)
-            {
-                storedValue = Value;
-            }
-            else
-            {
-                var type = Type ?? GetInferredType(dictionaryAdapter, property, out initializer);
+        public Type Type { get; private set; }
 
-                if (IsAcceptedType(type))
+        public object Value { get; private set; }
+
+        public object GetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            object storedValue,
+            PropertyDescriptor property,
+            bool ifExists
+        )
+        {
+            if (storedValue == null && ifExists == false)
+            {
+                IValueInitializer initializer = null;
+
+                if (Value != null)
                 {
-                    if (type.IsInterface)
+                    storedValue = Value;
+                }
+                else
+                {
+                    var type =
+                        Type ?? GetInferredType(dictionaryAdapter, property, out initializer);
+
+                    if (IsAcceptedType(type))
                     {
-                        if (property.IsDynamicProperty == false)
+                        if (type.IsInterface)
+                        {
+                            if (property.IsDynamicProperty == false)
+                            {
+                                if (storedValue == null)
+                                {
+                                    storedValue = dictionaryAdapter.Create(property.PropertyType);
+                                }
+                            }
+                        }
+                        else if (type.IsArray)
+                        {
+                            storedValue = Array.CreateInstance(type.GetElementType(), 0);
+                        }
+                        else
                         {
                             if (storedValue == null)
                             {
-                                storedValue = dictionaryAdapter.Create(property.PropertyType);
-                            }
-                        }
-                    }
-                    else if (type.IsArray)
-                    {
-                        storedValue = Array.CreateInstance(type.GetElementType(), 0);
-                    }
-                    else
-                    {
-                        if (storedValue == null)
-                        {
-                            object[] args = null;
-                            ConstructorInfo constructor = null;
+                                object[] args = null;
+                                ConstructorInfo constructor = null;
 
-                            if (property.IsDynamicProperty)
-                            {
-                                constructor = (
-                                    from ctor in type.GetConstructors()
-                                    let parms = ctor.GetParameters()
-                                    where
-                                        parms.Length == 1
-                                        && parms[0]
-                                            .ParameterType.IsAssignableFrom(
-                                                dictionaryAdapter.Meta.Type
-                                            )
-                                    select ctor
-                                ).FirstOrDefault();
+                                if (property.IsDynamicProperty)
+                                {
+                                    constructor = (
+                                        from ctor in type.GetConstructors()
+                                        let parms = ctor.GetParameters()
+                                        where
+                                            parms.Length == 1
+                                            && parms[0]
+                                                .ParameterType.IsAssignableFrom(
+                                                    dictionaryAdapter.Meta.Type
+                                                )
+                                        select ctor
+                                    ).FirstOrDefault();
+
+                                    if (constructor != null)
+                                        args = new[] { dictionaryAdapter };
+                                }
+
+                                if (constructor == null)
+                                {
+                                    constructor = type.GetConstructor(Type.EmptyTypes);
+                                }
 
                                 if (constructor != null)
-                                    args = new[] { dictionaryAdapter };
-                            }
-
-                            if (constructor == null)
-                            {
-                                constructor = type.GetConstructor(Type.EmptyTypes);
-                            }
-
-                            if (constructor != null)
-                            {
-                                storedValue = constructor.Invoke(args);
+                                {
+                                    storedValue = constructor.Invoke(args);
+                                }
                             }
                         }
                     }
                 }
-            }
 
-            if (storedValue != null)
-            {
-                using (dictionaryAdapter.SuppressNotificationsBlock())
+                if (storedValue != null)
                 {
-                    if (storedValue is ISupportInitialize)
+                    using (dictionaryAdapter.SuppressNotificationsBlock())
                     {
-                        ((ISupportInitialize)storedValue).BeginInit();
-                        ((ISupportInitialize)storedValue).EndInit();
-                    }
-                    if (initializer != null)
-                    {
-                        initializer.Initialize(dictionaryAdapter, storedValue);
-                    }
+                        if (storedValue is ISupportInitialize)
+                        {
+                            ((ISupportInitialize)storedValue).BeginInit();
+                            ((ISupportInitialize)storedValue).EndInit();
+                        }
+                        if (initializer != null)
+                        {
+                            initializer.Initialize(dictionaryAdapter, storedValue);
+                        }
 
-                    property.SetPropertyValue(
-                        dictionaryAdapter,
-                        property.PropertyName,
-                        ref storedValue,
-                        dictionaryAdapter.This.Descriptor
-                    );
+                        property.SetPropertyValue(
+                            dictionaryAdapter,
+                            property.PropertyName,
+                            ref storedValue,
+                            dictionaryAdapter.This.Descriptor
+                        );
+                    }
                 }
             }
+
+            return storedValue;
         }
 
-        return storedValue;
-    }
-
-    private static bool IsAcceptedType(Type type)
-    {
-        return type != null && type != typeof(string) && !type.IsPrimitive && !type.IsEnum;
-    }
-
-    private static Type GetInferredType(
-        IDictionaryAdapter dictionaryAdapter,
-        PropertyDescriptor property,
-        out IValueInitializer initializer
-    )
-    {
-        Type type = null;
-        initializer = null;
-
-        type = property.PropertyType;
-        if (typeof(IEnumerable).IsAssignableFrom(type) == false)
+        private static bool IsAcceptedType(Type type)
         {
+            return type != null && type != typeof(string) && !type.IsPrimitive && !type.IsEnum;
+        }
+
+        private static Type GetInferredType(
+            IDictionaryAdapter dictionaryAdapter,
+            PropertyDescriptor property,
+            out IValueInitializer initializer
+        )
+        {
+            Type type = null;
+            initializer = null;
+
+            type = property.PropertyType;
+            if (typeof(IEnumerable).IsAssignableFrom(type) == false)
+            {
+                return type;
+            }
+
+            Type collectionType = null;
+
+            if (type.IsGenericType)
+            {
+                var genericDef = type.GetGenericTypeDefinition();
+                var genericArg = type.GetGenericArguments()[0];
+                bool isBindingList = genericDef == typeof(System.ComponentModel.BindingList<>);
+
+                if (isBindingList || genericDef == typeof(List<>))
+                {
+                    if (dictionaryAdapter.CanEdit)
+                    {
+                        collectionType = isBindingList
+                            ? typeof(EditableBindingList<>)
+                            : typeof(EditableList<>);
+                    }
+
+                    if (isBindingList && genericArg.IsInterface)
+                    {
+                        Func<object> addNew = () => dictionaryAdapter.Create(genericArg);
+                        initializer = (IValueInitializer)
+                            Activator.CreateInstance(
+                                typeof(BindingListInitializer<>).MakeGenericType(genericArg),
+                                null,
+                                addNew,
+                                null,
+                                null,
+                                null
+                            );
+                    }
+                }
+                else if (genericDef == typeof(IList<>) || genericDef == typeof(ICollection<>))
+                {
+                    collectionType = dictionaryAdapter.CanEdit
+                        ? typeof(EditableList<>)
+                        : typeof(List<>);
+                }
+
+                if (collectionType != null)
+                {
+                    return collectionType.MakeGenericType(genericArg);
+                }
+            }
+            else if (type == typeof(IList) || type == typeof(ICollection))
+            {
+                return dictionaryAdapter.CanEdit ? typeof(EditableList) : typeof(List<object>);
+            }
+
             return type;
         }
-
-        Type collectionType = null;
-
-        if (type.IsGenericType)
-        {
-            var genericDef = type.GetGenericTypeDefinition();
-            var genericArg = type.GetGenericArguments()[0];
-            bool isBindingList = genericDef == typeof(System.ComponentModel.BindingList<>);
-
-            if (isBindingList || genericDef == typeof(List<>))
-            {
-                if (dictionaryAdapter.CanEdit)
-                {
-                    collectionType = isBindingList
-                        ? typeof(EditableBindingList<>)
-                        : typeof(EditableList<>);
-                }
-
-                if (isBindingList && genericArg.IsInterface)
-                {
-                    Func<object> addNew = () => dictionaryAdapter.Create(genericArg);
-                    initializer = (IValueInitializer)
-                        Activator.CreateInstance(
-                            typeof(BindingListInitializer<>).MakeGenericType(genericArg),
-                            null,
-                            addNew,
-                            null,
-                            null,
-                            null
-                        );
-                }
-            }
-            else if (genericDef == typeof(IList<>) || genericDef == typeof(ICollection<>))
-            {
-                collectionType = dictionaryAdapter.CanEdit
-                    ? typeof(EditableList<>)
-                    : typeof(List<>);
-            }
-
-            if (collectionType != null)
-            {
-                return collectionType.MakeGenericType(genericArg);
-            }
-        }
-        else if (type == typeof(IList) || type == typeof(ICollection))
-        {
-            return dictionaryAdapter.CanEdit ? typeof(EditableList) : typeof(List<object>);
-        }
-
-        return type;
     }
 }

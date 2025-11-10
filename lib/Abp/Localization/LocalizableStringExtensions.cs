@@ -10,10 +10,7 @@ namespace Abp.Localization
         /// <param name="localizableString">Localizable string instance</param>
         /// <param name="localizationManager">Localization manager</param>
         /// <returns>Localized string</returns>
-        public static string Localize(
-            this ILocalizableString localizableString,
-            ILocalizationManager localizationManager
-        )
+        public static string Localize(this ILocalizableString localizableString, ILocalizationManager localizationManager)
         {
             return localizableString.Localize(new LocalizationContext(localizationManager));
         }
@@ -25,16 +22,9 @@ namespace Abp.Localization
         /// <param name="localizationManager">Localization manager</param>
         /// <param name="culture">culture</param>
         /// <returns>Localized string</returns>
-        public static string Localize(
-            this ILocalizableString localizableString,
-            ILocalizationManager localizationManager,
-            CultureInfo culture
-        )
+        public static string Localize(this ILocalizableString localizableString, ILocalizationManager localizationManager, CultureInfo culture)
         {
-            return localizableString.Localize(
-                new LocalizationContext(localizationManager),
-                culture
-            );
+            return localizableString.Localize(new LocalizationContext(localizationManager), culture);
         }
     }
 }

@@ -12,28 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
-public abstract class XPathVariableAttribute : Attribute, IXsltContextVariable
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    protected XPathVariableAttribute() { }
+    using System;
+    using System.Xml.XPath;
+    using System.Xml.Xsl;
 
-    public abstract XmlName Name { get; }
-    public abstract XPathResultType VariableType { get; }
-
-    bool IXsltContextVariable.IsLocal
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
+    public abstract class XPathVariableAttribute : Attribute, IXsltContextVariable
     {
-        get { return false; }
-    }
-    bool IXsltContextVariable.IsParam
-    {
-        get { return false; }
-    }
+        protected XPathVariableAttribute() { }
 
-    public abstract object Evaluate(XsltContext context);
+        public abstract XmlName Name { get; }
+        public abstract XPathResultType VariableType { get; }
+
+        bool IXsltContextVariable.IsLocal
+        {
+            get { return false; }
+        }
+        bool IXsltContextVariable.IsParam
+        {
+            get { return false; }
+        }
+
+        public abstract object Evaluate(XsltContext context);
+    }
 }

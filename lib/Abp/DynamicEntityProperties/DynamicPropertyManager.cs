@@ -17,10 +17,9 @@ namespace Abp.DynamicEntityProperties
         private readonly IDynamicEntityPropertyDefinitionManager _dynamicEntityPropertyDefinitionManager;
 
         public IAbpSession AbpSession { get; set; }
-
+        
         public const string CacheName = "AbpZeroDynamicPropertyCache";
-        private ITypedCache<string, DynamicProperty> DynamicPropertyCache =>
-            _cacheManager.GetCache<string, DynamicProperty>(CacheName);
+        private ITypedCache<string, DynamicProperty> DynamicPropertyCache => _cacheManager.GetCache<string, DynamicProperty>(CacheName);
 
         public DynamicPropertyManager(
             ICacheManager cacheManager,
@@ -33,7 +32,7 @@ namespace Abp.DynamicEntityProperties
             _dynamicPropertyStore = dynamicPropertyStore;
             _unitOfWorkManager = unitOfWorkManager;
             _dynamicEntityPropertyDefinitionManager = dynamicEntityPropertyDefinitionManager;
-
+            
             AbpSession = NullAbpSession.Instance;
         }
 
@@ -41,7 +40,7 @@ namespace Abp.DynamicEntityProperties
         {
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
-
+            
             return DynamicPropertyCache.Get(cacheKey, () => _dynamicPropertyStore.Get(id));
         }
 
@@ -49,11 +48,8 @@ namespace Abp.DynamicEntityProperties
         {
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
-
-            return DynamicPropertyCache.GetAsync(
-                cacheKey,
-                (i) => _dynamicPropertyStore.GetAsync(id)
-            );
+            
+            return DynamicPropertyCache.GetAsync(cacheKey, (i) => _dynamicPropertyStore.GetAsync(id));
         }
 
         public virtual DynamicProperty Get(string propertyName)
@@ -66,10 +62,7 @@ namespace Abp.DynamicEntityProperties
             return _dynamicPropertyStore.GetAsync(propertyName);
         }
 
-        protected virtual void CheckDynamicProperty(
-            DynamicProperty dynamicProperty,
-            bool updating = false
-        )
+        protected virtual void CheckDynamicProperty(DynamicProperty dynamicProperty, bool updating = false)
         {
             if (dynamicProperty == null)
             {
@@ -81,25 +74,17 @@ namespace Abp.DynamicEntityProperties
                 throw new ArgumentNullException(nameof(dynamicProperty.PropertyName));
             }
 
-            if (
-                !_dynamicEntityPropertyDefinitionManager.ContainsInputType(
-                    dynamicProperty.InputType
-                )
-            )
+            if (!_dynamicEntityPropertyDefinitionManager.ContainsInputType(dynamicProperty.InputType))
             {
-                throw new ApplicationException(
-                    $"Input type is invalid, if you want to use \"{dynamicProperty.InputType}\" input type, define it in DynamicEntityPropertyDefinitionProvider."
-                );
+                throw new ApplicationException($"Input type is invalid, if you want to use \"{dynamicProperty.InputType}\" input type, define it in DynamicEntityPropertyDefinitionProvider.");
             }
 
-            if (!updating)
+            if(!updating)
             {
                 var existingProperty = _dynamicPropertyStore.Get(dynamicProperty.PropertyName);
                 if (existingProperty != null)
                 {
-                    throw new ArgumentException(
-                        $"There is already a dynamic property with name: '{dynamicProperty.PropertyName}'"
-                    );
+                    throw new ArgumentException($"There is already a dynamic property with name: '{dynamicProperty.PropertyName}'");
                 }
             }
         }
@@ -132,7 +117,7 @@ namespace Abp.DynamicEntityProperties
 
             var cacheKey = GetCacheKey(dynamicProperty.Id, dynamicProperty.TenantId);
             await DynamicPropertyCache.SetAsync(cacheKey, dynamicProperty);
-
+            
             return dynamicProperty;
         }
 
@@ -148,7 +133,7 @@ namespace Abp.DynamicEntityProperties
 
             var cacheKey = GetCacheKey(dynamicProperty.Id, dynamicProperty.TenantId);
             DynamicPropertyCache.Set(cacheKey, dynamicProperty);
-
+            
             return dynamicProperty;
         }
 
@@ -164,7 +149,7 @@ namespace Abp.DynamicEntityProperties
 
             var cacheKey = GetCacheKey(dynamicProperty.Id, dynamicProperty.TenantId);
             await DynamicPropertyCache.SetAsync(cacheKey, dynamicProperty);
-
+            
             return dynamicProperty;
         }
 
@@ -178,7 +163,7 @@ namespace Abp.DynamicEntityProperties
 
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
-
+            
             DynamicPropertyCache.Remove(cacheKey);
         }
 
@@ -192,10 +177,10 @@ namespace Abp.DynamicEntityProperties
 
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
-
+            
             await DynamicPropertyCache.RemoveAsync(cacheKey);
         }
-
+        
         protected virtual int? GetCurrentTenantId()
         {
             if (_unitOfWorkManager.Current != null)
@@ -205,7 +190,7 @@ namespace Abp.DynamicEntityProperties
 
             return AbpSession.TenantId;
         }
-
+        
         protected virtual string GetCacheKey(int id, int? tenantId)
         {
             return id + "@" + (tenantId ?? 0);

@@ -1,7 +1,11 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using System.Linq;
+using System.Threading;
 using Abp.Data;
 using Abp.Threading.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Runtime.Caching
 {
@@ -9,10 +13,7 @@ namespace Abp.Runtime.Caching
     /// Base class for caches with generic types, <see cref="AbpCacheBase{TKey, TValue}"/> and .
     /// It provides default implementation of <see cref="IAbpCache{TKey, TValue}"/>.
     /// </summary>
-    public abstract class AbpCacheBase<TKey, TValue>
-        : AbpCacheBase,
-            IAbpCache<TKey, TValue>,
-            ICacheOptions
+    public abstract class AbpCacheBase<TKey, TValue> : AbpCacheBase, IAbpCache<TKey, TValue>, ICacheOptions
     {
         public TimeSpan DefaultSlidingExpireTime { get; set; }
 
@@ -26,8 +27,7 @@ namespace Abp.Runtime.Caching
         /// Constructor.
         /// </summary>
         /// <param name="name"></param>
-        protected AbpCacheBase(string name)
-            : base(name)
+        protected AbpCacheBase(string name) : base(name)
         {
             DefaultSlidingExpireTime = TimeSpan.FromHours(1);
         }
@@ -55,7 +55,7 @@ namespace Abp.Runtime.Caching
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogError(ex, "Failed to get value for key {Key}", key);
+                        Logger.Error(ex.ToString(), ex);
                     }
                 }
                 return generatedValue;
@@ -71,7 +71,7 @@ namespace Abp.Runtime.Caching
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Failed to get value for keys {Keys}", keys);
+                Logger.Error(ex.ToString(), ex);
             }
 
             if (results == null)
@@ -89,7 +89,7 @@ namespace Abp.Runtime.Caching
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogError(ex, "Failed to get values for keys {Keys}", keys);
+                        Logger.Error(ex.ToString(), ex);
                     }
 
                     var generated = new List<KeyValuePair<TKey, TValue>>();
@@ -117,7 +117,7 @@ namespace Abp.Runtime.Caching
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogError(ex, "Failed to set");
+                            Logger.Error(ex.ToString(), ex);
                         }
                     }
                 }
@@ -141,7 +141,7 @@ namespace Abp.Runtime.Caching
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Failed to get");
+                Logger.Error(ex.ToString(), ex);
             }
 
             if (result.HasValue)
@@ -157,7 +157,7 @@ namespace Abp.Runtime.Caching
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, "Failed to get values");
+                    Logger.Error(ex.ToString(), ex);
                 }
 
                 if (result.HasValue)
@@ -177,7 +177,7 @@ namespace Abp.Runtime.Caching
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogError(ex, "Failed to set");
+                    Logger.Error(ex.ToString(), ex);
                 }
 
                 return generatedValue;
@@ -186,7 +186,7 @@ namespace Abp.Runtime.Caching
 
         public virtual async Task<TValue[]> GetAsync(TKey[] keys, Func<TKey, Task<TValue>> factory)
         {
-            ConditionalValue<TValue>[]? results = null;
+            ConditionalValue<TValue>[] results = null;
 
             try
             {
@@ -194,7 +194,7 @@ namespace Abp.Runtime.Caching
             }
             catch (Exception ex)
             {
-                Logger.LogError(ex, "Failed to get values");
+                Logger.Error(ex.ToString(), ex);
             }
 
             if (results == null)
@@ -212,7 +212,7 @@ namespace Abp.Runtime.Caching
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogError(ex, "Failed to get values");
+                        Logger.Error(ex.ToString(), ex);
                     }
 
                     var generated = new List<KeyValuePair<TKey, TValue>>();
@@ -239,7 +239,7 @@ namespace Abp.Runtime.Caching
                         }
                         catch (Exception ex)
                         {
-                            Logger.LogError(ex, "Failed to set");
+                            Logger.Error(ex.ToString(), ex);
                         }
                     }
                 }
@@ -296,18 +296,9 @@ namespace Abp.Runtime.Caching
             return results.Select(result => result.Value).ToArray();
         }
 
-        public abstract void Set(
-            TKey key,
-            TValue value,
-            TimeSpan? slidingExpireTime = null,
-            DateTimeOffset? absoluteExpireTime = null
-        );
+        public abstract void Set(TKey key, TValue value, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null);
 
-        public virtual void Set(
-            KeyValuePair<TKey, TValue>[] pairs,
-            TimeSpan? slidingExpireTime = null,
-            DateTimeOffset? absoluteExpireTime = null
-        )
+        public virtual void Set(KeyValuePair<TKey, TValue>[] pairs, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null)
         {
             foreach (var pair in pairs)
             {
@@ -315,26 +306,15 @@ namespace Abp.Runtime.Caching
             }
         }
 
-        public virtual Task SetAsync(
-            TKey key,
-            TValue value,
-            TimeSpan? slidingExpireTime = null,
-            DateTimeOffset? absoluteExpireTime = null
-        )
+        public virtual Task SetAsync(TKey key, TValue value, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null)
         {
             Set(key, value, slidingExpireTime, absoluteExpireTime);
             return Task.CompletedTask;
         }
 
-        public virtual Task SetAsync(
-            KeyValuePair<TKey, TValue>[] pairs,
-            TimeSpan? slidingExpireTime = null,
-            DateTimeOffset? absoluteExpireTime = null
-        )
+        public virtual Task SetAsync(KeyValuePair<TKey, TValue>[] pairs, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null)
         {
-            return Task.WhenAll(
-                pairs.Select(p => SetAsync(p.Key, p.Value, slidingExpireTime, absoluteExpireTime))
-            );
+            return Task.WhenAll(pairs.Select(p => SetAsync(p.Key, p.Value, slidingExpireTime, absoluteExpireTime)));
         }
 
         public abstract void Remove(TKey key);
@@ -387,6 +367,8 @@ namespace Abp.Runtime.Caching
             return Task.CompletedTask;
         }
 
-        public virtual void Dispose() { }
+        public virtual void Dispose()
+        {
+        }
     }
 }

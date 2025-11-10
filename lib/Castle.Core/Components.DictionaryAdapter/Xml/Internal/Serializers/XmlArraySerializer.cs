@@ -12,100 +12,111 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-public class XmlArraySerializer : XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlArraySerializer Instance = new XmlArraySerializer();
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
-    protected XmlArraySerializer() { }
-
-    public override XmlTypeKind Kind
+    public class XmlArraySerializer : XmlTypeSerializer
     {
-        get { return XmlTypeKind.Collection; }
-    }
+        public static readonly XmlArraySerializer Instance = new XmlArraySerializer();
 
-    public override bool CanGetStub
-    {
-        get { return true; }
-    }
+        protected XmlArraySerializer() { }
 
-    public override object GetStub(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        var itemType = node.ClrType.GetElementType();
-
-        return Array.CreateInstance(itemType, 0);
-    }
-
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        var items = new ArrayList();
-        var itemType = node.ClrType.GetElementType();
-        var references = XmlAdapter.For(parent).References;
-
-        accessor
-            .GetCollectionAccessor(itemType)
-            .GetCollectionItems(node, parent, references, items);
-
-        return items.ToArray(itemType);
-    }
-
-    public override void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    )
-    {
-        var source = (Array)value;
-        var target = (Array)null;
-        var originals = (Array)oldValue;
-        var itemType = source.GetType().GetElementType();
-        var subaccessor = accessor.GetCollectionAccessor(itemType);
-        var cursor = subaccessor.SelectCollectionItems(node, true);
-        var serializer = subaccessor.Serializer;
-        var references = XmlAdapter.For(parent).References;
-
-        for (var i = 0; i < source.Length; i++)
+        public override XmlTypeKind Kind
         {
-            var originalItem = GetItemSafe(originals, i);
-            var providedItem = source.GetValue(i);
-            var assignedItem = providedItem;
-
-            subaccessor.SetValue(
-                cursor,
-                parent,
-                references,
-                cursor.MoveNext(),
-                originalItem,
-                ref assignedItem
-            );
-
-            if (target != null)
-            {
-                target.SetValue(assignedItem, i);
-            }
-            else if (!Equals(assignedItem, providedItem))
-            {
-                target = Array.CreateInstance(itemType, source.Length);
-                Array.Copy(source, target, i);
-                target.SetValue(assignedItem, i);
-            }
+            get { return XmlTypeKind.Collection; }
         }
 
-        cursor.RemoveAllNext();
+        public override bool CanGetStub
+        {
+            get { return true; }
+        }
 
-        if (target != null)
-            value = target;
-    }
+        public override object GetStub(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            var itemType = node.ClrType.GetElementType();
 
-    private static object GetItemSafe(Array array, int index)
-    {
-        return array != null && index >= 0 && index < array.Length ? array.GetValue(index) : null;
+            return Array.CreateInstance(itemType, 0);
+        }
+
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            var items = new ArrayList();
+            var itemType = node.ClrType.GetElementType();
+            var references = XmlAdapter.For(parent).References;
+
+            accessor
+                .GetCollectionAccessor(itemType)
+                .GetCollectionItems(node, parent, references, items);
+
+            return items.ToArray(itemType);
+        }
+
+        public override void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        )
+        {
+            var source = (Array)value;
+            var target = (Array)null;
+            var originals = (Array)oldValue;
+            var itemType = source.GetType().GetElementType();
+            var subaccessor = accessor.GetCollectionAccessor(itemType);
+            var cursor = subaccessor.SelectCollectionItems(node, true);
+            var serializer = subaccessor.Serializer;
+            var references = XmlAdapter.For(parent).References;
+
+            for (var i = 0; i < source.Length; i++)
+            {
+                var originalItem = GetItemSafe(originals, i);
+                var providedItem = source.GetValue(i);
+                var assignedItem = providedItem;
+
+                subaccessor.SetValue(
+                    cursor,
+                    parent,
+                    references,
+                    cursor.MoveNext(),
+                    originalItem,
+                    ref assignedItem
+                );
+
+                if (target != null)
+                {
+                    target.SetValue(assignedItem, i);
+                }
+                else if (!Equals(assignedItem, providedItem))
+                {
+                    target = Array.CreateInstance(itemType, source.Length);
+                    Array.Copy(source, target, i);
+                    target.SetValue(assignedItem, i);
+                }
+            }
+
+            cursor.RemoveAllNext();
+
+            if (target != null)
+                value = target;
+        }
+
+        private static object GetItemSafe(Array array, int index)
+        {
+            return array != null && index >= 0 && index < array.Length
+                ? array.GetValue(index)
+                : null;
+        }
     }
 }

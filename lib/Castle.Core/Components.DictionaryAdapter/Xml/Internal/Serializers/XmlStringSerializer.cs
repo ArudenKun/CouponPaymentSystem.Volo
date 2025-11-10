@@ -12,32 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public class XmlStringSerializer : XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlStringSerializer Instance = new XmlStringSerializer();
-
-    protected XmlStringSerializer() { }
-
-    public override XmlTypeKind Kind
+    public class XmlStringSerializer : XmlTypeSerializer
     {
-        get { return XmlTypeKind.Simple; }
-    }
+        public static readonly XmlStringSerializer Instance = new XmlStringSerializer();
 
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        return node.Value;
-    }
+        protected XmlStringSerializer() { }
 
-    public override void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    )
-    {
-        node.Value = value.ToString();
+        public override XmlTypeKind Kind
+        {
+            get { return XmlTypeKind.Simple; }
+        }
+
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            return node.Value;
+        }
+
+        public override void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        )
+        {
+            node.Value = value.ToString();
+        }
     }
 }

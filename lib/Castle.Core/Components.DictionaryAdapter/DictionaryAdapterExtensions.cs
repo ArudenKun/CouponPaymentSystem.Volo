@@ -12,15 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.Linq;
-
-public static class DictionaryAdapterExtensions
+namespace Castle.Components.DictionaryAdapter
 {
-    public static IVirtual AsVirtual(this IDictionaryAdapter dictionaryAdapter)
+    using System.Linq;
+
+    public static class DictionaryAdapterExtensions
     {
-        var descriptor = dictionaryAdapter.This.Descriptor;
-        return descriptor != null ? descriptor.Getters.OfType<IVirtual>().FirstOrDefault() : null;
+        public static IVirtual AsVirtual(this IDictionaryAdapter dictionaryAdapter)
+        {
+            var descriptor = dictionaryAdapter.This.Descriptor;
+            return descriptor != null
+                ? descriptor.Getters.OfType<IVirtual>().FirstOrDefault()
+                : null;
+        }
     }
 }

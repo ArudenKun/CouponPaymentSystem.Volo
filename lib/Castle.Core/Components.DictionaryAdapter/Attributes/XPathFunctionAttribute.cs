@@ -12,34 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
-public abstract class XPathFunctionAttribute : Attribute, IXsltContextFunction
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    protected XPathFunctionAttribute() { }
+    using System;
+    using System.Xml.XPath;
+    using System.Xml.Xsl;
 
-    public abstract XmlName Name { get; }
-    public abstract XPathResultType ReturnType { get; }
-
-    public virtual XPathResultType[] ArgTypes
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
+    public abstract class XPathFunctionAttribute : Attribute, IXsltContextFunction
     {
-        get { return NoArgs; }
-    }
-    public virtual int Maxargs
-    {
-        get { return ArgTypes.Length; }
-    }
-    public virtual int Minargs
-    {
-        get { return ArgTypes.Length; }
-    }
+        protected XPathFunctionAttribute() { }
 
-    public static readonly XPathResultType[] NoArgs = new XPathResultType[0];
+        public abstract XmlName Name { get; }
+        public abstract XPathResultType ReturnType { get; }
 
-    public abstract object Invoke(XsltContext context, object[] args, XPathNavigator node);
+        public virtual XPathResultType[] ArgTypes
+        {
+            get { return NoArgs; }
+        }
+        public virtual int Maxargs
+        {
+            get { return ArgTypes.Length; }
+        }
+        public virtual int Minargs
+        {
+            get { return ArgTypes.Length; }
+        }
+
+        public static readonly XPathResultType[] NoArgs = new XPathResultType[0];
+
+        public abstract object Invoke(XsltContext context, object[] args, XPathNavigator node);
+    }
 }

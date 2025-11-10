@@ -1,7 +1,6 @@
-namespace Abp.Auditing
+namespace Abp.Auditing;
+
+public interface IAuditSerializer
 {
-    public interface IAuditSerializer
-    {
-        string Serialize(object obj);
-    }
+    string Serialize(object obj);
 }

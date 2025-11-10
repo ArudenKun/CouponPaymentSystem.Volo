@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class EndExceptionBlockStatement : IStatement
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    public void Emit(ILGenerator gen)
+    using System.Reflection.Emit;
+
+    internal class EndExceptionBlockStatement : IStatement
     {
-        gen.EndExceptionBlock();
+        public void Emit(ILGenerator gen)
+        {
+            gen.EndExceptionBlock();
+        }
     }
 }

@@ -2,11 +2,11 @@ using Abp.Runtime.Caching;
 
 namespace Abp.Domain.Entities.Caching
 {
-    public interface IMultiTenancyEntityCache<TCacheItem>
-        : IMultiTenancyEntityCache<TCacheItem, int> { }
+    public interface IMultiTenancyEntityCache<TCacheItem> : IMultiTenancyEntityCache<TCacheItem, int>
+    {
+    }
 
-    public interface IMultiTenancyEntityCache<TCacheItem, TPrimaryKey>
-        : IEntityCacheBase<TCacheItem, TPrimaryKey>
+    public interface IMultiTenancyEntityCache<TCacheItem, TPrimaryKey> : IEntityCacheBase<TCacheItem, TPrimaryKey>
     {
         ITypedCache<string, TCacheItem> InternalCache { get; }
 

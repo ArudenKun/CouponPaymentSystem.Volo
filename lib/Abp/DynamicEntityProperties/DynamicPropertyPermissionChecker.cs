@@ -7,9 +7,7 @@ using Abp.Extensions;
 
 namespace Abp.DynamicEntityProperties
 {
-    public class DynamicPropertyPermissionChecker
-        : IDynamicPropertyPermissionChecker,
-            ITransientDependency
+    public class DynamicPropertyPermissionChecker : IDynamicPropertyPermissionChecker, ITransientDependency
     {
         private readonly IPermissionChecker _permissionChecker;
         private readonly IDynamicPropertyManager _dynamicPropertyManager;
@@ -17,7 +15,7 @@ namespace Abp.DynamicEntityProperties
         public DynamicPropertyPermissionChecker(
             IPermissionChecker permissionChecker,
             IDynamicPropertyManager dynamicPropertyManager
-        )
+            )
         {
             _permissionChecker = permissionChecker;
             _dynamicPropertyManager = dynamicPropertyManager;

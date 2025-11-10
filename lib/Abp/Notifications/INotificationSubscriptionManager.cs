@@ -16,12 +16,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        Task SubscribeAsync(
-            UserIdentifier user,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        Task SubscribeAsync(UserIdentifier user, string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Subscribes to a notification for given user and notification informations.
@@ -30,12 +25,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        void Subscribe(
-            UserIdentifier user,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        void Subscribe(UserIdentifier user, string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Subscribes to all available notifications for given user.
@@ -57,11 +47,7 @@ namespace Abp.Notifications
         /// <param name="user">User.</param>
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
-        Task UnsubscribeAsync(
-            UserIdentifier user,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null
-        );
+        Task UnsubscribeAsync(UserIdentifier user, string notificationName, EntityIdentifier entityIdentifier = null);
 
         /// <summary>
         /// Unsubscribes from a notification.
@@ -69,11 +55,7 @@ namespace Abp.Notifications
         /// <param name="user">User.</param>
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
-        void Unsubscribe(
-            UserIdentifier user,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null
-        );
+        void Unsubscribe(UserIdentifier user, string notificationName, EntityIdentifier entityIdentifier = null);
 
         /// <summary>
         /// Gets all subscribtions for given notification (including all tenants).
@@ -82,11 +64,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        Task<List<NotificationSubscription>> GetSubscriptionsAsync(
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        Task<List<NotificationSubscription>> GetSubscriptionsAsync(string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Gets all subscribtions for given notification (including all tenants).
@@ -95,11 +73,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        List<NotificationSubscription> GetSubscriptions(
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        List<NotificationSubscription> GetSubscriptions(string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Gets all subscribtions for given notification.
@@ -108,12 +82,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        Task<List<NotificationSubscription>> GetSubscriptionsAsync(
-            int? tenantId,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        Task<List<NotificationSubscription>> GetSubscriptionsAsync(int? tenantId, string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Gets all subscribtions for given notification.
@@ -122,12 +91,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        List<NotificationSubscription> GetSubscriptions(
-            int? tenantId,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        List<NotificationSubscription> GetSubscriptions(int? tenantId, string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Gets subscribed notifications for a user.
@@ -148,12 +112,7 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        Task<bool> IsSubscribedAsync(
-            UserIdentifier user,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        Task<bool> IsSubscribedAsync(UserIdentifier user, string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
 
         /// <summary>
         /// Checks if a user subscribed for a notification.
@@ -162,11 +121,6 @@ namespace Abp.Notifications
         /// <param name="notificationName">Name of the notification.</param>
         /// <param name="entityIdentifier">entity identifier</param>
         /// <param name="targetNotifiers">target notifier</param>
-        bool IsSubscribed(
-            UserIdentifier user,
-            string notificationName,
-            EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        );
+        bool IsSubscribed(UserIdentifier user, string notificationName, EntityIdentifier entityIdentifier = null, string targetNotifiers = null);
     }
 }

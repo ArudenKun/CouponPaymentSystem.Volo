@@ -13,10 +13,7 @@ namespace Abp.Domain.Uow
         private readonly IUnitOfWorkManager _unitOfWorkManager;
         private readonly IUnitOfWorkDefaultOptions _unitOfWorkOptions;
 
-        public UnitOfWorkInterceptor(
-            IUnitOfWorkManager unitOfWorkManager,
-            IUnitOfWorkDefaultOptions unitOfWorkOptions
-        )
+        public UnitOfWorkInterceptor(IUnitOfWorkManager unitOfWorkManager, IUnitOfWorkDefaultOptions unitOfWorkOptions)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _unitOfWorkOptions = unitOfWorkOptions;
@@ -63,9 +60,8 @@ namespace Abp.Domain.Uow
             }
         }
 
-        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(
-            IInvocation invocation
-        )
+
+        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();
             var method = GetMethodInfo(invocation);
@@ -81,7 +77,7 @@ namespace Abp.Domain.Uow
             using (var uow = _unitOfWorkManager.Begin(unitOfWorkAttr.CreateOptions()))
             {
                 proceedInfo.Invoke();
-
+                
                 var taskResult = (Task<TResult>)invocation.ReturnValue;
                 var result = await taskResult;
 

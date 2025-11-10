@@ -23,8 +23,11 @@ namespace Abp.Application.Features
         /// <summary>
         /// Required for serialization.
         /// </summary>
-        public SimpleFeatureDependency() { }
-
+        public SimpleFeatureDependency()
+        {
+            
+        }
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="SimpleFeatureDependency"/> class.
         /// </summary>
@@ -52,11 +55,7 @@ namespace Abp.Application.Features
         public Task<bool> IsSatisfiedAsync(IFeatureDependencyContext context)
         {
             return context.TenantId.HasValue
-                ? context.FeatureChecker.IsEnabledAsync(
-                    context.TenantId.Value,
-                    RequiresAll,
-                    Features
-                )
+                ? context.FeatureChecker.IsEnabledAsync(context.TenantId.Value, RequiresAll, Features)
                 : context.FeatureChecker.IsEnabledAsync(RequiresAll, Features);
         }
 

@@ -38,11 +38,7 @@ namespace Abp.Modules
         /// <summary>
         /// Creates a new AbpModuleInfo object.
         /// </summary>
-        public AbpModuleInfo(
-            [NotNull] Type type,
-            [NotNull] AbpModule instance,
-            bool isLoadedAsPlugIn
-        )
+        public AbpModuleInfo([NotNull] Type type, [NotNull] AbpModule instance, bool isLoadedAsPlugIn)
         {
             Check.NotNull(type, nameof(type));
             Check.NotNull(instance, nameof(instance));
@@ -57,7 +53,8 @@ namespace Abp.Modules
 
         public override string ToString()
         {
-            return Type.AssemblyQualifiedName ?? Type.FullName;
+            return Type.AssemblyQualifiedName ??
+                   Type.FullName;
         }
     }
 }

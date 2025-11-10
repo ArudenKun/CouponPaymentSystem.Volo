@@ -31,10 +31,7 @@ namespace Abp.Runtime.Validation.Interception
         /// <summary>
         /// Creates a new <see cref="MethodInvocationValidator"/> instance.
         /// </summary>
-        public MethodInvocationValidator(
-            IValidationConfiguration configuration,
-            IIocResolver iocResolver
-        )
+        public MethodInvocationValidator(IValidationConfiguration configuration, IIocResolver iocResolver)
         {
             _configuration = configuration;
             _iocResolver = iocResolver;
@@ -102,9 +99,7 @@ namespace Abp.Runtime.Validation.Interception
         {
             if (Method == null)
             {
-                throw new AbpException(
-                    "This object has not been initialized. Call Initialize method first."
-                );
+                throw new AbpException("This object has not been initialized. Call Initialize method first.");
             }
         }
 
@@ -115,9 +110,7 @@ namespace Abp.Runtime.Validation.Interception
                 return false;
             }
 
-            return ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableValidationAttribute>(
-                    Method
-                ) != null;
+            return ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableValidationAttribute>(Method) != null;
         }
 
         protected virtual void ThrowValidationError()
@@ -133,28 +126,15 @@ namespace Abp.Runtime.Validation.Interception
         /// </summary>
         /// <param name="parameterInfo">Parameter of the method to validate</param>
         /// <param name="parameterValue">Value to validate</param>
-        protected virtual void ValidateMethodParameter(
-            ParameterInfo parameterInfo,
-            object parameterValue
-        )
+        protected virtual void ValidateMethodParameter(ParameterInfo parameterInfo, object parameterValue)
         {
             if (parameterValue == null)
             {
-                if (
-                    !parameterInfo.IsOptional
-                    && !parameterInfo.IsOut
-                    && !TypeHelper.IsPrimitiveExtendedIncludingNullable(
-                        parameterInfo.ParameterType,
-                        includeEnums: true
-                    )
-                )
+                if (!parameterInfo.IsOptional &&
+                    !parameterInfo.IsOut &&
+                    !TypeHelper.IsPrimitiveExtendedIncludingNullable(parameterInfo.ParameterType, includeEnums: true))
                 {
-                    ValidationErrors.Add(
-                        new ValidationResult(
-                            parameterInfo.Name + " is null!",
-                            new[] { parameterInfo.Name }
-                        )
-                    );
+                    ValidationErrors.Add(new ValidationResult(parameterInfo.Name + " is null!", new[] { parameterInfo.Name }));
                 }
 
                 return;
@@ -190,13 +170,10 @@ namespace Abp.Runtime.Validation.Interception
             // Validate items of enumerable
             if (IsEnumerable(validatingObject))
             {
-                foreach (var item in (IEnumerable)validatingObject)
+                foreach (var item in (IEnumerable) validatingObject)
                 {
                     // Do not recursively validate for primitive objects
-                    if (
-                        item == null
-                        || TypeHelper.IsPrimitiveExtendedIncludingNullable(item.GetType())
-                    )
+                    if (item == null || TypeHelper.IsPrimitiveExtendedIncludingNullable(item.GetType()))
                     {
                         break;
                     }
@@ -213,9 +190,7 @@ namespace Abp.Runtime.Validation.Interception
 
             if (ShouldMakeDeepValidation(validatingObject))
             {
-                var properties = TypeDescriptor
-                    .GetProperties(validatingObject)
-                    .Cast<PropertyDescriptor>();
+                var properties = TypeDescriptor.GetProperties(validatingObject).Cast<PropertyDescriptor>();
                 foreach (var property in properties)
                 {
                     if (property.Attributes.OfType<DisableValidationAttribute>().Any())
@@ -223,10 +198,7 @@ namespace Abp.Runtime.Validation.Interception
                         continue;
                     }
 
-                    ValidateObjectRecursively(
-                        property.GetValue(validatingObject),
-                        currentDepth + 1
-                    );
+                    ValidateObjectRecursively(property.GetValue(validatingObject), currentDepth + 1);
                 }
             }
         }
@@ -237,11 +209,7 @@ namespace Abp.Runtime.Validation.Interception
             {
                 if (ShouldValidateUsingValidator(validatingObject, validatorType))
                 {
-                    using (
-                        var validator = _iocResolver.ResolveAsDisposable<IMethodParameterValidator>(
-                            validatorType
-                        )
-                    )
+                    using (var validator = _iocResolver.ResolveAsDisposable<IMethodParameterValidator>(validatorType))
                     {
                         var validationResults = validator.Object.Validate(validatingObject);
                         ValidationErrors.AddRange(validationResults);
@@ -250,10 +218,7 @@ namespace Abp.Runtime.Validation.Interception
             }
         }
 
-        protected virtual bool ShouldValidateUsingValidator(
-            object validatingObject,
-            Type validatorType
-        )
+        protected virtual bool ShouldValidateUsingValidator(object validatingObject, Type validatorType)
         {
             return true;
         }
@@ -279,9 +244,10 @@ namespace Abp.Runtime.Validation.Interception
 
         private bool IsEnumerable(object validatingObject)
         {
-            return validatingObject is IEnumerable
-                && !(validatingObject is IQueryable)
-                && !TypeHelper.IsPrimitiveExtendedIncludingNullable(validatingObject.GetType());
+            return
+                validatingObject is IEnumerable &&
+                !(validatingObject is IQueryable) &&
+                !TypeHelper.IsPrimitiveExtendedIncludingNullable(validatingObject.GetType());
         }
     }
 }

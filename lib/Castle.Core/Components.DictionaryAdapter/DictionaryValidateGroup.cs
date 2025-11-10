@@ -12,102 +12,103 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-
-public class DictionaryValidateGroup : IDictionaryValidate, INotifyPropertyChanged, IDisposable
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly object[] groups;
-    private readonly IDictionaryAdapter adapter;
-    private readonly string[] propertyNames;
-    private readonly PropertyChangedEventHandler propertyChanged;
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
 
-    public DictionaryValidateGroup(object[] groups, IDictionaryAdapter adapter)
+    public class DictionaryValidateGroup : IDictionaryValidate, INotifyPropertyChanged, IDisposable
     {
-        this.groups = groups;
-        this.adapter = adapter;
+        private readonly object[] groups;
+        private readonly IDictionaryAdapter adapter;
+        private readonly string[] propertyNames;
+        private readonly PropertyChangedEventHandler propertyChanged;
 
-        propertyNames = (
-            from property in this.adapter.This.Properties.Values
-            from groupings in property.Annotations.OfType<GroupAttribute>()
-            where this.groups.Intersect(groupings.Group).Any()
-            select property.PropertyName
-        )
-            .Distinct()
-            .ToArray();
-
-        if (propertyNames.Length > 0 && adapter.CanNotify)
+        public DictionaryValidateGroup(object[] groups, IDictionaryAdapter adapter)
         {
-            propertyChanged += (sender, args) =>
+            this.groups = groups;
+            this.adapter = adapter;
+
+            propertyNames = (
+                from property in this.adapter.This.Properties.Values
+                from groupings in property.Annotations.OfType<GroupAttribute>()
+                where this.groups.Intersect(groupings.Group).Any()
+                select property.PropertyName
+            )
+                .Distinct()
+                .ToArray();
+
+            if (propertyNames.Length > 0 && adapter.CanNotify)
             {
-                if (PropertyChanged != null)
-                    PropertyChanged(this, args);
-            };
-            this.adapter.PropertyChanged += propertyChanged;
-        }
-    }
-
-    public event PropertyChangedEventHandler PropertyChanged;
-
-    public bool CanValidate
-    {
-        get { return adapter.CanValidate; }
-        set { adapter.CanValidate = value; }
-    }
-
-    public bool IsValid
-    {
-        get { return string.IsNullOrEmpty(Error); }
-    }
-
-    public string Error
-    {
-        get
-        {
-            return string.Join(
-                Environment.NewLine,
-                propertyNames
-                    .Select(propertyName => adapter[propertyName])
-                    .Where(errors => !string.IsNullOrEmpty(errors))
-                    .ToArray()
-            );
-        }
-    }
-
-    public string this[string columnName]
-    {
-        get
-        {
-            if (Array.IndexOf(propertyNames, columnName) >= 0)
-            {
-                return adapter[columnName];
+                propertyChanged += (sender, args) =>
+                {
+                    if (PropertyChanged != null)
+                        PropertyChanged(this, args);
+                };
+                this.adapter.PropertyChanged += propertyChanged;
             }
-            return string.Empty;
         }
-    }
 
-    public DictionaryValidateGroup ValidateGroups(params object[] groups)
-    {
-        groups = this.groups.Union(groups).ToArray();
-        return new DictionaryValidateGroup(groups, adapter);
-    }
+        public event PropertyChangedEventHandler PropertyChanged;
 
-    public IEnumerable<IDictionaryValidator> Validators
-    {
-        get { return adapter.Validators; }
-    }
+        public bool CanValidate
+        {
+            get { return adapter.CanValidate; }
+            set { adapter.CanValidate = value; }
+        }
 
-    public void AddValidator(IDictionaryValidator validator)
-    {
-        throw new NotSupportedException();
-    }
+        public bool IsValid
+        {
+            get { return string.IsNullOrEmpty(Error); }
+        }
 
-    public void Dispose()
-    {
-        adapter.PropertyChanged -= propertyChanged;
+        public string Error
+        {
+            get
+            {
+                return string.Join(
+                    Environment.NewLine,
+                    propertyNames
+                        .Select(propertyName => adapter[propertyName])
+                        .Where(errors => !string.IsNullOrEmpty(errors))
+                        .ToArray()
+                );
+            }
+        }
+
+        public string this[string columnName]
+        {
+            get
+            {
+                if (Array.IndexOf(propertyNames, columnName) >= 0)
+                {
+                    return adapter[columnName];
+                }
+                return string.Empty;
+            }
+        }
+
+        public DictionaryValidateGroup ValidateGroups(params object[] groups)
+        {
+            groups = this.groups.Union(groups).ToArray();
+            return new DictionaryValidateGroup(groups, adapter);
+        }
+
+        public IEnumerable<IDictionaryValidator> Validators
+        {
+            get { return adapter.Validators; }
+        }
+
+        public void AddValidator(IDictionaryValidator validator)
+        {
+            throw new NotSupportedException();
+        }
+
+        public void Dispose()
+        {
+            adapter.PropertyChanged -= propertyChanged;
+        }
     }
 }

@@ -37,7 +37,7 @@ namespace Abp.Events.Bus
             {
                 container.Register(
                     Component.For<IEventBus>().ImplementedBy<EventBus>().LifestyleSingleton()
-                );
+                    );
             }
 
             _eventBus = container.Resolve<IEventBus>();
@@ -50,11 +50,7 @@ namespace Abp.Events.Bus
             /* This code checks if registering component implements any IEventHandler<TEventData> interface, if yes,
              * gets all event handler interfaces and registers type to Event Bus for each handling event.
              */
-            if (
-                !typeof(IEventHandler)
-                    .GetTypeInfo()
-                    .IsAssignableFrom(handler.ComponentModel.Implementation)
-            )
+            if (!typeof(IEventHandler).GetTypeInfo().IsAssignableFrom(handler.ComponentModel.Implementation))
             {
                 return;
             }
@@ -70,10 +66,7 @@ namespace Abp.Events.Bus
                 var genericArgs = @interface.GetGenericArguments();
                 if (genericArgs.Length == 1)
                 {
-                    _eventBus.Register(
-                        genericArgs[0],
-                        new IocHandlerFactory(_iocResolver, handler.ComponentModel.Implementation)
-                    );
+                    _eventBus.Register(genericArgs[0], new IocHandlerFactory(_iocResolver, handler.ComponentModel.Implementation));
                 }
             }
         }

@@ -12,23 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System.Diagnostics;
-
-public static class Try
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    [DebuggerHidden]
-    public static bool Failure<T>(out T result)
-    {
-        result = default(T);
-        return false;
-    }
+    using System.Diagnostics;
 
-    [DebuggerHidden]
-    public static bool Success<T>(out T result, T value)
+    public static class Try
     {
-        result = value;
-        return true;
+        [DebuggerHidden]
+        public static bool Failure<T>(out T result)
+        {
+            result = default(T);
+            return false;
+        }
+
+        [DebuggerHidden]
+        public static bool Success<T>(out T result, T value)
+        {
+            result = value;
+            return true;
+        }
     }
 }

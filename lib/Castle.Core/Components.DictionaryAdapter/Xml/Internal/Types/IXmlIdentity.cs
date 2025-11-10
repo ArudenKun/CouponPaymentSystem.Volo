@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public interface IXmlIdentity
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    XmlName Name { get; }
-    XmlName XsiType { get; }
+    public interface IXmlIdentity
+    {
+        XmlName Name { get; }
+        XmlName XsiType { get; }
+    }
 }

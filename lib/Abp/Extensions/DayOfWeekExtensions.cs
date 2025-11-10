@@ -21,13 +21,7 @@ namespace Abp.Extensions
         /// </summary>
         public static bool IsWeekday(this DayOfWeek dayOfWeek)
         {
-            return dayOfWeek.IsIn(
-                DayOfWeek.Monday,
-                DayOfWeek.Tuesday,
-                DayOfWeek.Wednesday,
-                DayOfWeek.Thursday,
-                DayOfWeek.Friday
-            );
+            return dayOfWeek.IsIn(DayOfWeek.Monday, DayOfWeek.Tuesday, DayOfWeek.Wednesday, DayOfWeek.Thursday, DayOfWeek.Friday);
         }
 
         /// <summary>
@@ -38,12 +32,7 @@ namespace Abp.Extensions
         /// <param name="month">The month.</param>
         /// <param name="n">The nth instance.</param>
         /// <remarks>Compensates for 4th and 5th DayOfWeek of Month</remarks>
-        public static DateTime FindNthWeekDayOfMonth(
-            this DayOfWeek dayOfWeek,
-            int year,
-            int month,
-            int n
-        )
+        public static DateTime FindNthWeekDayOfMonth(this DayOfWeek dayOfWeek, int year, int month, int n)
         {
             if (n < 1 || n > 5)
             {
@@ -63,9 +52,7 @@ namespace Abp.Extensions
                 .Where(date => dayOfWeek.Equals(date.DayOfWeek))
                 .OrderBy(date => date)
                 .Select(x => new { n = ++y, date = x })
-                .Where(x => x.n.Equals(n))
-                .Select(x => x.date)
-                .First(); //black magic wizardry
+                .Where(x => x.n.Equals(n)).Select(x => x.date).First(); //black magic wizardry
 
             return foundDate;
         }
@@ -79,9 +66,7 @@ namespace Abp.Extensions
         /// <returns></returns>
         public static int TotalInstancesInMonth(this DayOfWeek dayOfWeek, int year, int month)
         {
-            return DateTimeExtensions
-                .DaysOfMonth(year, month)
-                .Count(date => dayOfWeek.Equals(date.DayOfWeek));
+            return DateTimeExtensions.DaysOfMonth(year, month).Count(date => dayOfWeek.Equals(date.DayOfWeek));
         }
 
         /// <summary>

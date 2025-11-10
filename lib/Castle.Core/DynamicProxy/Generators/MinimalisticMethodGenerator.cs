@@ -12,53 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System.Reflection;
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-internal class MinimalisticMethodGenerator : MethodGenerator
+namespace Castle.DynamicProxy.Generators
 {
-    public MinimalisticMethodGenerator(MetaMethod method, OverrideMethodDelegate overrideMethod)
-        : base(method, overrideMethod) { }
+    using System.Reflection;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
-    protected override MethodEmitter BuildProxiedMethodBody(
-        MethodEmitter emitter,
-        ClassEmitter @class,
-        INamingScope namingScope
-    )
+    internal class MinimalisticMethodGenerator : MethodGenerator
     {
-        InitOutParameters(emitter, MethodToOverride.GetParameters());
+        public MinimalisticMethodGenerator(MetaMethod method, OverrideMethodDelegate overrideMethod)
+            : base(method, overrideMethod) { }
 
-        if (emitter.ReturnType == typeof(void))
+        protected override MethodEmitter BuildProxiedMethodBody(
+            MethodEmitter emitter,
+            ClassEmitter @class,
+            INamingScope namingScope
+        )
         {
-            emitter.CodeBuilder.AddStatement(new ReturnStatement());
-        }
-        else
-        {
-            emitter.CodeBuilder.AddStatement(
-                new ReturnStatement(new DefaultValueExpression(emitter.ReturnType))
-            );
-        }
+            InitOutParameters(emitter, MethodToOverride.GetParameters());
 
-        return emitter;
-    }
-
-    private void InitOutParameters(MethodEmitter emitter, ParameterInfo[] parameters)
-    {
-        for (var index = 0; index < parameters.Length; index++)
-        {
-            var parameter = parameters[index];
-            if (parameter.IsOut)
+            if (emitter.ReturnType == typeof(void))
+            {
+                emitter.CodeBuilder.AddStatement(new ReturnStatement());
+            }
+            else
             {
                 emitter.CodeBuilder.AddStatement(
-                    new AssignArgumentStatement(
-                        new ArgumentReference(parameter.ParameterType, index + 1),
-                        new DefaultValueExpression(parameter.ParameterType)
-                    )
+                    new ReturnStatement(new DefaultValueExpression(emitter.ReturnType))
                 );
+            }
+
+            return emitter;
+        }
+
+        private void InitOutParameters(MethodEmitter emitter, ParameterInfo[] parameters)
+        {
+            for (var index = 0; index < parameters.Length; index++)
+            {
+                var parameter = parameters[index];
+                if (parameter.IsOut)
+                {
+                    emitter.CodeBuilder.AddStatement(
+                        new AssignArgumentStatement(
+                            new ArgumentReference(parameter.ParameterType, index + 1),
+                            new DefaultValueExpression(parameter.ParameterType)
+                        )
+                    );
+                }
             }
         }
     }

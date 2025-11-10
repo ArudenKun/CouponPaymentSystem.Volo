@@ -12,77 +12,81 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Provides simple string formatting from existing properties.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-public class StringFormatAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter
+namespace Castle.Components.DictionaryAdapter
 {
-    private static readonly char[] PropertyDelimeters = new[] { ',', ' ' };
-
-    public StringFormatAttribute(string format, string properties)
-    {
-        if (format == null)
-        {
-            throw new ArgumentNullException(nameof(format));
-        }
-
-        Format = format;
-        Properties = properties;
-    }
+    using System;
 
     /// <summary>
-    /// Gets the string format.
+    /// Provides simple string formatting from existing properties.
     /// </summary>
-    public string Format { get; private set; }
-
-    /// <summary>
-    /// Gets the format properties.
-    /// </summary>
-    public string Properties { get; private set; }
-
-    #region IDictionaryPropertyGetter
-
-    object IDictionaryPropertyGetter.GetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        object storedValue,
-        PropertyDescriptor property,
-        bool ifExists
-    )
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
+    public class StringFormatAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter
     {
-        return string.Format(Format, GetFormatArguments(dictionaryAdapter, property.Property.Name))
-            .Trim();
-    }
+        private static readonly char[] PropertyDelimeters = new[] { ',', ' ' };
 
-    #endregion
-
-    private object[] GetFormatArguments(
-        IDictionaryAdapter dictionaryAdapter,
-        string formattedPropertyName
-    )
-    {
-        var properties = Properties.Split(
-            PropertyDelimeters,
-            StringSplitOptions.RemoveEmptyEntries
-        );
-        var arguments = new object[properties.Length];
-        for (int i = 0; i < properties.Length; ++i)
+        public StringFormatAttribute(string format, string properties)
         {
-            var propertyName = properties[i];
-            if (propertyName != formattedPropertyName)
+            if (format == null)
             {
-                arguments[i] = dictionaryAdapter.GetProperty(propertyName, false);
+                throw new ArgumentNullException(nameof(format));
             }
-            else
-            {
-                arguments[i] = "(recursive)";
-            }
+
+            Format = format;
+            Properties = properties;
         }
-        return arguments;
+
+        /// <summary>
+        /// Gets the string format.
+        /// </summary>
+        public string Format { get; private set; }
+
+        /// <summary>
+        /// Gets the format properties.
+        /// </summary>
+        public string Properties { get; private set; }
+
+        #region IDictionaryPropertyGetter
+
+        object IDictionaryPropertyGetter.GetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            object storedValue,
+            PropertyDescriptor property,
+            bool ifExists
+        )
+        {
+            return string.Format(
+                    Format,
+                    GetFormatArguments(dictionaryAdapter, property.Property.Name)
+                )
+                .Trim();
+        }
+
+        #endregion
+
+        private object[] GetFormatArguments(
+            IDictionaryAdapter dictionaryAdapter,
+            string formattedPropertyName
+        )
+        {
+            var properties = Properties.Split(
+                PropertyDelimeters,
+                StringSplitOptions.RemoveEmptyEntries
+            );
+            var arguments = new object[properties.Length];
+            for (int i = 0; i < properties.Length; ++i)
+            {
+                var propertyName = properties[i];
+                if (propertyName != formattedPropertyName)
+                {
+                    arguments[i] = dictionaryAdapter.GetProperty(propertyName, false);
+                }
+                else
+                {
+                    arguments[i] = "(recursive)";
+                }
+            }
+            return arguments;
+        }
     }
 }

@@ -18,10 +18,7 @@ namespace Abp.Configuration
         /// <summary>
         /// Constructor.
         /// </summary>
-        public SettingDefinitionManager(
-            IIocManager iocManager,
-            ISettingsConfiguration settingsConfiguration
-        )
+        public SettingDefinitionManager(IIocManager iocManager, ISettingsConfiguration settingsConfiguration)
         {
             _iocManager = iocManager;
             _settingsConfiguration = settingsConfiguration;
@@ -59,9 +56,7 @@ namespace Abp.Configuration
             return _settings.Values.ToImmutableList();
         }
 
-        private IDisposableDependencyObjectWrapper<SettingProvider> CreateProvider(
-            Type providerType
-        )
+        private IDisposableDependencyObjectWrapper<SettingProvider> CreateProvider(Type providerType)
         {
             return _iocManager.ResolveAsDisposable<SettingProvider>(providerType);
         }

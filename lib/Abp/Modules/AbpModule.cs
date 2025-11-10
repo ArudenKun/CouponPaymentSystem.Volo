@@ -1,9 +1,11 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Abp.Collections.Extensions;
 using Abp.Configuration.Startup;
 using Abp.Dependency;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Modules
 {
@@ -41,22 +43,34 @@ namespace Abp.Modules
         /// This is the first event called on application startup.
         /// Codes can be placed here to run before dependency injection registrations.
         /// </summary>
-        public virtual void PreInitialize() { }
+        public virtual void PreInitialize()
+        {
+
+        }
 
         /// <summary>
         /// This method is used to register dependencies for this module.
         /// </summary>
-        public virtual void Initialize() { }
+        public virtual void Initialize()
+        {
+
+        }
 
         /// <summary>
         /// This method is called lastly on application startup.
         /// </summary>
-        public virtual void PostInitialize() { }
+        public virtual void PostInitialize()
+        {
+
+        }
 
         /// <summary>
         /// This method is called when the application is being shutdown.
         /// </summary>
-        public virtual void Shutdown() { }
+        public virtual void Shutdown()
+        {
+
+        }
 
         public virtual Assembly[] GetAdditionalAssemblies()
         {
@@ -70,10 +84,11 @@ namespace Abp.Modules
         public static bool IsAbpModule(Type type)
         {
             var typeInfo = type.GetTypeInfo();
-            return typeInfo.IsClass
-                && !typeInfo.IsAbstract
-                && !typeInfo.IsGenericType
-                && typeof(AbpModule).IsAssignableFrom(type);
+            return
+                typeInfo.IsClass &&
+                !typeInfo.IsAbstract &&
+                !typeInfo.IsGenericType &&
+                typeof(AbpModule).IsAssignableFrom(type);
         }
 
         /// <summary>
@@ -83,19 +98,14 @@ namespace Abp.Modules
         {
             if (!IsAbpModule(moduleType))
             {
-                throw new AbpInitializationException(
-                    "This type is not an ABP module: " + moduleType.AssemblyQualifiedName
-                );
+                throw new AbpInitializationException("This type is not an ABP module: " + moduleType.AssemblyQualifiedName);
             }
 
             var list = new List<Type>();
 
             if (moduleType.GetTypeInfo().IsDefined(typeof(DependsOnAttribute), true))
             {
-                var dependsOnAttributes = moduleType
-                    .GetTypeInfo()
-                    .GetCustomAttributes(typeof(DependsOnAttribute), true)
-                    .Cast<DependsOnAttribute>();
+                var dependsOnAttributes = moduleType.GetTypeInfo().GetCustomAttributes(typeof(DependsOnAttribute), true).Cast<DependsOnAttribute>();
                 foreach (var dependsOnAttribute in dependsOnAttributes)
                 {
                     foreach (var dependedModuleType in dependsOnAttribute.DependedModuleTypes)
@@ -108,9 +118,7 @@ namespace Abp.Modules
             return list;
         }
 
-        public static List<Type> FindDependedModuleTypesRecursivelyIncludingGivenModule(
-            Type moduleType
-        )
+        public static List<Type> FindDependedModuleTypesRecursivelyIncludingGivenModule(Type moduleType)
         {
             var list = new List<Type>();
             AddModuleAndDependenciesRecursively(list, moduleType);
@@ -122,9 +130,7 @@ namespace Abp.Modules
         {
             if (!IsAbpModule(module))
             {
-                throw new AbpInitializationException(
-                    "This type is not an ABP module: " + module.AssemblyQualifiedName
-                );
+                throw new AbpInitializationException("This type is not an ABP module: " + module.AssemblyQualifiedName);
             }
 
             if (modules.Contains(module))

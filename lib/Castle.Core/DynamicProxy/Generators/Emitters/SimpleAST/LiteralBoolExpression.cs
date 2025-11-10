@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class LiteralBoolExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly bool value;
+    using System.Reflection.Emit;
 
-    public LiteralBoolExpression(bool value)
+    internal class LiteralBoolExpression : IExpression
     {
-        this.value = value;
-    }
+        private readonly bool value;
 
-    public void Emit(ILGenerator gen)
-    {
-        gen.Emit(value ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
+        public LiteralBoolExpression(bool value)
+        {
+            this.value = value;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            gen.Emit(value ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
+        }
     }
 }

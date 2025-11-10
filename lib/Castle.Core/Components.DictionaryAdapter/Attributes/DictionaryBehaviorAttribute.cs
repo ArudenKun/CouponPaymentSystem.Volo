@@ -12,28 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Assigns a specific dictionary key.
-/// </summary>
-public abstract class DictionaryBehaviorAttribute : Attribute, IDictionaryBehavior
+namespace Castle.Components.DictionaryAdapter
 {
-    public const int FirstExecutionOrder = 0;
-    public const int DefaultExecutionOrder = int.MaxValue / 2;
-    public const int LastExecutionOrder = int.MaxValue;
+    using System;
 
-    public DictionaryBehaviorAttribute()
+    /// <summary>
+    /// Assigns a specific dictionary key.
+    /// </summary>
+    public abstract class DictionaryBehaviorAttribute : Attribute, IDictionaryBehavior
     {
-        ExecutionOrder = DefaultExecutionOrder;
-    }
+        public const int FirstExecutionOrder = 0;
+        public const int DefaultExecutionOrder = int.MaxValue / 2;
+        public const int LastExecutionOrder = int.MaxValue;
 
-    public int ExecutionOrder { get; set; }
+        public DictionaryBehaviorAttribute()
+        {
+            ExecutionOrder = DefaultExecutionOrder;
+        }
 
-    public virtual IDictionaryBehavior Copy()
-    {
-        return this;
+        public int ExecutionOrder { get; set; }
+
+        public virtual IDictionaryBehavior Copy()
+        {
+            return this;
+        }
     }
 }

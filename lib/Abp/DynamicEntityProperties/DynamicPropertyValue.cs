@@ -20,7 +20,9 @@ namespace Abp.DynamicEntityProperties
         [ForeignKey("DynamicPropertyId")]
         public virtual DynamicProperty DynamicProperty { get; set; }
 
-        public DynamicPropertyValue() { }
+        public DynamicPropertyValue()
+        {
+        }
 
         public DynamicPropertyValue(DynamicProperty dynamicProperty, string value, int? tenantId)
         {

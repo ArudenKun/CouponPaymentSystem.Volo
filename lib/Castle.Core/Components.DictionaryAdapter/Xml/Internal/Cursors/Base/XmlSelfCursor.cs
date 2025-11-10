@@ -12,245 +12,246 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml;
-
-public class XmlSelfCursor : IXmlCursor
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly IXmlNode node;
-    private readonly Type clrType;
-    private int position;
+    using System;
+    using System.Xml;
 
-    public XmlSelfCursor(IXmlNode node, Type clrType)
+    public class XmlSelfCursor : IXmlCursor
     {
-        this.node = node;
-        this.clrType = clrType;
-        Reset();
-    }
+        private readonly IXmlNode node;
+        private readonly Type clrType;
+        private int position;
 
-    public CursorFlags Flags
-    {
-        get { return node.IsAttribute ? CursorFlags.Attributes : CursorFlags.Elements; }
-    }
+        public XmlSelfCursor(IXmlNode node, Type clrType)
+        {
+            this.node = node;
+            this.clrType = clrType;
+            Reset();
+        }
 
-    public CompiledXPath Path
-    {
-        get { return node.Path; }
-    }
+        public CursorFlags Flags
+        {
+            get { return node.IsAttribute ? CursorFlags.Attributes : CursorFlags.Elements; }
+        }
 
-    public XmlName Name
-    {
-        get { return node.Name; }
-    }
+        public CompiledXPath Path
+        {
+            get { return node.Path; }
+        }
 
-    public XmlName XsiType
-    {
-        get { return node.XsiType; }
-    }
+        public XmlName Name
+        {
+            get { return node.Name; }
+        }
 
-    public Type ClrType
-    {
-        get { return clrType ?? node.ClrType; }
-    }
+        public XmlName XsiType
+        {
+            get { return node.XsiType; }
+        }
 
-    public bool IsReal
-    {
-        get { return node.IsReal; }
-    }
+        public Type ClrType
+        {
+            get { return clrType ?? node.ClrType; }
+        }
 
-    public bool IsElement
-    {
-        get { return node.IsElement; }
-    }
+        public bool IsReal
+        {
+            get { return node.IsReal; }
+        }
 
-    public bool IsAttribute
-    {
-        get { return node.IsAttribute; }
-    }
+        public bool IsElement
+        {
+            get { return node.IsElement; }
+        }
 
-    public bool IsNil
-    {
-        get { return node.IsNil; }
-        set { throw Error.NotSupported(); }
-    }
+        public bool IsAttribute
+        {
+            get { return node.IsAttribute; }
+        }
 
-    public string Value
-    {
-        get { return node.Value; }
-        set { node.Value = value; }
-    }
+        public bool IsNil
+        {
+            get { return node.IsNil; }
+            set { throw Error.NotSupported(); }
+        }
 
-    public string Xml
-    {
-        get { return node.Xml; }
-    }
+        public string Value
+        {
+            get { return node.Value; }
+            set { node.Value = value; }
+        }
 
-    public IXmlNode Parent
-    {
-        get { return node.Parent; }
-    }
+        public string Xml
+        {
+            get { return node.Xml; }
+        }
 
-    public IXmlNamespaceSource Namespaces
-    {
-        get { return node.Namespaces; }
-    }
+        public IXmlNode Parent
+        {
+            get { return node.Parent; }
+        }
 
-    public object UnderlyingObject
-    {
-        get { return node.UnderlyingObject; }
-    }
+        public IXmlNamespaceSource Namespaces
+        {
+            get { return node.Namespaces; }
+        }
 
-    public bool UnderlyingPositionEquals(IXmlNode node)
-    {
-        return this.node.UnderlyingPositionEquals(node);
-    }
+        public object UnderlyingObject
+        {
+            get { return node.UnderlyingObject; }
+        }
 
-    public IRealizable<T> AsRealizable<T>()
-    {
-        return node.AsRealizable<T>();
-    }
+        public bool UnderlyingPositionEquals(IXmlNode node)
+        {
+            return this.node.UnderlyingPositionEquals(node);
+        }
 
-    public void Realize()
-    {
-        node.Realize();
-    }
+        public IRealizable<T> AsRealizable<T>()
+        {
+            return node.AsRealizable<T>();
+        }
 
-    public event EventHandler Realized
-    {
-        add { node.Realized += value; }
-        remove { node.Realized -= value; }
-    }
+        public void Realize()
+        {
+            node.Realize();
+        }
 
-    public string GetAttribute(XmlName name)
-    {
-        return node.GetAttribute(name);
-    }
+        public event EventHandler Realized
+        {
+            add { node.Realized += value; }
+            remove { node.Realized -= value; }
+        }
 
-    public void SetAttribute(XmlName name, string value)
-    {
-        node.SetAttribute(name, value);
-    }
+        public string GetAttribute(XmlName name)
+        {
+            return node.GetAttribute(name);
+        }
 
-    public string LookupPrefix(string namespaceUri)
-    {
-        return node.LookupPrefix(namespaceUri);
-    }
+        public void SetAttribute(XmlName name, string value)
+        {
+            node.SetAttribute(name, value);
+        }
 
-    public string LookupNamespaceUri(string prefix)
-    {
-        return node.LookupNamespaceUri(prefix);
-    }
+        public string LookupPrefix(string namespaceUri)
+        {
+            return node.LookupPrefix(namespaceUri);
+        }
 
-    public void DefineNamespace(string prefix, string namespaceUri, bool root)
-    {
-        node.DefineNamespace(prefix, namespaceUri, root);
-    }
+        public string LookupNamespaceUri(string prefix)
+        {
+            return node.LookupNamespaceUri(prefix);
+        }
 
-    public bool MoveNext()
-    {
-        return 0 == ++position;
-    }
+        public void DefineNamespace(string prefix, string namespaceUri, bool root)
+        {
+            node.DefineNamespace(prefix, namespaceUri, root);
+        }
 
-    public void MoveToEnd()
-    {
-        position = 1;
-    }
+        public bool MoveNext()
+        {
+            return 0 == ++position;
+        }
 
-    public void Reset()
-    {
-        position = -1;
-    }
+        public void MoveToEnd()
+        {
+            position = 1;
+        }
 
-    public void MoveTo(IXmlNode position)
-    {
-        if (position != node)
+        public void Reset()
+        {
+            position = -1;
+        }
+
+        public void MoveTo(IXmlNode position)
+        {
+            if (position != node)
+                throw Error.NotSupported();
+        }
+
+        public IXmlNode Save()
+        {
+            return position == 0 ? new XmlSelfCursor(node.Save(), clrType) { position = 0 } : this;
+        }
+
+        public IXmlCursor SelectSelf(Type clrType)
+        {
+            return new XmlSelfCursor(node, clrType);
+        }
+
+        public IXmlCursor SelectChildren(
+            IXmlKnownTypeMap knownTypes,
+            IXmlNamespaceSource namespaces,
+            CursorFlags flags
+        )
+        {
+            return node.SelectChildren(knownTypes, namespaces, flags);
+        }
+
+        public IXmlIterator SelectSubtree()
+        {
+            return node.SelectSubtree();
+        }
+
+        public IXmlCursor Select(
+            CompiledXPath path,
+            IXmlIncludedTypeMap knownTypes,
+            IXmlNamespaceSource namespaces,
+            CursorFlags flags
+        )
+        {
+            return node.Select(path, knownTypes, namespaces, flags);
+        }
+
+        public object Evaluate(CompiledXPath path)
+        {
+            return node.Evaluate(path);
+        }
+
+        public XmlReader ReadSubtree()
+        {
+            return node.ReadSubtree();
+        }
+
+        public XmlWriter WriteAttributes()
+        {
+            return node.WriteAttributes();
+        }
+
+        public XmlWriter WriteChildren()
+        {
+            return node.WriteChildren();
+        }
+
+        public void MakeNext(Type type)
+        {
+            if (!MoveNext())
+                throw Error.NotSupported();
+        }
+
+        public void Create(Type type)
+        {
             throw Error.NotSupported();
-    }
+        }
 
-    public IXmlNode Save()
-    {
-        return position == 0 ? new XmlSelfCursor(node.Save(), clrType) { position = 0 } : this;
-    }
+        public void Coerce(Type type)
+        {
+            // Do nothing
+        }
 
-    public IXmlCursor SelectSelf(Type clrType)
-    {
-        return new XmlSelfCursor(node, clrType);
-    }
+        public void Clear()
+        {
+            node.Clear();
+        }
 
-    public IXmlCursor SelectChildren(
-        IXmlKnownTypeMap knownTypes,
-        IXmlNamespaceSource namespaces,
-        CursorFlags flags
-    )
-    {
-        return node.SelectChildren(knownTypes, namespaces, flags);
-    }
+        public void Remove()
+        {
+            // Do nothing
+        }
 
-    public IXmlIterator SelectSubtree()
-    {
-        return node.SelectSubtree();
-    }
-
-    public IXmlCursor Select(
-        CompiledXPath path,
-        IXmlIncludedTypeMap knownTypes,
-        IXmlNamespaceSource namespaces,
-        CursorFlags flags
-    )
-    {
-        return node.Select(path, knownTypes, namespaces, flags);
-    }
-
-    public object Evaluate(CompiledXPath path)
-    {
-        return node.Evaluate(path);
-    }
-
-    public XmlReader ReadSubtree()
-    {
-        return node.ReadSubtree();
-    }
-
-    public XmlWriter WriteAttributes()
-    {
-        return node.WriteAttributes();
-    }
-
-    public XmlWriter WriteChildren()
-    {
-        return node.WriteChildren();
-    }
-
-    public void MakeNext(Type type)
-    {
-        if (!MoveNext())
-            throw Error.NotSupported();
-    }
-
-    public void Create(Type type)
-    {
-        throw Error.NotSupported();
-    }
-
-    public void Coerce(Type type)
-    {
-        // Do nothing
-    }
-
-    public void Clear()
-    {
-        node.Clear();
-    }
-
-    public void Remove()
-    {
-        // Do nothing
-    }
-
-    public void RemoveAllNext()
-    {
-        // Do nothing
+        public void RemoveAllNext()
+        {
+            // Do nothing
+        }
     }
 }

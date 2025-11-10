@@ -18,10 +18,8 @@ namespace Abp.Timing.Timezone
     /// </summary>
     public static class TimezoneHelper
     {
-        static readonly Dictionary<string, string> WindowsTimeZoneMappings =
-            new Dictionary<string, string>();
-        static readonly Dictionary<string, string> IanaTimeZoneMappings =
-            new Dictionary<string, string>();
+        static readonly Dictionary<string, string> WindowsTimeZoneMappings = new Dictionary<string, string>();
+        static readonly Dictionary<string, string> IanaTimeZoneMappings = new Dictionary<string, string>();
         static readonly object SyncObj = new object();
 
         /// <summary>
@@ -67,9 +65,7 @@ namespace Abp.Timing.Timezone
                 return IanaTimeZoneMappings[ianaTimezoneId];
             }
 
-            throw new Exception(
-                string.Format("Unable to map {0} to windows timezone.", ianaTimezoneId)
-            );
+            throw new Exception(string.Format("Unable to map {0} to windows timezone.", ianaTimezoneId));
         }
 
         /// <summary>
@@ -109,10 +105,7 @@ namespace Abp.Timing.Timezone
         /// <param name="date"></param>
         /// <param name="timeZoneId"></param>
         /// <returns></returns>
-        public static DateTimeOffset? ConvertFromUtcToDateTimeOffset(
-            DateTime? date,
-            string timeZoneId
-        )
+        public static DateTimeOffset? ConvertFromUtcToDateTimeOffset(DateTime? date, string timeZoneId)
         {
             var zonedDate = ConvertFromUtc(date, timeZoneId);
 
@@ -145,9 +138,7 @@ namespace Abp.Timing.Timezone
         {
             var timeZone = FindTimeZoneInfo(timeZoneId);
             var offset = timeZone.BaseUtcOffset;
-            var rule = timeZone
-                .GetAdjustmentRules()
-                .FirstOrDefault(x => date >= x.DateStart && date <= x.DateEnd);
+            var rule = timeZone.GetAdjustmentRules().FirstOrDefault(x => date >= x.DateStart && date <= x.DateEnd);
 
             if (!timeZone.SupportsDaylightSavingTime || rule == null)
             {
@@ -165,37 +156,25 @@ namespace Abp.Timing.Timezone
             return new DateTimeOffset(date, offset);
         }
 
-        private static DateTime GetDaylightTransition(
-            DateTime date,
-            TimeZoneInfo.TransitionTime transitionTime
-        )
+        private static DateTime GetDaylightTransition(DateTime date, TimeZoneInfo.TransitionTime transitionTime)
         {
             var daylightTime = new DateTime(date.Year, transitionTime.Month, 1);
 
             if (transitionTime.IsFixedDateRule)
             {
-                daylightTime = new DateTime(
-                    daylightTime.Year,
-                    daylightTime.Month,
-                    transitionTime.Day,
-                    transitionTime.TimeOfDay.Hour,
-                    transitionTime.TimeOfDay.Minute,
-                    transitionTime.TimeOfDay.Second
-                );
+                daylightTime = new DateTime(daylightTime.Year, daylightTime.Month, transitionTime.Day, transitionTime.TimeOfDay.Hour, transitionTime.TimeOfDay.Minute, transitionTime.TimeOfDay.Second);
             }
             else
             {
                 daylightTime = daylightTime.NthOf(transitionTime.Week, transitionTime.DayOfWeek);
             }
 
-            daylightTime = new DateTime(
-                daylightTime.Year,
+            daylightTime = new DateTime(daylightTime.Year,
                 daylightTime.Month,
                 daylightTime.Day,
                 transitionTime.TimeOfDay.Hour,
                 transitionTime.TimeOfDay.Minute,
-                transitionTime.TimeOfDay.Second
-            );
+                transitionTime.TimeOfDay.Second);
 
             return daylightTime;
         }
@@ -205,20 +184,14 @@ namespace Abp.Timing.Timezone
         {
             var firstDay = new DateTime(currentDate.Year, currentDate.Month, 1);
 
-            var firstOccurrence =
-                firstDay.DayOfWeek == day ? firstDay : firstDay.AddDays(day - firstDay.DayOfWeek);
+            var firstOccurrence = firstDay.DayOfWeek == day ? firstDay : firstDay.AddDays(day - firstDay.DayOfWeek);
 
-            if (firstOccurrence.Month < currentDate.Month)
-                occurrence = occurrence + 1;
+            if (firstOccurrence.Month < currentDate.Month) occurrence = occurrence + 1;
 
             return firstOccurrence.AddDays(7 * (occurrence - 1));
         }
 
-        public static DateTime? ConvertTimeByIanaTimeZoneId(
-            DateTime? date,
-            string fromIanaTimeZoneId,
-            string toIanaTimeZoneId
-        )
+        public static DateTime? ConvertTimeByIanaTimeZoneId(DateTime? date, string fromIanaTimeZoneId, string toIanaTimeZoneId)
         {
             if (!date.HasValue)
             {
@@ -231,18 +204,12 @@ namespace Abp.Timing.Timezone
             return TimeZoneInfo.ConvertTime(date.Value, sourceTimeZone, destinationTimeZone);
         }
 
-        public static DateTime? ConvertTimeFromUtcByIanaTimeZoneId(
-            DateTime? date,
-            string toIanaTimeZoneId
-        )
+        public static DateTime? ConvertTimeFromUtcByIanaTimeZoneId(DateTime? date, string toIanaTimeZoneId)
         {
             return ConvertTimeByIanaTimeZoneId(date, "Etc/UTC", toIanaTimeZoneId);
         }
 
-        public static DateTime? ConvertTimeToUtcByIanaTimeZoneId(
-            DateTime? date,
-            string fromIanaTimeZoneId
-        )
+        public static DateTime? ConvertTimeToUtcByIanaTimeZoneId(DateTime? date, string fromIanaTimeZoneId)
         {
             return ConvertTimeByIanaTimeZoneId(date, fromIanaTimeZoneId, "Etc/UTC");
         }
@@ -252,9 +219,7 @@ namespace Abp.Timing.Timezone
             return TZConvert.GetTimeZoneInfo(windowsOrIanaTimeZoneId);
         }
 
-        public static List<string> GetWindowsTimeZoneIds(
-            bool ignoreTimeZoneNotFoundException = true
-        )
+        public static List<string> GetWindowsTimeZoneIds(bool ignoreTimeZoneNotFoundException = true)
         {
             return TZConvert.KnownWindowsTimeZoneIds.ToList();
         }
@@ -284,22 +249,15 @@ namespace Abp.Timing.Timezone
                     var xmlString = Encoding.UTF8.GetString(bytes, 3, bytes.Length - 3); //Skipping byte order mark
                     var xmlDocument = new XmlDocument();
                     xmlDocument.LoadXml(xmlString);
-                    var windowsMappingNodes = xmlDocument.SelectNodes(
-                        "//supplementalData/windowsZones/mapTimezones/mapZone[@territory='001']"
-                    );
-                    var ianaMappingNodes = xmlDocument.SelectNodes(
-                        "//supplementalData/windowsZones/mapTimezones/mapZone"
-                    );
+                    var windowsMappingNodes = xmlDocument.SelectNodes("//supplementalData/windowsZones/mapTimezones/mapZone[@territory='001']");
+                    var ianaMappingNodes = xmlDocument.SelectNodes("//supplementalData/windowsZones/mapTimezones/mapZone");
                     AddWindowsMappingsToDictionary(WindowsTimeZoneMappings, windowsMappingNodes);
                     AddIanaMappingsToDictionary(IanaTimeZoneMappings, ianaMappingNodes);
                 }
             }
         }
 
-        private static void AddWindowsMappingsToDictionary(
-            Dictionary<string, string> timeZoneMappings,
-            XmlNodeList defaultMappingNodes
-        )
+        private static void AddWindowsMappingsToDictionary(Dictionary<string, string> timeZoneMappings, XmlNodeList defaultMappingNodes)
         {
             foreach (XmlNode defaultMappingNode in defaultMappingNodes)
             {
@@ -314,10 +272,7 @@ namespace Abp.Timing.Timezone
             }
         }
 
-        private static void AddIanaMappingsToDictionary(
-            Dictionary<string, string> timeZoneMappings,
-            XmlNodeList defaultMappingNodes
-        )
+        private static void AddIanaMappingsToDictionary(Dictionary<string, string> timeZoneMappings, XmlNodeList defaultMappingNodes)
         {
             foreach (XmlNode defaultMappingNode in defaultMappingNodes)
             {

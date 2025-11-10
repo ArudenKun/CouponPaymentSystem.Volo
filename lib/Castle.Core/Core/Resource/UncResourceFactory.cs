@@ -12,26 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-
-public class UncResourceFactory : IResourceFactory
+namespace Castle.Core.Resource
 {
-    public UncResourceFactory() { }
+    using System;
 
-    public bool Accept(CustomUri uri)
+    public class UncResourceFactory : IResourceFactory
     {
-        return uri.IsUnc;
-    }
+        public UncResourceFactory() { }
 
-    public IResource Create(CustomUri uri)
-    {
-        return new UncResource(uri);
-    }
+        public bool Accept(CustomUri uri)
+        {
+            return uri.IsUnc;
+        }
 
-    public IResource Create(CustomUri uri, string basePath)
-    {
-        return new UncResource(uri, basePath);
+        public IResource Create(CustomUri uri)
+        {
+            return new UncResource(uri);
+        }
+
+        public IResource Create(CustomUri uri, string basePath)
+        {
+            return new UncResource(uri, basePath);
+        }
     }
 }

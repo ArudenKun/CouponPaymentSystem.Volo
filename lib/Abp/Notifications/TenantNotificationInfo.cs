@@ -61,7 +61,10 @@ namespace Abp.Notifications
         /// </summary>
         public virtual NotificationSeverity Severity { get; set; }
 
-        public TenantNotificationInfo() { }
+        public TenantNotificationInfo()
+        {
+            
+        }
 
         public TenantNotificationInfo(Guid id, int? tenantId, NotificationInfo notification)
         {

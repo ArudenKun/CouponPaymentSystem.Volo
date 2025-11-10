@@ -22,7 +22,10 @@ namespace Abp.Localization.Dictionaries.Xml
         /// </summary>
         /// <param name="cultureInfo">Culture of the dictionary</param>
         private XmlLocalizationDictionary(CultureInfo cultureInfo)
-            : base(cultureInfo) { }
+            : base(cultureInfo)
+        {
+
+        }
 
         /// <summary>
         /// Builds an <see cref="XmlLocalizationDictionary"/> from given file.
@@ -52,9 +55,7 @@ namespace Abp.Localization.Dictionaries.Xml
             var localizationDictionaryNode = xmlDocument.SelectNodes("/localizationDictionary");
             if (localizationDictionaryNode == null || localizationDictionaryNode.Count <= 0)
             {
-                throw new AbpException(
-                    "A Localization Xml must include localizationDictionary as root node."
-                );
+                throw new AbpException("A Localization Xml must include localizationDictionary as root node.");
             }
 
             var cultureName = localizationDictionaryNode[0].GetAttributeValueOrNull("culture");
@@ -75,9 +76,7 @@ namespace Abp.Localization.Dictionaries.Xml
                     var name = node.GetAttributeValueOrNull("name");
                     if (string.IsNullOrEmpty(name))
                     {
-                        throw new AbpException(
-                            "name attribute of a text is empty in given xml string."
-                        );
+                        throw new AbpException("name attribute of a text is empty in given xml string.");
                     }
 
                     if (dictionary.Contains(name))
@@ -85,18 +84,13 @@ namespace Abp.Localization.Dictionaries.Xml
                         dublicateNames.Add(name);
                     }
 
-                    dictionary[name] = (
-                        node.GetAttributeValueOrNull("value") ?? node.InnerText
-                    ).NormalizeLineEndings();
+                    dictionary[name] = (node.GetAttributeValueOrNull("value") ?? node.InnerText).NormalizeLineEndings();
                 }
             }
 
             if (dublicateNames.Count > 0)
             {
-                throw new AbpException(
-                    "A dictionary can not contain same key twice. There are some duplicated names: "
-                        + dublicateNames.JoinAsString(", ")
-                );
+                throw new AbpException("A dictionary can not contain same key twice. There are some duplicated names: " + dublicateNames.JoinAsString(", "));
             }
 
             return dictionary;

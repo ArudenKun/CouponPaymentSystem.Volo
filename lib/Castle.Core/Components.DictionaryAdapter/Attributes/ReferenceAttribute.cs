@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Specifies assignment by reference rather than by copying.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property | AttributeTargets.Interface)]
-public class ReferenceAttribute : Attribute
+namespace Castle.Components.DictionaryAdapter
 {
-    // Marker attribute; no functionality
+    using System;
+
+    /// <summary>
+    /// Specifies assignment by reference rather than by copying.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property | AttributeTargets.Interface)]
+    public class ReferenceAttribute : Attribute
+    {
+        // Marker attribute; no functionality
+    }
 }

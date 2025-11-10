@@ -28,6 +28,6 @@
         /// <summary>
         /// High.
         /// </summary>
-        High = 25,
+        High = 25
     }
 }

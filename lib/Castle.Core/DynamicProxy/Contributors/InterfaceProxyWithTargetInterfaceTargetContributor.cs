@@ -12,22 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using Castle.DynamicProxy.Generators;
-
-internal class InterfaceProxyWithTargetInterfaceTargetContributor : InterfaceProxyTargetContributor
+namespace Castle.DynamicProxy.Contributors
 {
-    public InterfaceProxyWithTargetInterfaceTargetContributor(
-        Type proxyTargetType,
-        bool allowChangeTarget,
-        INamingScope namingScope
-    )
-        : base(proxyTargetType, allowChangeTarget, namingScope) { }
+    using System;
+    using Castle.DynamicProxy.Generators;
 
-    protected override MembersCollector GetCollectorForInterface(Type @interface)
+    internal class InterfaceProxyWithTargetInterfaceTargetContributor
+        : InterfaceProxyTargetContributor
     {
-        return new InterfaceMembersCollector(@interface);
+        public InterfaceProxyWithTargetInterfaceTargetContributor(
+            Type proxyTargetType,
+            bool allowChangeTarget,
+            INamingScope namingScope
+        )
+            : base(proxyTargetType, allowChangeTarget, namingScope) { }
+
+        protected override MembersCollector GetCollectorForInterface(Type @interface)
+        {
+            return new InterfaceMembersCollector(@interface);
+        }
     }
 }

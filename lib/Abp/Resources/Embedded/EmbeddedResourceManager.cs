@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 using Abp.Collections.Extensions;
 using Abp.Dependency;
+using System.IO;
+using System.Linq;
 
 namespace Abp.Resources.Embedded
 {
@@ -37,7 +37,7 @@ namespace Abp.Resources.Embedded
             }
 
             // We will assume that any file starting with this path, is in that directory.
-            // NOTE: This may include false positives, but helps in the majority of cases until
+            // NOTE: This may include false positives, but helps in the majority of cases until 
             // https://github.com/aspnet/FileSystem/issues/184 is solved.
 
             return _resources.Value.Where(k => k.Key.StartsWith(encodedPath)).Select(d => d.Value);
@@ -45,9 +45,7 @@ namespace Abp.Resources.Embedded
 
         private Dictionary<string, EmbeddedResourceItem> CreateResourcesDictionary()
         {
-            var resources = new Dictionary<string, EmbeddedResourceItem>(
-                StringComparer.OrdinalIgnoreCase
-            );
+            var resources = new Dictionary<string, EmbeddedResourceItem>(StringComparer.OrdinalIgnoreCase);
 
             foreach (var source in _configuration.Sources)
             {

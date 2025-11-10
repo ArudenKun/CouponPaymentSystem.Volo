@@ -12,240 +12,245 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Internal;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Reflection;
-using Castle.DynamicProxy.Generators;
-
-internal static class AttributeUtil
+namespace Castle.DynamicProxy.Internal
 {
-    public static CustomAttributeInfo CreateInfo(CustomAttributeData attribute)
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators;
+
+    internal static class AttributeUtil
     {
-        Debug.Assert(attribute != null, "attribute != null");
-
-        object[] constructorArgs = GetArguments(attribute.ConstructorArguments);
-
-        PropertyInfo[] properties;
-        object[] propertyValues;
-        FieldInfo[] fields;
-        object[] fieldValues;
-        GetSettersAndFields(
-            attribute.AttributeType,
-            attribute.NamedArguments,
-            out properties,
-            out propertyValues,
-            out fields,
-            out fieldValues
-        );
-
-        return new CustomAttributeInfo(
-            attribute.Constructor,
-            constructorArgs,
-            properties,
-            propertyValues,
-            fields,
-            fieldValues
-        );
-    }
-
-    private static object[] GetArguments(IList<CustomAttributeTypedArgument> constructorArguments)
-    {
-        var arguments = new object[constructorArguments.Count];
-        for (var i = 0; i < constructorArguments.Count; i++)
+        public static CustomAttributeInfo CreateInfo(CustomAttributeData attribute)
         {
-            arguments[i] = ReadAttributeValue(constructorArguments[i]);
+            Debug.Assert(attribute != null, "attribute != null");
+
+            object[] constructorArgs = GetArguments(attribute.ConstructorArguments);
+
+            PropertyInfo[] properties;
+            object[] propertyValues;
+            FieldInfo[] fields;
+            object[] fieldValues;
+            GetSettersAndFields(
+                attribute.AttributeType,
+                attribute.NamedArguments,
+                out properties,
+                out propertyValues,
+                out fields,
+                out fieldValues
+            );
+
+            return new CustomAttributeInfo(
+                attribute.Constructor,
+                constructorArgs,
+                properties,
+                propertyValues,
+                fields,
+                fieldValues
+            );
         }
 
-        return arguments;
-    }
-
-    private static object ReadAttributeValue(CustomAttributeTypedArgument argument)
-    {
-        var value = argument.Value;
-
-        if (argument.ArgumentType.IsArray && value is IList<CustomAttributeTypedArgument> values)
+        private static object[] GetArguments(
+            IList<CustomAttributeTypedArgument> constructorArguments
+        )
         {
-            // `CustomAttributeInfo` represents array values as `ReadOnlyCollection<CustomAttributeTypedArgument>`,
-            // but `CustomAttributeBuilder` will require plain arrays, so we need a (recursive) conversion:
-            var arguments = GetArguments(values);
-            var array = new object[arguments.Length];
-            arguments.CopyTo(array, 0);
-            return array;
+            var arguments = new object[constructorArguments.Count];
+            for (var i = 0; i < constructorArguments.Count; i++)
+            {
+                arguments[i] = ReadAttributeValue(constructorArguments[i]);
+            }
+
+            return arguments;
         }
 
-        return value;
-    }
-
-    private static void GetSettersAndFields(
-        Type attributeType,
-        IEnumerable<CustomAttributeNamedArgument> namedArguments,
-        out PropertyInfo[] properties,
-        out object[] propertyValues,
-        out FieldInfo[] fields,
-        out object[] fieldValues
-    )
-    {
-        var propertyList = new List<PropertyInfo>();
-        var propertyValuesList = new List<object>();
-        var fieldList = new List<FieldInfo>();
-        var fieldValuesList = new List<object>();
-        foreach (var argument in namedArguments)
+        private static object ReadAttributeValue(CustomAttributeTypedArgument argument)
         {
-            if (argument.IsField)
+            var value = argument.Value;
+
+            if (
+                argument.ArgumentType.IsArray && value is IList<CustomAttributeTypedArgument> values
+            )
             {
-                fieldList.Add(attributeType.GetField(argument.MemberName));
-                fieldValuesList.Add(ReadAttributeValue(argument.TypedValue));
+                // `CustomAttributeInfo` represents array values as `ReadOnlyCollection<CustomAttributeTypedArgument>`,
+                // but `CustomAttributeBuilder` will require plain arrays, so we need a (recursive) conversion:
+                var arguments = GetArguments(values);
+                var array = new object[arguments.Length];
+                arguments.CopyTo(array, 0);
+                return array;
             }
-            else
+
+            return value;
+        }
+
+        private static void GetSettersAndFields(
+            Type attributeType,
+            IEnumerable<CustomAttributeNamedArgument> namedArguments,
+            out PropertyInfo[] properties,
+            out object[] propertyValues,
+            out FieldInfo[] fields,
+            out object[] fieldValues
+        )
+        {
+            var propertyList = new List<PropertyInfo>();
+            var propertyValuesList = new List<object>();
+            var fieldList = new List<FieldInfo>();
+            var fieldValuesList = new List<object>();
+            foreach (var argument in namedArguments)
             {
-                propertyList.Add(attributeType.GetProperty(argument.MemberName));
-                propertyValuesList.Add(ReadAttributeValue(argument.TypedValue));
+                if (argument.IsField)
+                {
+                    fieldList.Add(attributeType.GetField(argument.MemberName));
+                    fieldValuesList.Add(ReadAttributeValue(argument.TypedValue));
+                }
+                else
+                {
+                    propertyList.Add(attributeType.GetProperty(argument.MemberName));
+                    propertyValuesList.Add(ReadAttributeValue(argument.TypedValue));
+                }
+            }
+
+            properties = propertyList.ToArray();
+            propertyValues = propertyValuesList.ToArray();
+            fields = fieldList.ToArray();
+            fieldValues = fieldValuesList.ToArray();
+        }
+
+        public static IEnumerable<CustomAttributeInfo> GetNonInheritableAttributes(
+            this MemberInfo member
+        )
+        {
+            Debug.Assert(member != null, "member != null");
+            var attributes = member.CustomAttributes;
+
+            foreach (var attribute in attributes)
+            {
+                var attributeType = attribute.AttributeType;
+                if (ShouldSkipAttributeReplication(attributeType, ignoreInheritance: false))
+                {
+                    continue;
+                }
+
+                CustomAttributeInfo info;
+                try
+                {
+                    info = CreateInfo(attribute);
+                }
+                catch (ArgumentException e)
+                {
+                    var message = string.Format(
+                        "Due to limitations in CLR, DynamicProxy was unable to successfully replicate non-inheritable attribute {0} on {1}{2}. "
+                            + "To avoid this error you can chose not to replicate this attribute type by calling '{3}.Add(typeof({0}))'.",
+                        attributeType.FullName,
+                        member.DeclaringType.FullName,
+                        (member is TypeInfo) ? "" : ("." + member.Name),
+                        typeof(AttributesToAvoidReplicating).FullName
+                    );
+                    throw new NotSupportedException(message, e);
+                }
+                if (info != null)
+                {
+                    yield return info;
+                }
             }
         }
 
-        properties = propertyList.ToArray();
-        propertyValues = propertyValuesList.ToArray();
-        fields = fieldList.ToArray();
-        fieldValues = fieldValuesList.ToArray();
-    }
-
-    public static IEnumerable<CustomAttributeInfo> GetNonInheritableAttributes(
-        this MemberInfo member
-    )
-    {
-        Debug.Assert(member != null, "member != null");
-        var attributes = member.CustomAttributes;
-
-        foreach (var attribute in attributes)
+        public static IEnumerable<CustomAttributeInfo> GetNonInheritableAttributes(
+            this ParameterInfo parameter
+        )
         {
-            var attributeType = attribute.AttributeType;
-            if (ShouldSkipAttributeReplication(attributeType, ignoreInheritance: false))
-            {
-                continue;
-            }
+            Debug.Assert(parameter != null, "parameter != null");
 
-            CustomAttributeInfo info;
-            try
+            var attributes = parameter.CustomAttributes;
+
+            var ignoreInheritance = parameter.Member is ConstructorInfo;
+
+            foreach (var attribute in attributes)
             {
-                info = CreateInfo(attribute);
-            }
-            catch (ArgumentException e)
-            {
-                var message = string.Format(
-                    "Due to limitations in CLR, DynamicProxy was unable to successfully replicate non-inheritable attribute {0} on {1}{2}. "
-                        + "To avoid this error you can chose not to replicate this attribute type by calling '{3}.Add(typeof({0}))'.",
-                    attributeType.FullName,
-                    member.DeclaringType.FullName,
-                    (member is TypeInfo) ? "" : ("." + member.Name),
-                    typeof(AttributesToAvoidReplicating).FullName
-                );
-                throw new NotSupportedException(message, e);
-            }
-            if (info != null)
-            {
-                yield return info;
+                var attributeType = attribute.AttributeType;
+
+                if (ShouldSkipAttributeReplication(attributeType, ignoreInheritance))
+                {
+                    continue;
+                }
+
+                var info = CreateInfo(attribute);
+                if (info != null)
+                {
+                    yield return info;
+                }
             }
         }
-    }
 
-    public static IEnumerable<CustomAttributeInfo> GetNonInheritableAttributes(
-        this ParameterInfo parameter
-    )
-    {
-        Debug.Assert(parameter != null, "parameter != null");
-
-        var attributes = parameter.CustomAttributes;
-
-        var ignoreInheritance = parameter.Member is ConstructorInfo;
-
-        foreach (var attribute in attributes)
+        /// <summary>
+        ///   Attributes should be replicated if they are non-inheritable,
+        ///   but there are some special cases where the attributes means
+        ///   something to the CLR, where they should be skipped.
+        /// </summary>
+        private static bool ShouldSkipAttributeReplication(Type attribute, bool ignoreInheritance)
         {
-            var attributeType = attribute.AttributeType;
-
-            if (ShouldSkipAttributeReplication(attributeType, ignoreInheritance))
+            if (attribute.IsPublic == false && attribute.IsNestedPublic == false)
             {
-                continue;
+                return true;
             }
 
-            var info = CreateInfo(attribute);
-            if (info != null)
+            if (AttributesToAvoidReplicating.ShouldAvoid(attribute))
             {
-                yield return info;
+                return true;
             }
-        }
-    }
 
-    /// <summary>
-    ///   Attributes should be replicated if they are non-inheritable,
-    ///   but there are some special cases where the attributes means
-    ///   something to the CLR, where they should be skipped.
-    /// </summary>
-    private static bool ShouldSkipAttributeReplication(Type attribute, bool ignoreInheritance)
-    {
-        if (attribute.IsPublic == false && attribute.IsNestedPublic == false)
-        {
-            return true;
-        }
+            if (AttributesToAlwaysReplicate.ShouldAdd(attribute))
+            {
+                return false;
+            }
 
-        if (AttributesToAvoidReplicating.ShouldAvoid(attribute))
-        {
-            return true;
-        }
+            if (!ignoreInheritance)
+            {
+                var attrs = attribute.GetCustomAttributes<AttributeUsageAttribute>(true).ToArray();
+                if (attrs.Length != 0)
+                {
+                    return attrs[0].Inherited;
+                }
 
-        if (AttributesToAlwaysReplicate.ShouldAdd(attribute))
-        {
+                return true;
+            }
+
             return false;
         }
 
-        if (!ignoreInheritance)
+        public static CustomAttributeInfo CreateInfo<TAttribute>()
+            where TAttribute : Attribute, new()
         {
-            var attrs = attribute.GetCustomAttributes<AttributeUsageAttribute>(true).ToArray();
-            if (attrs.Length != 0)
+            var constructor = typeof(TAttribute).GetConstructor(Type.EmptyTypes);
+            Debug.Assert(constructor != null, "constructor != null");
+
+            return new CustomAttributeInfo(constructor, Array.Empty<object>());
+        }
+
+        public static CustomAttributeInfo CreateInfo(Type attribute, object[] constructorArguments)
+        {
+            Debug.Assert(attribute != null, "attribute != null");
+            Debug.Assert(
+                typeof(Attribute).IsAssignableFrom(attribute),
+                "typeof(Attribute).IsAssignableFrom(attribute)"
+            );
+            Debug.Assert(constructorArguments != null, "constructorArguments != null");
+
+            var constructor = attribute.GetConstructor(GetTypes(constructorArguments));
+            Debug.Assert(constructor != null, "constructor != null");
+
+            return new CustomAttributeInfo(constructor, constructorArguments);
+        }
+
+        private static Type[] GetTypes(object[] objects)
+        {
+            var types = new Type[objects.Length];
+            for (var i = 0; i < types.Length; i++)
             {
-                return attrs[0].Inherited;
+                types[i] = objects[i].GetType();
             }
-
-            return true;
+            return types;
         }
-
-        return false;
-    }
-
-    public static CustomAttributeInfo CreateInfo<TAttribute>()
-        where TAttribute : Attribute, new()
-    {
-        var constructor = typeof(TAttribute).GetConstructor(Type.EmptyTypes);
-        Debug.Assert(constructor != null, "constructor != null");
-
-        return new CustomAttributeInfo(constructor, Array.Empty<object>());
-    }
-
-    public static CustomAttributeInfo CreateInfo(Type attribute, object[] constructorArguments)
-    {
-        Debug.Assert(attribute != null, "attribute != null");
-        Debug.Assert(
-            typeof(Attribute).IsAssignableFrom(attribute),
-            "typeof(Attribute).IsAssignableFrom(attribute)"
-        );
-        Debug.Assert(constructorArguments != null, "constructorArguments != null");
-
-        var constructor = attribute.GetConstructor(GetTypes(constructorArguments));
-        Debug.Assert(constructor != null, "constructor != null");
-
-        return new CustomAttributeInfo(constructor, constructorArguments);
-    }
-
-    private static Type[] GetTypes(object[] objects)
-    {
-        var types = new Type[objects.Length];
-        for (var i = 0; i < types.Length; i++)
-        {
-            types[i] = objects[i].GetType();
-        }
-        return types;
     }
 }

@@ -8,18 +8,14 @@ namespace Abp.Web.Http
     {
         /// <summary>
         /// Extract local path and query from <paramref name="url"/>.
-        /// If <paramref name="url"/> is an absolute url,
+        /// If <paramref name="url"/> is an absolute url, 
         /// <paramref name="localHostName"/> and <paramref name="localPort"/> will be used to check against the host and port in <paramref name="url"/> if any.
         /// </summary>
         /// <param name="url">absolute or relative url</param>
         /// <param name="localHostName"></param>
         /// <param name="localPort"></param>
         /// <returns></returns>
-        public virtual string LocalPathAndQuery(
-            [NotNull] string url,
-            [CanBeNull] string localHostName = null,
-            [CanBeNull] int? localPort = null
-        )
+        public virtual string LocalPathAndQuery([NotNull] string url, [CanBeNull] string localHostName = null, [CanBeNull] int? localPort = null)
         {
             Check.NotNull(url, nameof(url));
 
@@ -28,15 +24,9 @@ namespace Abp.Web.Http
             {
                 if (uri.IsAbsoluteUri)
                 {
-                    var isValidScheme =
-                        uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
-                    var isSameHost = string.Equals(
-                        localHostName,
-                        uri.Host,
-                        StringComparison.OrdinalIgnoreCase
-                    );
-                    var isSamePort =
-                        localPort == uri.Port || (localPort == null && uri.IsDefaultPort);
+                    var isValidScheme = uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps;
+                    var isSameHost = string.Equals(localHostName, uri.Host, StringComparison.OrdinalIgnoreCase);
+                    var isSamePort = localPort == uri.Port || (localPort == null && uri.IsDefaultPort);
                     if (isValidScheme && isSameHost && isSamePort)
                     {
                         return uri.PathAndQuery;

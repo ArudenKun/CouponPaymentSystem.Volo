@@ -26,8 +26,7 @@ namespace Abp.Configuration
 
         public string Decrypt(SettingDefinition settingDefinition, string encryptedValue)
         {
-            return SimpleStringCipher.Instance.Decrypt(
-                encryptedValue,
+            return SimpleStringCipher.Instance.Decrypt(encryptedValue,
                 _settingsConfiguration.SettingEncryptionConfiguration.DefaultPassPhrase,
                 _settingsConfiguration.SettingEncryptionConfiguration.DefaultSalt,
                 _settingsConfiguration.SettingEncryptionConfiguration.Keysize,

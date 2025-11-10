@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Abp.Threading.Timers;
-using Microsoft.Extensions.Logging;
 
 namespace Abp.Threading.BackgroundWorkers
 {
@@ -48,7 +47,7 @@ namespace Abp.Threading.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                Logger.LogWarning(ex, "Worker failed to start");
+                Logger.Warn(ex.ToString(), ex);
             }
         }
 

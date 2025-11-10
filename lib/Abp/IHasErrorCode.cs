@@ -1,7 +1,6 @@
-﻿namespace Abp
+﻿namespace Abp;
+
+public interface IHasErrorCode
 {
-    public interface IHasErrorCode
-    {
-        int Code { get; set; }
-    }
+    string Code { get; set; }
 }

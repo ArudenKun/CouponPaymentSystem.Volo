@@ -12,158 +12,162 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-public class MemberwiseEqualityHashCodeStrategy
-    : DictionaryBehaviorAttribute,
-        IDictionaryEqualityHashCodeStrategy,
-        IDictionaryInitializer,
-        IEqualityComparer<IDictionaryAdapter>
+namespace Castle.Components.DictionaryAdapter
 {
-    class HashCodeVisitor : AbstractDictionaryAdapterVisitor
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
+
+    public class MemberwiseEqualityHashCodeStrategy
+        : DictionaryBehaviorAttribute,
+            IDictionaryEqualityHashCodeStrategy,
+            IDictionaryInitializer,
+            IEqualityComparer<IDictionaryAdapter>
     {
-        private int hashCode;
-
-        public int CalculateHashCode(IDictionaryAdapter dictionaryAdapter)
+        class HashCodeVisitor : AbstractDictionaryAdapterVisitor
         {
-            if (dictionaryAdapter == null)
-                return 0;
+            private int hashCode;
 
-            hashCode = 27;
-            return VisitDictionaryAdapter(dictionaryAdapter, null) ? hashCode : 0;
-        }
-
-        protected override void VisitProperty(
-            IDictionaryAdapter dictionaryAdapter,
-            PropertyDescriptor property,
-            object state
-        )
-        {
-            var value = dictionaryAdapter.GetProperty(property.PropertyName, true);
-            CollectHashCode(property, GetValueHashCode(value));
-        }
-
-        protected override void VisitInterface(
-            IDictionaryAdapter dictionaryAdapter,
-            PropertyDescriptor property,
-            object state
-        )
-        {
-            var nested = (IDictionaryAdapter)
-                dictionaryAdapter.GetProperty(property.PropertyName, true);
-            CollectHashCode(property, GetNestedHashCode(nested));
-        }
-
-        protected override void VisitCollection(
-            IDictionaryAdapter dictionaryAdapter,
-            PropertyDescriptor property,
-            Type collectionItemType,
-            object state
-        )
-        {
-            var collection = (IEnumerable)
-                dictionaryAdapter.GetProperty(property.PropertyName, true);
-            CollectHashCode(property, GetCollectionHashcode(collection));
-        }
-
-        private int GetValueHashCode(object value)
-        {
-            if (value == null)
+            public int CalculateHashCode(IDictionaryAdapter dictionaryAdapter)
             {
-                return 0;
+                if (dictionaryAdapter == null)
+                    return 0;
+
+                hashCode = 27;
+                return VisitDictionaryAdapter(dictionaryAdapter, null) ? hashCode : 0;
             }
 
-            if (value is IDictionaryAdapter)
+            protected override void VisitProperty(
+                IDictionaryAdapter dictionaryAdapter,
+                PropertyDescriptor property,
+                object state
+            )
             {
-                return GetNestedHashCode((IDictionaryAdapter)value);
+                var value = dictionaryAdapter.GetProperty(property.PropertyName, true);
+                CollectHashCode(property, GetValueHashCode(value));
             }
 
-            if ((value is IEnumerable) && (value is string) == false)
+            protected override void VisitInterface(
+                IDictionaryAdapter dictionaryAdapter,
+                PropertyDescriptor property,
+                object state
+            )
             {
-                return GetCollectionHashcode((IEnumerable)value);
+                var nested = (IDictionaryAdapter)
+                    dictionaryAdapter.GetProperty(property.PropertyName, true);
+                CollectHashCode(property, GetNestedHashCode(nested));
             }
 
-            return value.GetHashCode();
-        }
-
-        private int GetNestedHashCode(IDictionaryAdapter nested)
-        {
-            var currentHashCode = hashCode;
-            var nestedHashCode = CalculateHashCode(nested);
-            hashCode = currentHashCode;
-            return nestedHashCode;
-        }
-
-        private int GetCollectionHashcode(IEnumerable collection)
-        {
-            if (collection == null)
+            protected override void VisitCollection(
+                IDictionaryAdapter dictionaryAdapter,
+                PropertyDescriptor property,
+                Type collectionItemType,
+                object state
+            )
             {
-                return 0;
+                var collection = (IEnumerable)
+                    dictionaryAdapter.GetProperty(property.PropertyName, true);
+                CollectHashCode(property, GetCollectionHashcode(collection));
             }
 
-            var collectionHashCode = 0;
-
-            foreach (var value in collection)
+            private int GetValueHashCode(object value)
             {
-                var valueHashCode = GetValueHashCode(value);
+                if (value == null)
+                {
+                    return 0;
+                }
+
+                if (value is IDictionaryAdapter)
+                {
+                    return GetNestedHashCode((IDictionaryAdapter)value);
+                }
+
+                if ((value is IEnumerable) && (value is string) == false)
+                {
+                    return GetCollectionHashcode((IEnumerable)value);
+                }
+
+                return value.GetHashCode();
+            }
+
+            private int GetNestedHashCode(IDictionaryAdapter nested)
+            {
+                var currentHashCode = hashCode;
+                var nestedHashCode = CalculateHashCode(nested);
+                hashCode = currentHashCode;
+                return nestedHashCode;
+            }
+
+            private int GetCollectionHashcode(IEnumerable collection)
+            {
+                if (collection == null)
+                {
+                    return 0;
+                }
+
+                var collectionHashCode = 0;
+
+                foreach (var value in collection)
+                {
+                    var valueHashCode = GetValueHashCode(value);
+                    unchecked
+                    {
+                        collectionHashCode = (13 * collectionHashCode) + valueHashCode;
+                    }
+                }
+
+                return collectionHashCode;
+            }
+
+            private void CollectHashCode(PropertyDescriptor property, int valueHashCode)
+            {
                 unchecked
                 {
-                    collectionHashCode = (13 * collectionHashCode) + valueHashCode;
+                    hashCode = (13 * hashCode) + property.PropertyName.GetHashCode();
+                    hashCode = (13 * hashCode) + valueHashCode;
                 }
             }
-
-            return collectionHashCode;
         }
 
-        private void CollectHashCode(PropertyDescriptor property, int valueHashCode)
+        public bool Equals(IDictionaryAdapter adapter1, IDictionaryAdapter adapter2)
         {
-            unchecked
+            if (ReferenceEquals(adapter1, adapter2))
             {
-                hashCode = (13 * hashCode) + property.PropertyName.GetHashCode();
-                hashCode = (13 * hashCode) + valueHashCode;
+                return true;
             }
-        }
-    }
 
-    public bool Equals(IDictionaryAdapter adapter1, IDictionaryAdapter adapter2)
-    {
-        if (ReferenceEquals(adapter1, adapter2))
+            if ((adapter1 == null) ^ (adapter2 == null))
+            {
+                return false;
+            }
+
+            if (adapter1.Meta.Type != adapter2.Meta.Type)
+            {
+                return false;
+            }
+
+            return GetHashCode(adapter1) == GetHashCode(adapter2);
+        }
+
+        public int GetHashCode(IDictionaryAdapter adapter)
         {
+            int hashCode;
+            GetHashCode(adapter, out hashCode);
+            return hashCode;
+        }
+
+        public bool GetHashCode(IDictionaryAdapter adapter, out int hashCode)
+        {
+            hashCode = new HashCodeVisitor().CalculateHashCode(adapter);
             return true;
         }
 
-        if ((adapter1 == null) ^ (adapter2 == null))
+        void IDictionaryInitializer.Initialize(
+            IDictionaryAdapter dictionaryAdapter,
+            object[] behaviors
+        )
         {
-            return false;
+            dictionaryAdapter.This.EqualityHashCodeStrategy = this;
         }
-
-        if (adapter1.Meta.Type != adapter2.Meta.Type)
-        {
-            return false;
-        }
-
-        return GetHashCode(adapter1) == GetHashCode(adapter2);
-    }
-
-    public int GetHashCode(IDictionaryAdapter adapter)
-    {
-        int hashCode;
-        GetHashCode(adapter, out hashCode);
-        return hashCode;
-    }
-
-    public bool GetHashCode(IDictionaryAdapter adapter, out int hashCode)
-    {
-        hashCode = new HashCodeVisitor().CalculateHashCode(adapter);
-        return true;
-    }
-
-    void IDictionaryInitializer.Initialize(IDictionaryAdapter dictionaryAdapter, object[] behaviors)
-    {
-        dictionaryAdapter.This.EqualityHashCodeStrategy = this;
     }
 }

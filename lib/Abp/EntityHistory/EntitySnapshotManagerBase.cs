@@ -23,18 +23,12 @@ namespace Abp.EntityHistory
         }
 
         protected abstract Task<TEntity> GetEntityById<TEntity, TPrimaryKey>(TPrimaryKey id)
-            where TEntity : class, IEntity<TPrimaryKey>;
+           where TEntity : class, IEntity<TPrimaryKey>;
 
-        protected abstract IQueryable<EntityChange> GetEntityChanges<TEntity, TPrimaryKey>(
-            TPrimaryKey id,
-            DateTime snapshotTime
-        )
-            where TEntity : class, IEntity<TPrimaryKey>;
+        protected abstract IQueryable<EntityChange> GetEntityChanges<TEntity, TPrimaryKey>(TPrimaryKey id, DateTime snapshotTime)
+           where TEntity : class, IEntity<TPrimaryKey>;
 
-        protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId<
-            TEntity,
-            TPrimaryKey
-        >(TPrimaryKey id)
+        protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId<TEntity, TPrimaryKey>(TPrimaryKey id)
         {
             var lambdaParam = Expression.Parameter(typeof(TEntity));
 
@@ -50,11 +44,8 @@ namespace Abp.EntityHistory
             return Expression.Lambda<Func<TEntity, bool>>(lambdaBody, lambdaParam);
         }
 
-        public virtual async Task<EntityHistorySnapshot> GetSnapshotAsync<TEntity, TPrimaryKey>(
-            TPrimaryKey id,
-            DateTime snapshotTime
-        )
-            where TEntity : class, IEntity<TPrimaryKey>
+        public virtual async Task<EntityHistorySnapshot> GetSnapshotAsync<TEntity, TPrimaryKey>(TPrimaryKey id, DateTime snapshotTime)
+           where TEntity : class, IEntity<TPrimaryKey>
         {
             var entity = await GetEntityById<TEntity, TPrimaryKey>(id);
 
@@ -63,10 +54,7 @@ namespace Abp.EntityHistory
 
             if (entity == null)
             {
-                return new EntityHistorySnapshot(
-                    snapshotPropertiesDictionary,
-                    propertyChangesStackTreeDictionary
-                );
+                return new EntityHistorySnapshot(snapshotPropertiesDictionary, propertyChangesStackTreeDictionary);
             }
 
             var changes = await AsyncQueryableExecuter.ToListAsync(
@@ -75,15 +63,11 @@ namespace Abp.EntityHistory
             );
 
             //revoke all changes
-            foreach (var change in changes) // desc ordered changes
+            foreach (var change in changes)// desc ordered changes
             {
                 foreach (var entityPropertyChange in change.PropertyChanges)
                 {
-                    RevokeChange<TEntity, TPrimaryKey>(
-                        snapshotPropertiesDictionary,
-                        entityPropertyChange,
-                        entity
-                    );
+                    RevokeChange<TEntity, TPrimaryKey>(snapshotPropertiesDictionary, entityPropertyChange, entity);
 
                     AddChangeToPropertyChangesStackTree<TEntity, TPrimaryKey>(
                         entityPropertyChange,
@@ -93,36 +77,30 @@ namespace Abp.EntityHistory
                 }
             }
 
-            return new EntityHistorySnapshot(
-                snapshotPropertiesDictionary,
-                propertyChangesStackTreeDictionary
-            );
+            return new EntityHistorySnapshot(snapshotPropertiesDictionary, propertyChangesStackTreeDictionary);
         }
 
         private static void RevokeChange<TEntity, TPrimaryKey>(
             Dictionary<string, string> snapshotPropertiesDictionary,
             EntityPropertyChange entityPropertyChange,
-            TEntity entity
-        )
+            TEntity entity)
             where TEntity : class, IEntity<TPrimaryKey>
         {
-            snapshotPropertiesDictionary[entityPropertyChange.PropertyName] =
-                entityPropertyChange.OriginalValue;
+            snapshotPropertiesDictionary[entityPropertyChange.PropertyName] = entityPropertyChange.OriginalValue;
         }
 
         private static void AddChangeToPropertyChangesStackTree<TEntity, TPrimaryKey>(
-            EntityPropertyChange entityPropertyChange,
-            Dictionary<string, string> propertyChangesStackTreeDictionary,
-            TEntity entity
-        )
+            EntityPropertyChange entityPropertyChange, 
+            Dictionary<string, string> propertyChangesStackTreeDictionary, 
+            TEntity entity)
             where TEntity : class, IEntity<TPrimaryKey>
         {
             if (propertyChangesStackTreeDictionary.ContainsKey(entityPropertyChange.PropertyName))
             {
                 propertyChangesStackTreeDictionary[entityPropertyChange.PropertyName] =
-                    entityPropertyChange.OriginalValue
-                    + " -> "
-                    + propertyChangesStackTreeDictionary[entityPropertyChange.PropertyName];
+                    entityPropertyChange.OriginalValue + 
+                    " -> " +
+                    propertyChangesStackTreeDictionary[entityPropertyChange.PropertyName];
             }
             else
             {

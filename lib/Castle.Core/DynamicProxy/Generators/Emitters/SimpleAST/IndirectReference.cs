@@ -12,61 +12,65 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using System.Reflection.Emit;
-
-/// <summary>
-///   Wraps a reference that is passed
-///   ByRef and provides indirect load/store support.
-/// </summary>
-[DebuggerDisplay("&{OwnerReference}")]
-internal class IndirectReference : TypeReference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    public IndirectReference(TypeReference byRefReference)
-        : base(byRefReference, byRefReference.Type.GetElementType())
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
+    using System.Reflection.Emit;
+
+    /// <summary>
+    ///   Wraps a reference that is passed
+    ///   ByRef and provides indirect load/store support.
+    /// </summary>
+    [DebuggerDisplay("&{OwnerReference}")]
+    internal class IndirectReference : TypeReference
     {
-        if (!byRefReference.Type.IsByRef)
+        public IndirectReference(TypeReference byRefReference)
+            : base(byRefReference, byRefReference.Type.GetElementType())
         {
-            throw new ArgumentException("Expected an IsByRef reference", nameof(byRefReference));
-        }
-    }
-
-    public override void LoadAddressOfReference(ILGenerator gen)
-    {
-        // Load of owner reference takes care of this.
-    }
-
-    // TODO: Better name
-
-    public override void LoadReference(ILGenerator gen)
-    {
-        OpCodeUtil.EmitLoadIndirectOpCodeForType(gen, Type);
-    }
-
-    public override void StoreReference(ILGenerator gen)
-    {
-        OpCodeUtil.EmitStoreIndirectOpCodeForType(gen, Type);
-    }
-
-    public static TypeReference WrapIfByRef(TypeReference reference)
-    {
-        return reference.Type.IsByRef ? new IndirectReference(reference) : reference;
-    }
-
-    // TODO: Better name
-    public static TypeReference[] WrapIfByRef(TypeReference[] references)
-    {
-        var result = new TypeReference[references.Length];
-
-        for (var i = 0; i < references.Length; i++)
-        {
-            result[i] = WrapIfByRef(references[i]);
+            if (!byRefReference.Type.IsByRef)
+            {
+                throw new ArgumentException(
+                    "Expected an IsByRef reference",
+                    nameof(byRefReference)
+                );
+            }
         }
 
-        return result;
+        public override void LoadAddressOfReference(ILGenerator gen)
+        {
+            // Load of owner reference takes care of this.
+        }
+
+        // TODO: Better name
+
+        public override void LoadReference(ILGenerator gen)
+        {
+            OpCodeUtil.EmitLoadIndirectOpCodeForType(gen, Type);
+        }
+
+        public override void StoreReference(ILGenerator gen)
+        {
+            OpCodeUtil.EmitStoreIndirectOpCodeForType(gen, Type);
+        }
+
+        public static TypeReference WrapIfByRef(TypeReference reference)
+        {
+            return reference.Type.IsByRef ? new IndirectReference(reference) : reference;
+        }
+
+        // TODO: Better name
+        public static TypeReference[] WrapIfByRef(TypeReference[] references)
+        {
+            var result = new TypeReference[references.Length];
+
+            for (var i = 0; i < references.Length; i++)
+            {
+                result[i] = WrapIfByRef(references[i]);
+            }
+
+            return result;
+        }
     }
 }

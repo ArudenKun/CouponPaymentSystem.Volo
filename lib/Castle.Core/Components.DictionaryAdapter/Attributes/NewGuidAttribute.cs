@@ -12,37 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Generates a new GUID on demand.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
-public class NewGuidAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter
+namespace Castle.Components.DictionaryAdapter
 {
-    private static readonly Guid UnassignedGuid = new Guid();
+    using System;
 
-    public object GetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        object storedValue,
-        PropertyDescriptor property,
-        bool ifExists
-    )
+    /// <summary>
+    /// Generates a new GUID on demand.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
+    public class NewGuidAttribute : DictionaryBehaviorAttribute, IDictionaryPropertyGetter
     {
-        if (storedValue == null || storedValue.Equals(UnassignedGuid))
-        {
-            storedValue = Guid.NewGuid();
-            property.SetPropertyValue(
-                dictionaryAdapter,
-                key,
-                ref storedValue,
-                dictionaryAdapter.This.Descriptor
-            );
-        }
+        private static readonly Guid UnassignedGuid = new Guid();
 
-        return storedValue;
+        public object GetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            object storedValue,
+            PropertyDescriptor property,
+            bool ifExists
+        )
+        {
+            if (storedValue == null || storedValue.Equals(UnassignedGuid))
+            {
+                storedValue = Guid.NewGuid();
+                property.SetPropertyValue(
+                    dictionaryAdapter,
+                    key,
+                    ref storedValue,
+                    dictionaryAdapter.This.Descriptor
+                );
+            }
+
+            return storedValue;
+        }
     }
 }

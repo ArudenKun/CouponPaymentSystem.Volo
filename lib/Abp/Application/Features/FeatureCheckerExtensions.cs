@@ -20,11 +20,7 @@ namespace Abp.Application.Features
         /// <param name="featureChecker"><see cref="IFeatureChecker"/> instance</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static async Task<bool> IsEnabledAsync(
-            this IFeatureChecker featureChecker,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static async Task<bool> IsEnabledAsync(this IFeatureChecker featureChecker, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -61,11 +57,7 @@ namespace Abp.Application.Features
         /// <param name="featureChecker"><see cref="IFeatureChecker"/> instance</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static bool IsEnabled(
-            this IFeatureChecker featureChecker,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static bool IsEnabled(this IFeatureChecker featureChecker, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -96,6 +88,7 @@ namespace Abp.Application.Features
             return false;
         }
 
+
         /// <summary>
         /// Used to check if one or all of the given features are enabled.
         /// </summary>
@@ -103,12 +96,7 @@ namespace Abp.Application.Features
         /// <param name="tenantId">Tenant id</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static async Task<bool> IsEnabledAsync(
-            this IFeatureChecker featureChecker,
-            int tenantId,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static async Task<bool> IsEnabledAsync(this IFeatureChecker featureChecker, int tenantId, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -146,12 +134,7 @@ namespace Abp.Application.Features
         /// <param name="tenantId">Tenant id</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static bool IsEnabled(
-            this IFeatureChecker featureChecker,
-            int tenantId,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static bool IsEnabled(this IFeatureChecker featureChecker, int tenantId, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -187,21 +170,20 @@ namespace Abp.Application.Features
         /// </summary>
         /// <param name="featureChecker"><see cref="IFeatureChecker"/> instance</param>
         /// <param name="featureName">Unique feature name</param>
-        public static async Task CheckEnabledAsync(
-            this IFeatureChecker featureChecker,
-            string featureName
-        )
+        public static async Task CheckEnabledAsync(this IFeatureChecker featureChecker, string featureName)
         {
-            var localizedFeatureNames = LocalizeFeatureNames(featureChecker, new[] { featureName });
+            var localizedFeatureNames = LocalizeFeatureNames(featureChecker, new []{ featureName });
 
             if (!(await featureChecker.IsEnabledAsync(featureName)))
             {
-                throw new AbpAuthorizationException(
-                    string.Format(
-                        L(featureChecker, "FeatureIsNotEnabled", "Feature is not enabled: {0}"),
-                        localizedFeatureNames.First()
-                    )
-                );
+                throw new AbpAuthorizationException(string.Format(
+                    L(
+                        featureChecker,
+                        "FeatureIsNotEnabled",
+                        "Feature is not enabled: {0}"
+                    ),
+                    localizedFeatureNames.First()
+                ));
             }
         }
 
@@ -216,12 +198,14 @@ namespace Abp.Application.Features
 
             if (!featureChecker.IsEnabled(featureName))
             {
-                throw new AbpAuthorizationException(
-                    string.Format(
-                        L(featureChecker, "FeatureIsNotEnabled", "Feature is not enabled: {0}"),
-                        localizedFeatureNames.First()
-                    )
-                );
+                throw new AbpAuthorizationException(string.Format(
+                    L(
+                        featureChecker,
+                        "FeatureIsNotEnabled",
+                        "Feature is not enabled: {0}"
+                    ),
+                    localizedFeatureNames.First()
+                ));
             }
         }
 
@@ -231,11 +215,7 @@ namespace Abp.Application.Features
         /// <param name="featureChecker"><see cref="IFeatureChecker"/> instance</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static async Task CheckEnabledAsync(
-            this IFeatureChecker featureChecker,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static async Task CheckEnabledAsync(this IFeatureChecker featureChecker, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -292,11 +272,7 @@ namespace Abp.Application.Features
         /// <param name="featureChecker"><see cref="IFeatureChecker"/> instance</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static void CheckEnabled(
-            this IFeatureChecker featureChecker,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static void CheckEnabled(this IFeatureChecker featureChecker, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -354,12 +330,7 @@ namespace Abp.Application.Features
         /// <param name="tenantId">Tenant id</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static async Task CheckEnabledAsync(
-            this IFeatureChecker featureChecker,
-            int tenantId,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static async Task CheckEnabledAsync(this IFeatureChecker featureChecker, int tenantId, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -415,12 +386,7 @@ namespace Abp.Application.Features
         /// <param name="tenantId">Tenant id</param>
         /// <param name="requiresAll">True, to require that all the given features are enabled. False, to require one or more.</param>
         /// <param name="featureNames">Names of the features</param>
-        public static void CheckEnabled(
-            this IFeatureChecker featureChecker,
-            int tenantId,
-            bool requiresAll,
-            params string[] featureNames
-        )
+        public static void CheckEnabled(this IFeatureChecker featureChecker, int tenantId, bool requiresAll, params string[] featureNames)
         {
             if (featureNames.IsNullOrEmpty())
             {
@@ -468,7 +434,7 @@ namespace Abp.Application.Features
                 );
             }
         }
-
+               
         public static string L(IFeatureChecker featureChecker, string name, string defaultValue)
         {
             if (!(featureChecker is IIocManagerAccessor))
@@ -483,10 +449,7 @@ namespace Abp.Application.Features
             }
         }
 
-        public static string[] LocalizeFeatureNames(
-            IFeatureChecker featureChecker,
-            string[] featureNames
-        )
+        public static string[] LocalizeFeatureNames(IFeatureChecker featureChecker, string[] featureNames)
         {
             if (!(featureChecker is IIocManagerAccessor))
             {
@@ -498,15 +461,13 @@ namespace Abp.Application.Features
             {
                 using (var featureManager = iocManager.ResolveAsDisposable<IFeatureManager>())
                 {
-                    return featureNames
-                        .Select(featureName =>
-                        {
-                            var feature = featureManager.Object.GetOrNull(featureName);
-                            return feature?.DisplayName == null
-                                ? featureName
-                                : feature.DisplayName.Localize(localizationContext.Object);
-                        })
-                        .ToArray();
+                    return featureNames.Select(featureName =>
+                    {
+                        var feature = featureManager.Object.GetOrNull(featureName);
+                        return feature?.DisplayName == null
+                            ? featureName
+                            : feature.DisplayName.Localize(localizationContext.Object);
+                    }).ToArray();
                 }
             }
         }

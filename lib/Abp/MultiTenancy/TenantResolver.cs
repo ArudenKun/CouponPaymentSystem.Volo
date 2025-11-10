@@ -1,8 +1,10 @@
+using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Runtime;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.MultiTenancy
 {
@@ -23,8 +25,7 @@ namespace Abp.MultiTenancy
             IIocResolver iocResolver,
             ITenantStore tenantStore,
             ITenantResolverCache cache,
-            IAmbientScopeProvider<bool> ambientScopeProvider
-        )
+            IAmbientScopeProvider<bool> ambientScopeProvider)
         {
             _multiTenancy = multiTenancy;
             _iocResolver = iocResolver;
@@ -71,11 +72,7 @@ namespace Abp.MultiTenancy
         {
             foreach (var resolverType in _multiTenancy.Resolvers)
             {
-                using (
-                    var resolver = _iocResolver.ResolveAsDisposable<ITenantResolveContributor>(
-                        resolverType
-                    )
-                )
+                using (var resolver = _iocResolver.ResolveAsDisposable<ITenantResolveContributor>(resolverType))
                 {
                     int? tenantId;
 
@@ -85,7 +82,7 @@ namespace Abp.MultiTenancy
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogWarning(ex.ToString(), ex);
+                        Logger.Warn(ex.ToString(), ex);
                         continue;
                     }
 

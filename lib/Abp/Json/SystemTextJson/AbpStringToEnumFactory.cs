@@ -12,7 +12,10 @@ namespace Abp.Json.SystemTextJson
         private readonly bool _allowIntegerValues;
 
         public AbpStringToEnumFactory()
-            : this(namingPolicy: null, allowIntegerValues: true) { }
+            : this(namingPolicy: null, allowIntegerValues: true)
+        {
+
+        }
 
         public AbpStringToEnumFactory(JsonNamingPolicy namingPolicy, bool allowIntegerValues)
         {
@@ -25,19 +28,14 @@ namespace Abp.Json.SystemTextJson
             return typeToConvert.IsEnum;
         }
 
-        public override JsonConverter CreateConverter(
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override JsonConverter CreateConverter(Type typeToConvert, JsonSerializerOptions options)
         {
-            return (JsonConverter)
-                Activator.CreateInstance(
-                    typeof(AbpStringToEnumConverter<>).MakeGenericType(typeToConvert),
-                    BindingFlags.Instance | BindingFlags.Public,
-                    binder: null,
-                    new object[] { _namingPolicy, _allowIntegerValues },
-                    culture: null
-                );
+            return (JsonConverter)Activator.CreateInstance(
+                typeof(AbpStringToEnumConverter<>).MakeGenericType(typeToConvert),
+                BindingFlags.Instance | BindingFlags.Public,
+                binder: null,
+                new object[] { _namingPolicy, _allowIntegerValues },
+                culture: null);
         }
     }
 
@@ -51,17 +49,14 @@ namespace Abp.Json.SystemTextJson
         private JsonSerializerOptions _writeJsonSerializerOptions;
 
         public AbpStringToEnumConverter()
-            : this(namingPolicy: null, allowIntegerValues: true) { }
-
-        public AbpStringToEnumConverter(
-            JsonNamingPolicy namingPolicy = null,
-            bool allowIntegerValues = true
-        )
+            : this(namingPolicy: null, allowIntegerValues: true)
         {
-            _innerJsonStringEnumConverter = new JsonStringEnumConverter(
-                namingPolicy,
-                allowIntegerValues
-            );
+
+        }
+
+        public AbpStringToEnumConverter(JsonNamingPolicy namingPolicy = null, bool allowIntegerValues = true)
+        {
+            _innerJsonStringEnumConverter = new JsonStringEnumConverter(namingPolicy, allowIntegerValues);
         }
 
         public override bool CanConvert(Type typeToConvert)
@@ -69,19 +64,14 @@ namespace Abp.Json.SystemTextJson
             return typeToConvert.IsEnum;
         }
 
-        public override T Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override T Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (_readJsonSerializerOptions == null)
             {
-                _readJsonSerializerOptions = JsonSerializerOptionsHelper.Create(
-                    options,
-                    x => x == this || x.GetType() == typeof(AbpStringToEnumFactory),
-                    _innerJsonStringEnumConverter.CreateConverter(typeToConvert, options)
-                );
+                _readJsonSerializerOptions = JsonSerializerOptionsHelper.Create(options, x =>
+                        x == this ||
+                        x.GetType() == typeof(AbpStringToEnumFactory),
+                    _innerJsonStringEnumConverter.CreateConverter(typeToConvert, options));
             }
 
             return JsonSerializer.Deserialize<T>(ref reader, _readJsonSerializerOptions);
@@ -91,25 +81,17 @@ namespace Abp.Json.SystemTextJson
         {
             if (_writeJsonSerializerOptions == null)
             {
-                _writeJsonSerializerOptions = JsonSerializerOptionsHelper.Create(
-                    options,
-                    x => x == this || x.GetType() == typeof(AbpStringToEnumFactory)
-                );
+                _writeJsonSerializerOptions = JsonSerializerOptionsHelper.Create(options, x =>
+                    x == this ||
+                    x.GetType() == typeof(AbpStringToEnumFactory));
             }
 
             JsonSerializer.Serialize(writer, value, _writeJsonSerializerOptions);
         }
 
-        public override T ReadAsPropertyName(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override T ReadAsPropertyName(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (
-                reader.TokenType == JsonTokenType.String
-                || reader.TokenType == JsonTokenType.PropertyName
-            )
+            if (reader.TokenType == JsonTokenType.String || reader.TokenType == JsonTokenType.PropertyName)
             {
                 var str = reader.GetString();
                 if (!str.IsNullOrWhiteSpace())
@@ -121,13 +103,10 @@ namespace Abp.Json.SystemTextJson
             return base.ReadAsPropertyName(ref reader, typeToConvert, options);
         }
 
-        public override void WriteAsPropertyName(
-            Utf8JsonWriter writer,
-            T value,
-            JsonSerializerOptions options
-        )
+        public override void WriteAsPropertyName(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
         {
             writer.WritePropertyName(Enum.GetName(typeof(T), value));
         }
     }
+
 }

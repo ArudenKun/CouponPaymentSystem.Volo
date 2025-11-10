@@ -1,11 +1,13 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Globalization;
+using System.Linq;
 using Abp.Collections.Extensions;
 using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Localization.Dictionaries
 {
@@ -31,10 +33,7 @@ namespace Abp.Localization.Dictionaries
         /// </summary>
         /// <param name="name"></param>
         /// <param name="dictionaryProvider"></param>
-        public DictionaryBasedLocalizationSource(
-            string name,
-            ILocalizationDictionaryProvider dictionaryProvider
-        )
+        public DictionaryBasedLocalizationSource(string name, ILocalizationDictionaryProvider dictionaryProvider)
         {
             Check.NotNullOrEmpty(name, nameof(name));
             Check.NotNull(dictionaryProvider, nameof(dictionaryProvider));
@@ -44,24 +43,19 @@ namespace Abp.Localization.Dictionaries
         }
 
         /// <inheritdoc/>
-        public virtual void Initialize(
-            ILocalizationConfiguration configuration,
-            IIocResolver iocResolver
-        )
+        public virtual void Initialize(ILocalizationConfiguration configuration, IIocResolver iocResolver)
         {
             LocalizationConfiguration = configuration;
 
             _logger = iocResolver.IsRegistered(typeof(ILoggerFactory))
-                ? iocResolver
-                    .Resolve<ILoggerFactory>()
-                    .CreateLogger(typeof(DictionaryBasedLocalizationSource))
+                ? iocResolver.Resolve<ILoggerFactory>().Create(typeof(DictionaryBasedLocalizationSource))
                 : NullLogger.Instance;
 
             DictionaryProvider.Initialize(Name);
         }
 
         /// <inheritdoc/>
-        public string? FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
+        public string FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
         {
             var cultureName = culture.Name;
             var dictionaries = DictionaryProvider.Dictionaries;
@@ -84,12 +78,7 @@ namespace Abp.Localization.Dictionaries
             //Try to get from same language dictionary (without country code)
             if (cultureName.Contains("-")) //Example: "tr-TR" (length=5)
             {
-                if (
-                    dictionaries.TryGetValue(
-                        GetBaseCultureName(cultureName),
-                        out var langDictionary
-                    )
-                )
+                if (dictionaries.TryGetValue(GetBaseCultureName(cultureName), out var langDictionary))
                 {
                     var keyLang = langDictionary.TryGetKey(value);
                     if (keyLang != null)
@@ -134,12 +123,12 @@ namespace Abp.Localization.Dictionaries
             return value;
         }
 
-        public string? GetStringOrNull(string name, bool tryDefaults = true)
+        public string GetStringOrNull(string name, bool tryDefaults = true)
         {
             return GetStringOrNull(name, CultureInfo.CurrentUICulture, tryDefaults);
         }
 
-        public string? GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
+        public string GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
         {
             var cultureName = culture.Name;
             var dictionaries = DictionaryProvider.Dictionaries;
@@ -162,12 +151,7 @@ namespace Abp.Localization.Dictionaries
             //Try to get from same language dictionary (without country code)
             if (cultureName.Contains("-")) //Example: "tr-TR" (length=5)
             {
-                if (
-                    dictionaries.TryGetValue(
-                        GetBaseCultureName(cultureName),
-                        out var langDictionary
-                    )
-                )
+                if (dictionaries.TryGetValue(GetBaseCultureName(cultureName), out var langDictionary))
                 {
                     var strLang = langDictionary.GetOrNull(name);
                     if (strLang != null)
@@ -204,10 +188,7 @@ namespace Abp.Localization.Dictionaries
             var nullValues = values.Where(x => x.Value == null).ToList();
             if (nullValues.Any())
             {
-                return ReturnGivenNamesOrThrowException(
-                    nullValues.Select(x => x.Name).ToList(),
-                    culture
-                );
+                return ReturnGivenNamesOrThrowException(nullValues.Select(x => x.Name).ToList(), culture);
             }
 
             return values.Select(x => x.Value).ToList();
@@ -215,25 +196,15 @@ namespace Abp.Localization.Dictionaries
 
         public List<string> GetStringsOrNull(List<string> names, bool tryDefaults = true)
         {
-            return GetStringsInternal(names, CultureInfo.CurrentUICulture, tryDefaults)
-                .Select(x => x.Value)
-                .ToList();
+            return GetStringsInternal(names, CultureInfo.CurrentUICulture, tryDefaults).Select(x => x.Value).ToList();
         }
 
-        public List<string> GetStringsOrNull(
-            List<string> names,
-            CultureInfo culture,
-            bool tryDefaults = true
-        )
+        public List<string> GetStringsOrNull(List<string> names, CultureInfo culture, bool tryDefaults = true)
         {
             return GetStringsInternal(names, culture, tryDefaults).Select(x => x.Value).ToList();
         }
 
-        private List<NameValue> GetStringsInternal(
-            List<string> names,
-            CultureInfo culture,
-            bool includeDefaults = true
-        )
+        private List<NameValue> GetStringsInternal(List<string> names, CultureInfo culture, bool includeDefaults = true)
         {
             var cultureName = culture.Name;
             var dictionaries = DictionaryProvider.Dictionaries;
@@ -256,12 +227,7 @@ namespace Abp.Localization.Dictionaries
             //Try to get from same language dictionary (without country code)
             if (cultureName.Contains("-")) //Example: "tr-TR" (length=5)
             {
-                if (
-                    dictionaries.TryGetValue(
-                        GetBaseCultureName(cultureName),
-                        out var langDictionary
-                    )
-                )
+                if (dictionaries.TryGetValue(GetBaseCultureName(cultureName), out var langDictionary))
                 {
                     var strLang = langDictionary.GetStringsOrNull(names);
                     if (!strLang.IsNullOrEmpty())
@@ -294,10 +260,7 @@ namespace Abp.Localization.Dictionaries
         }
 
         /// <inheritdoc/>
-        public IReadOnlyList<LocalizedString> GetAllStrings(
-            CultureInfo culture,
-            bool includeDefaults = true
-        )
+        public IReadOnlyList<LocalizedString> GetAllStrings(CultureInfo culture, bool includeDefaults = true)
         {
             //TODO: Can be optimized (example: if it's already default dictionary, skip overriding)
 
@@ -321,12 +284,7 @@ namespace Abp.Localization.Dictionaries
                 //Overwrite all strings from the language based on country culture
                 if (culture.Name.Contains("-"))
                 {
-                    if (
-                        dictionaries.TryGetValue(
-                            GetBaseCultureName(culture.Name),
-                            out var langDictionary
-                        )
-                    )
+                    if (dictionaries.TryGetValue(GetBaseCultureName(culture.Name), out var langDictionary))
                     {
                         foreach (var langString in langDictionary.GetAllStrings())
                         {
@@ -368,10 +326,7 @@ namespace Abp.Localization.Dictionaries
             );
         }
 
-        protected virtual List<string> ReturnGivenNamesOrThrowException(
-            List<string> names,
-            CultureInfo culture
-        )
+        protected virtual List<string> ReturnGivenNamesOrThrowException(List<string> names, CultureInfo culture)
         {
             return LocalizationSourceHelper.ReturnGivenNamesOrThrowException(
                 LocalizationConfiguration,

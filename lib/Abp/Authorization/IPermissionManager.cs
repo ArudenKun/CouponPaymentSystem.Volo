@@ -40,7 +40,7 @@ namespace Abp.Authorization
         /// </summary>
         /// <param name="multiTenancySides">Multi-tenancy side to filter</param>
         IReadOnlyList<Permission> GetAllPermissions(MultiTenancySides multiTenancySides);
-
+        
         /// <summary>
         /// Gets all permissions.
         /// </summary>

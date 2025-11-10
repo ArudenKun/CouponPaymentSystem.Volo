@@ -44,7 +44,8 @@ namespace Abp.Domain.Uow
         /// Can be used to enable/disable some filters.
         /// </summary>
         public List<DataFilterConfiguration> FilterOverrides { get; }
-
+        
+        
         /// <summary>
         /// Creates a new <see cref="UnitOfWorkOptions"/> object.
         /// </summary>
@@ -78,9 +79,7 @@ namespace Abp.Domain.Uow
             }
         }
 
-        internal void FillOuterUowFiltersForNonProvidedOptions(
-            List<DataFilterConfiguration> filterOverrides
-        )
+        internal void FillOuterUowFiltersForNonProvidedOptions(List<DataFilterConfiguration> filterOverrides)
         {
             foreach (var filterOverride in filterOverrides)
             {

@@ -7,16 +7,17 @@ namespace Abp.Application.Services.Dto
     /// A shortcut of <see cref="FullAuditedEntityDto{TPrimaryKey}"/> for most used primary key type (<see cref="int"/>).
     /// </summary>
     [Serializable]
-    public abstract class FullAuditedEntityDto : FullAuditedEntityDto<int> { }
+    public abstract class FullAuditedEntityDto : FullAuditedEntityDto<int>
+    {
+
+    }
 
     /// <summary>
     /// This class can be inherited for simple Dto objects those are used for entities implement <see cref="IFullAudited{TUser}"/> interface.
     /// </summary>
     /// <typeparam name="TPrimaryKey">Type of primary key</typeparam>
     [Serializable]
-    public abstract class FullAuditedEntityDto<TPrimaryKey>
-        : AuditedEntityDto<TPrimaryKey>,
-            IFullAudited
+    public abstract class FullAuditedEntityDto<TPrimaryKey> : AuditedEntityDto<TPrimaryKey>, IFullAudited
     {
         /// <summary>
         /// Is this entity deleted?

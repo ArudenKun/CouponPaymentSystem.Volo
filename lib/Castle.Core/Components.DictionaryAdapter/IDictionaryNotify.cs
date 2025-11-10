@@ -12,23 +12,24 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.ComponentModel;
-
-/// <summary>
-/// Contract for managing Dictionary adapter notifications.
-/// </summary>
-public interface IDictionaryNotify : INotifyPropertyChanging, INotifyPropertyChanged
+namespace Castle.Components.DictionaryAdapter
 {
-    bool CanNotify { get; }
+    using System;
+    using System.ComponentModel;
 
-    bool ShouldNotify { get; }
+    /// <summary>
+    /// Contract for managing Dictionary adapter notifications.
+    /// </summary>
+    public interface IDictionaryNotify : INotifyPropertyChanging, INotifyPropertyChanged
+    {
+        bool CanNotify { get; }
 
-    IDisposable SuppressNotificationsBlock();
+        bool ShouldNotify { get; }
 
-    void SuppressNotifications();
+        IDisposable SuppressNotificationsBlock();
 
-    void ResumeNotifications();
+        void SuppressNotifications();
+
+        void ResumeNotifications();
+    }
 }

@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-/// <summary>
-///  Contract for property descriptor initialization.
-/// </summary>
-public interface IPropertyDescriptorInitializer : IDictionaryBehavior
+namespace Castle.Components.DictionaryAdapter
 {
     /// <summary>
-    /// Performs any initialization of the <see cref="PropertyDescriptor"/>
+    ///  Contract for property descriptor initialization.
     /// </summary>
-    /// <param name="propertyDescriptor">The property descriptor.</param>
-    /// <param name="behaviors">The property behaviors.</param>
-    void Initialize(PropertyDescriptor propertyDescriptor, object[] behaviors);
+    public interface IPropertyDescriptorInitializer : IDictionaryBehavior
+    {
+        /// <summary>
+        /// Performs any initialization of the <see cref="PropertyDescriptor"/>
+        /// </summary>
+        /// <param name="propertyDescriptor">The property descriptor.</param>
+        /// <param name="behaviors">The property behaviors.</param>
+        void Initialize(PropertyDescriptor propertyDescriptor, object[] behaviors);
+    }
 }

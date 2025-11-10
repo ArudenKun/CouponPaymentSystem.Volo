@@ -16,20 +16,14 @@ namespace Abp.Runtime.Validation.Interception
         /// <summary>
         /// Checks all properties for DataAnnotations attributes.
         /// </summary>
-        protected virtual List<ValidationResult> GetDataAnnotationAttributeErrors(
-            object validatingObject
-        )
+        protected virtual List<ValidationResult> GetDataAnnotationAttributeErrors(object validatingObject)
         {
             var validationErrors = new List<ValidationResult>();
 
-            var properties = TypeDescriptor
-                .GetProperties(validatingObject)
-                .Cast<PropertyDescriptor>();
+            var properties = TypeDescriptor.GetProperties(validatingObject).Cast<PropertyDescriptor>();
             foreach (var property in properties)
             {
-                var validationAttributes = property
-                    .Attributes.OfType<ValidationAttribute>()
-                    .ToArray();
+                var validationAttributes = property.Attributes.OfType<ValidationAttribute>().ToArray();
                 if (validationAttributes.IsNullOrEmpty())
                 {
                     continue;
@@ -38,15 +32,12 @@ namespace Abp.Runtime.Validation.Interception
                 var validationContext = new ValidationContext(validatingObject)
                 {
                     DisplayName = property.DisplayName,
-                    MemberName = property.Name,
+                    MemberName = property.Name
                 };
 
                 foreach (var attribute in validationAttributes)
                 {
-                    var result = attribute.GetValidationResult(
-                        property.GetValue(validatingObject),
-                        validationContext
-                    );
+                    var result = attribute.GetValidationResult(property.GetValue(validatingObject), validationContext);
                     if (result != null)
                     {
                         validationErrors.Add(result);

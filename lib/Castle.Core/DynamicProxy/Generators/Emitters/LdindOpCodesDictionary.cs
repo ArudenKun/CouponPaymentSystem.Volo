@@ -12,58 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-
-/// <summary>
-///   Provides appropriate Ldind.X opcode for
-///   the type of primitive value to be loaded indirectly.
-/// </summary>
-internal sealed class LdindOpCodesDictionary : Dictionary<Type, OpCode>
+namespace Castle.DynamicProxy.Generators.Emitters
 {
-    private static readonly LdindOpCodesDictionary dict = new LdindOpCodesDictionary();
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection.Emit;
 
-    // has to be assigned explicitly to suppress compiler warning
-    private static readonly OpCode emptyOpCode = new OpCode();
-
-    private LdindOpCodesDictionary()
+    /// <summary>
+    ///   Provides appropriate Ldind.X opcode for
+    ///   the type of primitive value to be loaded indirectly.
+    /// </summary>
+    internal sealed class LdindOpCodesDictionary : Dictionary<Type, OpCode>
     {
-        Add(typeof(bool), OpCodes.Ldind_I1);
-        Add(typeof(char), OpCodes.Ldind_I2);
-        Add(typeof(SByte), OpCodes.Ldind_I1);
-        Add(typeof(Int16), OpCodes.Ldind_I2);
-        Add(typeof(Int32), OpCodes.Ldind_I4);
-        Add(typeof(Int64), OpCodes.Ldind_I8);
-        Add(typeof(float), OpCodes.Ldind_R4);
-        Add(typeof(double), OpCodes.Ldind_R8);
-        Add(typeof(byte), OpCodes.Ldind_U1);
-        Add(typeof(UInt16), OpCodes.Ldind_U2);
-        Add(typeof(UInt32), OpCodes.Ldind_U4);
-        Add(typeof(UInt64), OpCodes.Ldind_I8);
-    }
+        private static readonly LdindOpCodesDictionary dict = new LdindOpCodesDictionary();
 
-    public new OpCode this[Type type]
-    {
-        get
+        // has to be assigned explicitly to suppress compiler warning
+        private static readonly OpCode emptyOpCode = new OpCode();
+
+        private LdindOpCodesDictionary()
         {
-            if (TryGetValue(type, out var opCode))
-            {
-                return opCode;
-            }
-            return EmptyOpCode;
+            Add(typeof(bool), OpCodes.Ldind_I1);
+            Add(typeof(char), OpCodes.Ldind_I2);
+            Add(typeof(SByte), OpCodes.Ldind_I1);
+            Add(typeof(Int16), OpCodes.Ldind_I2);
+            Add(typeof(Int32), OpCodes.Ldind_I4);
+            Add(typeof(Int64), OpCodes.Ldind_I8);
+            Add(typeof(float), OpCodes.Ldind_R4);
+            Add(typeof(double), OpCodes.Ldind_R8);
+            Add(typeof(byte), OpCodes.Ldind_U1);
+            Add(typeof(UInt16), OpCodes.Ldind_U2);
+            Add(typeof(UInt32), OpCodes.Ldind_U4);
+            Add(typeof(UInt64), OpCodes.Ldind_I8);
         }
-    }
 
-    public static OpCode EmptyOpCode
-    {
-        get { return emptyOpCode; }
-    }
+        public new OpCode this[Type type]
+        {
+            get
+            {
+                if (TryGetValue(type, out var opCode))
+                {
+                    return opCode;
+                }
+                return EmptyOpCode;
+            }
+        }
 
-    public static LdindOpCodesDictionary Instance
-    {
-        get { return dict; }
+        public static OpCode EmptyOpCode
+        {
+            get { return emptyOpCode; }
+        }
+
+        public static LdindOpCodesDictionary Instance
+        {
+            get { return dict; }
+        }
     }
 }

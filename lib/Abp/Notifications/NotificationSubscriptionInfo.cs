@@ -56,31 +56,31 @@ namespace Abp.Notifications
         /// </summary>
         [StringLength(NotificationInfo.MaxTargetNotifiersLength)]
         public virtual string TargetNotifiers { get; set; }
-
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationSubscriptionInfo"/> class.
         /// </summary>
-        public NotificationSubscriptionInfo() { }
+        public NotificationSubscriptionInfo()
+        {
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationSubscriptionInfo"/> class.
         /// </summary>
         public NotificationSubscriptionInfo(
-            Guid id,
-            int? tenantId,
-            long userId,
-            string notificationName,
+            Guid id, 
+            int? tenantId, 
+            long userId, 
+            string notificationName, 
             EntityIdentifier entityIdentifier = null,
-            string targetNotifiers = null
-        )
+            string targetNotifiers = null)
         {
             Id = id;
             TenantId = tenantId;
             NotificationName = notificationName;
             UserId = userId;
             EntityTypeName = entityIdentifier == null ? null : entityIdentifier.Type.FullName;
-            EntityTypeAssemblyQualifiedName =
-                entityIdentifier == null ? null : entityIdentifier.Type.AssemblyQualifiedName;
+            EntityTypeAssemblyQualifiedName = entityIdentifier == null ? null : entityIdentifier.Type.AssemblyQualifiedName;
             EntityId = entityIdentifier == null ? null : entityIdentifier.Id.ToJsonString();
             TargetNotifiers = targetNotifiers;
         }

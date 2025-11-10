@@ -22,15 +22,14 @@ namespace Abp.Domain.Values
             IEnumerator<object> otherValues = other.GetAtomicValues().GetEnumerator();
             while (thisValues.MoveNext() && otherValues.MoveNext())
             {
-                if (
-                    ReferenceEquals(thisValues.Current, null)
-                    ^ ReferenceEquals(otherValues.Current, null)
-                )
+                if (ReferenceEquals(thisValues.Current, null) ^
+                    ReferenceEquals(otherValues.Current, null))
                 {
                     return false;
                 }
 
-                if (thisValues.Current != null && !thisValues.Current.Equals(otherValues.Current))
+                if (thisValues.Current != null &&
+                    !thisValues.Current.Equals(otherValues.Current))
                 {
                     return false;
                 }

@@ -12,13 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Serialization;
-
-internal static class ProxyTypeConstants
+namespace Castle.DynamicProxy.Serialization
 {
-    public static readonly string Class = "class";
-    public static readonly string ClassWithTarget = "class.with.target";
-    public static readonly string InterfaceWithTarget = "interface.with.target";
-    public static readonly string InterfaceWithTargetInterface = "interface.with.target.interface";
-    public static readonly string InterfaceWithoutTarget = "interface.without.target";
+    internal static class ProxyTypeConstants
+    {
+        public static readonly string Class = "class";
+        public static readonly string ClassWithTarget = "class.with.target";
+        public static readonly string InterfaceWithTarget = "interface.with.target";
+        public static readonly string InterfaceWithTargetInterface =
+            "interface.with.target.interface";
+        public static readonly string InterfaceWithoutTarget = "interface.without.target";
+    }
 }

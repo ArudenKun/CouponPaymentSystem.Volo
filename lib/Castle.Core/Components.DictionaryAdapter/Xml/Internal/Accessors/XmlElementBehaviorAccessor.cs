@@ -12,124 +12,129 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-using System.Xml.Serialization;
-
-public class XmlElementBehaviorAccessor
-    : XmlNodeAccessor,
-        IConfigurable<XmlElementAttribute>,
-        IXmlBehaviorSemantics<XmlElementAttribute>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private ItemAccessor itemAccessor;
-    private List<XmlElementAttribute> attributes;
+    using System;
+    using System.Collections.Generic;
+    using System.Xml.Serialization;
 
-    internal static readonly XmlAccessorFactory<XmlElementBehaviorAccessor> Factory = (
-        name,
-        type,
-        context
-    ) => new XmlElementBehaviorAccessor(name, type, context);
-
-    public XmlElementBehaviorAccessor(string name, Type type, IXmlContext context)
-        : base(name, type, context) { }
-
-    public void Configure(XmlElementAttribute attribute)
+    public class XmlElementBehaviorAccessor
+        : XmlNodeAccessor,
+            IConfigurable<XmlElementAttribute>,
+            IXmlBehaviorSemantics<XmlElementAttribute>
     {
-        if (attribute.Type == null)
+        private ItemAccessor itemAccessor;
+        private List<XmlElementAttribute> attributes;
+
+        internal static readonly XmlAccessorFactory<XmlElementBehaviorAccessor> Factory = (
+            name,
+            type,
+            context
+        ) => new XmlElementBehaviorAccessor(name, type, context);
+
+        public XmlElementBehaviorAccessor(string name, Type type, IXmlContext context)
+            : base(name, type, context) { }
+
+        public void Configure(XmlElementAttribute attribute)
         {
-            ConfigureLocalName(attribute.ElementName);
-            ConfigureNamespaceUri(attribute.Namespace);
-            ConfigureNillable(attribute.IsNullable);
-        }
-        else
-        {
-            if (attributes == null)
-                attributes = new List<XmlElementAttribute>();
-            attributes.Add(attribute);
-        }
-    }
-
-    public override void Prepare()
-    {
-        if (attributes != null)
-        {
-            ConfigureKnownTypesFromAttributes(attributes, this);
-            attributes = null;
-        }
-        base.Prepare();
-    }
-
-    public override void SetValue(
-        IXmlCursor cursor,
-        IDictionaryAdapter parentObject,
-        XmlReferenceManager references,
-        bool hasCurrent,
-        object oldValue,
-        ref object newValue
-    )
-    {
-        if (newValue == null && IsCollection)
-            base.RemoveCollectionItems(cursor, references, oldValue);
-        else
-            base.SetValue(cursor, parentObject, references, hasCurrent, oldValue, ref newValue);
-    }
-
-    public override IXmlCollectionAccessor GetCollectionAccessor(Type itemType)
-    {
-        return itemAccessor ?? (itemAccessor = new ItemAccessor(this));
-    }
-
-    public override IXmlCursor SelectPropertyNode(IXmlNode node, bool mutable)
-    {
-        return node.SelectChildren(KnownTypes, Context, CursorFlags.Elements.MutableIf(mutable));
-    }
-
-    public override IXmlCursor SelectCollectionNode(IXmlNode node, bool mutable)
-    {
-        return node.SelectSelf(ClrType);
-    }
-
-    public string GetLocalName(XmlElementAttribute attribute)
-    {
-        return attribute.ElementName;
-    }
-
-    public string GetNamespaceUri(XmlElementAttribute attribute)
-    {
-        return attribute.Namespace;
-    }
-
-    public Type GetClrType(XmlElementAttribute attribute)
-    {
-        return attribute.Type;
-    }
-
-    private class ItemAccessor : XmlNodeAccessor
-    {
-        public ItemAccessor(XmlNodeAccessor parent)
-            : base(parent.ClrType.GetCollectionItemType(), parent.Context)
-        {
-            ConfigureLocalName(parent.Name.LocalName);
-            ConfigureNamespaceUri(parent.Name.NamespaceUri);
-            ConfigureNillable(parent.IsNillable);
-            ConfigureReference(parent.IsReference);
-            ConfigureKnownTypesFromParent(parent);
+            if (attribute.Type == null)
+            {
+                ConfigureLocalName(attribute.ElementName);
+                ConfigureNamespaceUri(attribute.Namespace);
+                ConfigureNillable(attribute.IsNullable);
+            }
+            else
+            {
+                if (attributes == null)
+                    attributes = new List<XmlElementAttribute>();
+                attributes.Add(attribute);
+            }
         }
 
         public override void Prepare()
         {
-            // Don't prepare; parent already did it
+            if (attributes != null)
+            {
+                ConfigureKnownTypesFromAttributes(attributes, this);
+                attributes = null;
+            }
+            base.Prepare();
         }
 
-        public override IXmlCursor SelectCollectionItems(IXmlNode node, bool mutable)
+        public override void SetValue(
+            IXmlCursor cursor,
+            IDictionaryAdapter parentObject,
+            XmlReferenceManager references,
+            bool hasCurrent,
+            object oldValue,
+            ref object newValue
+        )
+        {
+            if (newValue == null && IsCollection)
+                base.RemoveCollectionItems(cursor, references, oldValue);
+            else
+                base.SetValue(cursor, parentObject, references, hasCurrent, oldValue, ref newValue);
+        }
+
+        public override IXmlCollectionAccessor GetCollectionAccessor(Type itemType)
+        {
+            return itemAccessor ?? (itemAccessor = new ItemAccessor(this));
+        }
+
+        public override IXmlCursor SelectPropertyNode(IXmlNode node, bool mutable)
         {
             return node.SelectChildren(
                 KnownTypes,
                 Context,
-                CursorFlags.Elements.MutableIf(mutable) | CursorFlags.Multiple
+                CursorFlags.Elements.MutableIf(mutable)
             );
+        }
+
+        public override IXmlCursor SelectCollectionNode(IXmlNode node, bool mutable)
+        {
+            return node.SelectSelf(ClrType);
+        }
+
+        public string GetLocalName(XmlElementAttribute attribute)
+        {
+            return attribute.ElementName;
+        }
+
+        public string GetNamespaceUri(XmlElementAttribute attribute)
+        {
+            return attribute.Namespace;
+        }
+
+        public Type GetClrType(XmlElementAttribute attribute)
+        {
+            return attribute.Type;
+        }
+
+        private class ItemAccessor : XmlNodeAccessor
+        {
+            public ItemAccessor(XmlNodeAccessor parent)
+                : base(parent.ClrType.GetCollectionItemType(), parent.Context)
+            {
+                ConfigureLocalName(parent.Name.LocalName);
+                ConfigureNamespaceUri(parent.Name.NamespaceUri);
+                ConfigureNillable(parent.IsNillable);
+                ConfigureReference(parent.IsReference);
+                ConfigureKnownTypesFromParent(parent);
+            }
+
+            public override void Prepare()
+            {
+                // Don't prepare; parent already did it
+            }
+
+            public override IXmlCursor SelectCollectionItems(IXmlNode node, bool mutable)
+            {
+                return node.SelectChildren(
+                    KnownTypes,
+                    Context,
+                    CursorFlags.Elements.MutableIf(mutable) | CursorFlags.Multiple
+                );
+            }
         }
     }
 }

@@ -22,31 +22,34 @@ namespace Abp.Domain.Entities
         /// <summary>
         /// Creates a new <see cref="EntityNotFoundException"/> object.
         /// </summary>
-        public EntityNotFoundException() { }
+        public EntityNotFoundException()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="EntityNotFoundException"/> object.
         /// </summary>
-        public EntityNotFoundException(
-            SerializationInfo serializationInfo,
-            StreamingContext context
-        )
-            : base(serializationInfo, context) { }
+        public EntityNotFoundException(SerializationInfo serializationInfo, StreamingContext context)
+            : base(serializationInfo, context)
+        {
 
+        }
+        
         /// <summary>
         /// Creates a new <see cref="EntityNotFoundException"/> object.
         /// </summary>
         public EntityNotFoundException(Type entityType, object id)
-            : this(entityType, id, null) { }
+            : this(entityType, id, null)
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="EntityNotFoundException"/> object.
         /// </summary>
         public EntityNotFoundException(Type entityType, object id, Exception innerException)
-            : base(
-                $"There is no such an entity. Entity type: {entityType.FullName}, id: {id}",
-                innerException
-            )
+            : base($"There is no such an entity. Entity type: {entityType.FullName}, id: {id}", innerException)
         {
             EntityType = entityType;
             Id = id;
@@ -57,7 +60,10 @@ namespace Abp.Domain.Entities
         /// </summary>
         /// <param name="message">Exception message</param>
         public EntityNotFoundException(string message)
-            : base(message) { }
+            : base(message)
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="EntityNotFoundException"/> object.
@@ -65,6 +71,9 @@ namespace Abp.Domain.Entities
         /// <param name="message">Exception message</param>
         /// <param name="innerException">Inner exception</param>
         public EntityNotFoundException(string message, Exception innerException)
-            : base(message, innerException) { }
+            : base(message, innerException)
+        {
+
+        }
     }
 }

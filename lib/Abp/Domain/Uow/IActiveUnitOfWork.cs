@@ -41,7 +41,7 @@ namespace Abp.Domain.Uow
         /// Gets audit field configurations for this unit of work.
         /// </summary>
         IReadOnlyList<AuditFieldConfiguration> AuditFieldConfiguration { get; }
-
+        
         /// <summary>
         /// A dictionary to use for custom operations on unitOfWork
         /// </summary>
@@ -56,7 +56,7 @@ namespace Abp.Domain.Uow
         /// Saves all changes until now in this unit of work.
         /// This method may be called to apply changes whenever needed.
         /// Note that if this unit of work is transactional, saved changes are also rolled back if transaction is rolled back.
-        /// No explicit call is needed to SaveChanges generally,
+        /// No explicit call is needed to SaveChanges generally, 
         /// since all changes saved at end of a unit of work automatically.
         /// </summary>
         void SaveChanges();
@@ -65,14 +65,14 @@ namespace Abp.Domain.Uow
         /// Saves all changes until now in this unit of work.
         /// This method may be called to apply changes whenever needed.
         /// Note that if this unit of work is transactional, saved changes are also rolled back if transaction is rolled back.
-        /// No explicit call is needed to SaveChanges generally,
+        /// No explicit call is needed to SaveChanges generally, 
         /// since all changes saved at end of a unit of work automatically.
         /// </summary>
         Task SaveChangesAsync();
 
         /// <summary>
         /// Disables one or more data filters.
-        /// Does nothing for a filter if it's already disabled.
+        /// Does nothing for a filter if it's already disabled. 
         /// Use this method in a using statement to re-enable filters if needed.
         /// </summary>
         /// <param name="filterNames">One or more filter names. <see cref="AbpDataFilters"/> for standard filters.</param>
@@ -108,14 +108,14 @@ namespace Abp.Domain.Uow
         /// <param name="fieldNames">One or more audit field names. <see cref="AbpAuditFields"/> for standard fields.</param>
         /// <returns>A <see cref="IDisposable"/> handle to take back the disable effect.</returns>
         IDisposable DisableAuditing(params string[] fieldNames);
-
+        
         /// <summary>
         /// Enables automatic saving for one or more audit fields.
         /// </summary>
         /// <param name="fieldNames">One or more audit field names. <see cref="AbpAuditFields"/> for standard fields.</param>
         /// <returns>A <see cref="IDisposable"/> handle to take back the enable effect.</returns>
         IDisposable EnableAuditing(params string[] fieldNames);
-
+        
         /// <summary>
         /// Sets/Changes Tenant's Id for this UOW.
         /// </summary>

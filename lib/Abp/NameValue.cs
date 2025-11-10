@@ -11,7 +11,10 @@ namespace Abp
         /// <summary>
         /// Creates a new <see cref="NameValue"/>.
         /// </summary>
-        public NameValue() { }
+        public NameValue()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="NameValue"/>.
@@ -42,7 +45,10 @@ namespace Abp
         /// <summary>
         /// Creates a new <see cref="NameValue"/>.
         /// </summary>
-        public NameValue() { }
+        public NameValue()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="NameValue"/>.

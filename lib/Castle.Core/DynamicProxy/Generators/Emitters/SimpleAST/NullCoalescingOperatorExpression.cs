@@ -12,40 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection.Emit;
-
-internal class NullCoalescingOperatorExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly IExpression @default;
-    private readonly IExpression expression;
+    using System;
+    using System.Reflection.Emit;
 
-    public NullCoalescingOperatorExpression(IExpression expression, IExpression @default)
+    internal class NullCoalescingOperatorExpression : IExpression
     {
-        if (expression == null)
+        private readonly IExpression @default;
+        private readonly IExpression expression;
+
+        public NullCoalescingOperatorExpression(IExpression expression, IExpression @default)
         {
-            throw new ArgumentNullException(nameof(expression));
+            if (expression == null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (@default == null)
+            {
+                throw new ArgumentNullException(nameof(@default));
+            }
+
+            this.expression = expression;
+            this.@default = @default;
         }
 
-        if (@default == null)
+        public void Emit(ILGenerator gen)
         {
-            throw new ArgumentNullException(nameof(@default));
+            expression.Emit(gen);
+            gen.Emit(OpCodes.Dup);
+            var label = gen.DefineLabel();
+            gen.Emit(OpCodes.Brtrue_S, label);
+            gen.Emit(OpCodes.Pop);
+            @default.Emit(gen);
+            gen.MarkLabel(label);
         }
-
-        this.expression = expression;
-        this.@default = @default;
-    }
-
-    public void Emit(ILGenerator gen)
-    {
-        expression.Emit(gen);
-        gen.Emit(OpCodes.Dup);
-        var label = gen.DefineLabel();
-        gen.Emit(OpCodes.Brtrue_S, label);
-        gen.Emit(OpCodes.Pop);
-        @default.Emit(gen);
-        gen.MarkLabel(label);
     }
 }

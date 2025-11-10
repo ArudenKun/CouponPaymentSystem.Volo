@@ -33,16 +33,12 @@ namespace Abp.Timing.Timezone
                 return date;
             }
 
-            var usersTimezone = _settingManager.GetSettingValueForUser(
-                TimingSettingNames.TimeZone,
-                tenantId,
-                userId
-            );
-            if (string.IsNullOrEmpty(usersTimezone))
+            var usersTimezone = _settingManager.GetSettingValueForUser(TimingSettingNames.TimeZone, tenantId, userId);
+            if(string.IsNullOrEmpty(usersTimezone))
             {
                 return date;
             }
-
+            
             return TimezoneHelper.ConvertFromUtc(date.Value.ToUniversalTime(), usersTimezone);
         }
 
@@ -59,10 +55,7 @@ namespace Abp.Timing.Timezone
                 return date;
             }
 
-            var tenantsTimezone = _settingManager.GetSettingValueForTenant(
-                TimingSettingNames.TimeZone,
-                tenantId
-            );
+            var tenantsTimezone = _settingManager.GetSettingValueForTenant(TimingSettingNames.TimeZone, tenantId);
             if (string.IsNullOrEmpty(tenantsTimezone))
             {
                 return date;
@@ -70,7 +63,7 @@ namespace Abp.Timing.Timezone
 
             return TimezoneHelper.ConvertFromUtc(date.Value.ToUniversalTime(), tenantsTimezone);
         }
-
+        
         /// <inheritdoc/>
         public DateTime? Convert(DateTime? date)
         {
@@ -84,18 +77,13 @@ namespace Abp.Timing.Timezone
                 return date;
             }
 
-            var applicationsTimezone = _settingManager.GetSettingValueForApplication(
-                TimingSettingNames.TimeZone
-            );
+            var applicationsTimezone = _settingManager.GetSettingValueForApplication(TimingSettingNames.TimeZone);
             if (string.IsNullOrEmpty(applicationsTimezone))
             {
                 return date;
             }
 
-            return TimezoneHelper.ConvertFromUtc(
-                date.Value.ToUniversalTime(),
-                applicationsTimezone
-            );
+            return TimezoneHelper.ConvertFromUtc(date.Value.ToUniversalTime(), applicationsTimezone);
         }
     }
 }

@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Collections.Generic;
-using System.Reflection.Emit;
-
-internal class BlockStatement : IStatement
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly List<IStatement> statements = new List<IStatement>();
+    using System.Collections.Generic;
+    using System.Reflection.Emit;
 
-    public void AddStatement(IStatement statement)
+    internal class BlockStatement : IStatement
     {
-        statements.Add(statement);
-    }
+        private readonly List<IStatement> statements = new List<IStatement>();
 
-    public void Emit(ILGenerator gen)
-    {
-        foreach (var s in statements)
+        public void AddStatement(IStatement statement)
         {
-            s.Emit(gen);
+            statements.Add(statement);
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            foreach (var s in statements)
+            {
+                s.Emit(gen);
+            }
         }
     }
 }

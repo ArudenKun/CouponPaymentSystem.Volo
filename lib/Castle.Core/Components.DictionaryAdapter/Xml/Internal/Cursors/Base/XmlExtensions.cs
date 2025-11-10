@@ -12,34 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml;
-
-internal static class XmlExtensions
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static bool PositionEquals(this IXmlNode nodeA, IXmlNode nodeB)
-    {
-        return XmlPositionComparer.Instance.Equals(nodeA, nodeB);
-    }
+    using System;
+    using System.Xml;
 
-    public static void CopyTo(this IXmlNode source, IXmlNode target)
+    internal static class XmlExtensions
     {
-        using (var reader = source.ReadSubtree())
+        public static bool PositionEquals(this IXmlNode nodeA, IXmlNode nodeB)
         {
-            if (!reader.Read())
-                return;
+            return XmlPositionComparer.Instance.Equals(nodeA, nodeB);
+        }
 
-            using (var writer = target.WriteAttributes())
-                writer.WriteAttributes(reader, false);
+        public static void CopyTo(this IXmlNode source, IXmlNode target)
+        {
+            using (var reader = source.ReadSubtree())
+            {
+                if (!reader.Read())
+                    return;
 
-            if (!reader.Read())
-                return;
+                using (var writer = target.WriteAttributes())
+                    writer.WriteAttributes(reader, false);
 
-            using (var writer = target.WriteChildren())
-                do writer.WriteNode(reader, false);
-                while (!(reader.EOF || reader.NodeType == XmlNodeType.EndElement));
+                if (!reader.Read())
+                    return;
+
+                using (var writer = target.WriteChildren())
+                    do writer.WriteNode(reader, false);
+                    while (!(reader.EOF || reader.NodeType == XmlNodeType.EndElement));
+            }
         }
     }
 }

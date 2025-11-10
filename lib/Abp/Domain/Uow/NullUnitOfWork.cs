@@ -9,29 +9,45 @@ namespace Abp.Domain.Uow
     /// </summary>
     public sealed class NullUnitOfWork : UnitOfWorkBase
     {
-        public override void SaveChanges() { }
+        public override void SaveChanges()
+        {
+
+        }
 
         public override Task SaveChangesAsync()
         {
             return Task.FromResult(0);
         }
 
-        protected override void BeginUow() { }
+        protected override void BeginUow()
+        {
 
-        protected override void CompleteUow() { }
+        }
+
+        protected override void CompleteUow()
+        {
+
+        }
 
         protected override Task CompleteUowAsync()
         {
             return Task.FromResult(0);
         }
 
-        protected override void DisposeUow() { }
+        protected override void DisposeUow()
+        {
+
+        }
 
         public NullUnitOfWork(
             IConnectionStringResolver connectionStringResolver,
             IUnitOfWorkDefaultOptions defaultOptions,
             IUnitOfWorkFilterExecuter filterExecuter
-        )
-            : base(connectionStringResolver, defaultOptions, filterExecuter) { }
+            ) : base(
+                connectionStringResolver,
+                defaultOptions,
+                filterExecuter)
+        {
+        }
     }
 }

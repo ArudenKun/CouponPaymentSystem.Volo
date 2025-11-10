@@ -12,45 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
-public class XPathAttribute : Attribute
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly CompiledXPath getPath;
-    private readonly CompiledXPath setPath;
+    using System;
 
-    public XPathAttribute(string path)
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
+    public class XPathAttribute : Attribute
     {
-        if (path == null)
-            throw Error.ArgumentNull(nameof(path));
+        private readonly CompiledXPath getPath;
+        private readonly CompiledXPath setPath;
 
-        this.getPath = XPathCompiler.Compile(path);
-        this.setPath = this.getPath;
+        public XPathAttribute(string path)
+        {
+            if (path == null)
+                throw Error.ArgumentNull(nameof(path));
+
+            this.getPath = XPathCompiler.Compile(path);
+            this.setPath = this.getPath;
+        }
+
+        public XPathAttribute(string get, string set)
+        {
+            if (get == null)
+                throw Error.ArgumentNull(nameof(get));
+            if (set == null)
+                throw Error.ArgumentNull(nameof(set));
+
+            this.getPath = XPathCompiler.Compile(get);
+            this.setPath = XPathCompiler.Compile(set);
+        }
+
+        public CompiledXPath GetPath
+        {
+            get { return getPath; }
+        }
+
+        public CompiledXPath SetPath
+        {
+            get { return setPath; }
+        }
+
+        public bool Nullable { get; set; }
     }
-
-    public XPathAttribute(string get, string set)
-    {
-        if (get == null)
-            throw Error.ArgumentNull(nameof(get));
-        if (set == null)
-            throw Error.ArgumentNull(nameof(set));
-
-        this.getPath = XPathCompiler.Compile(get);
-        this.setPath = XPathCompiler.Compile(set);
-    }
-
-    public CompiledXPath GetPath
-    {
-        get { return getPath; }
-    }
-
-    public CompiledXPath SetPath
-    {
-        get { return setPath; }
-    }
-
-    public bool Nullable { get; set; }
 }

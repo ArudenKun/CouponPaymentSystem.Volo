@@ -21,7 +21,7 @@ namespace Abp.EntityHistory
             {
                 typeof(EntityChangeSet),
                 typeof(EntityChange),
-                typeof(EntityPropertyChange),
+                typeof(EntityPropertyChange)
             };
         }
     }

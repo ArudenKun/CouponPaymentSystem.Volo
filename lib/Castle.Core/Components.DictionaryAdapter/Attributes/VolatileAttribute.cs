@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
+namespace Castle.Components.DictionaryAdapter
+{
+    using System;
 
-using System;
-
-/// <summary>
-/// Indicates that underlying values are changeable and should not be cached.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
-public class VolatileAttribute : Attribute { }
+    /// <summary>
+    /// Indicates that underlying values are changeable and should not be cached.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
+    public class VolatileAttribute : Attribute { }
+}

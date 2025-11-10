@@ -8,10 +8,7 @@ namespace Abp.Application.Features
     /// <summary>
     /// Implements <see cref="IFeatureManager"/>.
     /// </summary>
-    internal class FeatureManager
-        : FeatureDefinitionContextBase,
-            IFeatureManager,
-            ISingletonDependency
+    internal class FeatureManager : FeatureDefinitionContextBase, IFeatureManager, ISingletonDependency
     {
         private readonly IIocManager _iocManager;
         private readonly IFeatureConfiguration _featureConfiguration;
@@ -66,9 +63,7 @@ namespace Abp.Application.Features
             return Features.Values.ToImmutableList();
         }
 
-        private IDisposableDependencyObjectWrapper<FeatureProvider> CreateProvider(
-            Type providerType
-        )
+        private IDisposableDependencyObjectWrapper<FeatureProvider> CreateProvider(Type providerType)
         {
             return _iocManager.ResolveAsDisposable<FeatureProvider>(providerType);
         }

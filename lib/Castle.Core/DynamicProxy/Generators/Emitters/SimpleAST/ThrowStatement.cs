@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class ThrowStatement : IStatement
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly string errorMessage;
-    private readonly Type exceptionType;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public ThrowStatement(Type exceptionType, string errorMessage)
+    internal class ThrowStatement : IStatement
     {
-        this.exceptionType = exceptionType;
-        this.errorMessage = errorMessage;
-    }
+        private readonly string errorMessage;
+        private readonly Type exceptionType;
 
-    public void Emit(ILGenerator gen)
-    {
-        var ci = exceptionType.GetConstructor(new[] { typeof(string) });
-        var message = new LiteralStringExpression(errorMessage);
+        public ThrowStatement(Type exceptionType, string errorMessage)
+        {
+            this.exceptionType = exceptionType;
+            this.errorMessage = errorMessage;
+        }
 
-        var creationStmt = new NewInstanceExpression(ci, message);
+        public void Emit(ILGenerator gen)
+        {
+            var ci = exceptionType.GetConstructor(new[] { typeof(string) });
+            var message = new LiteralStringExpression(errorMessage);
 
-        creationStmt.Emit(gen);
+            var creationStmt = new NewInstanceExpression(ci, message);
 
-        gen.Emit(OpCodes.Throw);
+            creationStmt.Emit(gen);
+
+            gen.Emit(OpCodes.Throw);
+        }
     }
 }

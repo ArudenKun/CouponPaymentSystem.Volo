@@ -88,8 +88,7 @@ namespace Abp.Configuration
             bool isInherited = true,
             object customData = null,
             ISettingClientVisibilityProvider clientVisibilityProvider = null,
-            bool isEncrypted = false
-        )
+            bool isEncrypted = false)
         {
             if (string.IsNullOrEmpty(name))
             {

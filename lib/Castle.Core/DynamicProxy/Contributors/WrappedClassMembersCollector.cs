@@ -12,70 +12,71 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Internal;
-
-internal class WrappedClassMembersCollector : ClassMembersCollector
+namespace Castle.DynamicProxy.Contributors
 {
-    public WrappedClassMembersCollector(Type type)
-        : base(type) { }
+    using System;
+    using System.Reflection;
+    using System.Runtime.CompilerServices;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Internal;
 
-    public override void CollectMembersToProxy(
-        IProxyGenerationHook hook,
-        IMembersCollectorSink sink
-    )
+    internal class WrappedClassMembersCollector : ClassMembersCollector
     {
-        base.CollectMembersToProxy(hook, sink);
-        CollectFields(hook);
-        // TODO: perhaps we should also look for nested classes...
-    }
+        public WrappedClassMembersCollector(Type type)
+            : base(type) { }
 
-    protected override MetaMethod GetMethodToGenerate(
-        MethodInfo method,
-        IProxyGenerationHook hook,
-        bool isStandalone
-    )
-    {
-        var interceptable = AcceptMethodPreScreen(method, true, hook);
-        if (!interceptable)
+        public override void CollectMembersToProxy(
+            IProxyGenerationHook hook,
+            IMembersCollectorSink sink
+        )
         {
-            //we don't need to do anything...
-            return null;
+            base.CollectMembersToProxy(hook, sink);
+            CollectFields(hook);
+            // TODO: perhaps we should also look for nested classes...
         }
 
-        var accepted = hook.ShouldInterceptMethod(type, method);
-
-        return new MetaMethod(method, method, isStandalone, accepted, hasTarget: true);
-    }
-
-    protected bool IsGeneratedByTheCompiler(FieldInfo field)
-    {
-        // for example fields backing autoproperties
-        return field.IsDefined(typeof(CompilerGeneratedAttribute));
-    }
-
-    protected virtual bool IsOKToBeOnProxy(FieldInfo field)
-    {
-        return IsGeneratedByTheCompiler(field);
-    }
-
-    private void CollectFields(IProxyGenerationHook hook)
-    {
-        var fields = type.GetAllFields();
-        foreach (var field in fields)
+        protected override MetaMethod GetMethodToGenerate(
+            MethodInfo method,
+            IProxyGenerationHook hook,
+            bool isStandalone
+        )
         {
-            if (IsOKToBeOnProxy(field))
+            var interceptable = AcceptMethodPreScreen(method, true, hook);
+            if (!interceptable)
             {
-                continue;
+                //we don't need to do anything...
+                return null;
             }
 
-            hook.NonProxyableMemberNotification(type, field);
+            var accepted = hook.ShouldInterceptMethod(type, method);
+
+            return new MetaMethod(method, method, isStandalone, accepted, hasTarget: true);
+        }
+
+        protected bool IsGeneratedByTheCompiler(FieldInfo field)
+        {
+            // for example fields backing autoproperties
+            return field.IsDefined(typeof(CompilerGeneratedAttribute));
+        }
+
+        protected virtual bool IsOKToBeOnProxy(FieldInfo field)
+        {
+            return IsGeneratedByTheCompiler(field);
+        }
+
+        private void CollectFields(IProxyGenerationHook hook)
+        {
+            var fields = type.GetAllFields();
+            foreach (var field in fields)
+            {
+                if (IsOKToBeOnProxy(field))
+                {
+                    continue;
+                }
+
+                hook.NonProxyableMemberNotification(type, field);
+            }
         }
     }
 }

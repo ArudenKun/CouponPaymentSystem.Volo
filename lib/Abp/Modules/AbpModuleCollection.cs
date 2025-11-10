@@ -22,8 +22,7 @@ namespace Abp.Modules
         /// </summary>
         /// <typeparam name="TModule">Module type</typeparam>
         /// <returns>Reference to the module instance</returns>
-        public TModule GetModule<TModule>()
-            where TModule : AbpModule
+        public TModule GetModule<TModule>() where TModule : AbpModule
         {
             var module = this.FirstOrDefault(m => m.Type == typeof(TModule));
             if (module == null)
@@ -61,10 +60,7 @@ namespace Abp.Modules
             modules.Insert(0, kernelModule);
         }
 
-        public static void EnsureStartupModuleToBeLast(
-            List<AbpModuleInfo> modules,
-            Type startupModuleType
-        )
+        public static void EnsureStartupModuleToBeLast(List<AbpModuleInfo> modules, Type startupModuleType)
         {
             var startupModuleIndex = modules.FindIndex(m => m.Type == startupModuleType);
             if (startupModuleIndex >= modules.Count - 1)

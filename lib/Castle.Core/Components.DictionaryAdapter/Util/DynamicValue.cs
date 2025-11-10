@@ -12,24 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-public abstract class DynamicValue<T> : IDynamicValue<T>
+namespace Castle.Components.DictionaryAdapter
 {
-    object IDynamicValue.GetValue()
+    public abstract class DynamicValue<T> : IDynamicValue<T>
     {
-        return Value;
-    }
-
-    public abstract T Value { get; }
-
-    public override string ToString()
-    {
-        var value = Value;
-        if (value != null)
+        object IDynamicValue.GetValue()
         {
-            return value.ToString();
+            return Value;
         }
-        return base.ToString();
+
+        public abstract T Value { get; }
+
+        public override string ToString()
+        {
+            var value = Value;
+            if (value != null)
+            {
+                return value.ToString();
+            }
+            return base.ToString();
+        }
     }
 }

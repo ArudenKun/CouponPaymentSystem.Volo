@@ -14,7 +14,7 @@ namespace Abp.Authorization
         /// Collects and gets all permissions in given providers.
         /// This method can be used to get permissions in database migrations or in unit tests where Abp is not initialized.
         /// Otherwise, use <see cref="IPermissionManager.GetAllPermissions(bool)"/> method.
-        ///
+        /// 
         /// </summary>
         /// <param name="authorizationProviders">Authorization providers</param>
         /// <returns>List of permissions</returns>
@@ -23,9 +23,7 @@ namespace Abp.Authorization
         /// calls <see cref="AuthorizationProvider.SetPermissions"/> to build permission list.
         /// So, providers should not use dependency injection.
         /// </remarks>
-        public static IReadOnlyList<Permission> GetAllPermissions(
-            params AuthorizationProvider[] authorizationProviders
-        )
+        public static IReadOnlyList<Permission> GetAllPermissions(params AuthorizationProvider[] authorizationProviders)
         {
             return new InternalPermissionFinder(authorizationProviders).GetAllPermissions();
         }

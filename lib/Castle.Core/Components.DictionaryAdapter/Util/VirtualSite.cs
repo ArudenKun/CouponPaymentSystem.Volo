@@ -12,62 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections.Generic;
-using Castle.Core;
-
-public sealed class VirtualSite<TNode, TMember>
-    : IVirtualSite<TNode>,
-        IEquatable<VirtualSite<TNode, TMember>>
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly IVirtualTarget<TNode, TMember> target;
-    private readonly TMember member;
+    using System;
+    using System.Collections.Generic;
+    using Castle.Core;
 
-    public VirtualSite(IVirtualTarget<TNode, TMember> target, TMember member)
+    public sealed class VirtualSite<TNode, TMember>
+        : IVirtualSite<TNode>,
+            IEquatable<VirtualSite<TNode, TMember>>
     {
-        this.target = target;
-        this.member = member;
+        private readonly IVirtualTarget<TNode, TMember> target;
+        private readonly TMember member;
+
+        public VirtualSite(IVirtualTarget<TNode, TMember> target, TMember member)
+        {
+            this.target = target;
+            this.member = member;
+        }
+
+        public IVirtualTarget<TNode, TMember> Target
+        {
+            get { return target; }
+        }
+
+        public TMember Member
+        {
+            get { return member; }
+        }
+
+        public void OnRealizing(TNode node)
+        {
+            target.OnRealizing(node, member);
+        }
+
+        public override bool Equals(object obj)
+        {
+            return Equals(obj as VirtualSite<TNode, TMember>);
+        }
+
+        public bool Equals(VirtualSite<TNode, TMember> other)
+        {
+            return other != null
+                && TargetComparer.Equals(target, other.target)
+                && MemberComparer.Equals(member, other.member);
+        }
+
+        public override int GetHashCode()
+        {
+            return 0x72F10A3D
+                + 37 * TargetComparer.GetHashCode(target)
+                + 37 * MemberComparer.GetHashCode(member);
+        }
+
+        private static readonly IEqualityComparer<IVirtualTarget<TNode, TMember>> TargetComparer =
+            ReferenceEqualityComparer<IVirtualTarget<TNode, TMember>>.Instance;
+
+        private static readonly IEqualityComparer<TMember> MemberComparer =
+            EqualityComparer<TMember>.Default;
     }
-
-    public IVirtualTarget<TNode, TMember> Target
-    {
-        get { return target; }
-    }
-
-    public TMember Member
-    {
-        get { return member; }
-    }
-
-    public void OnRealizing(TNode node)
-    {
-        target.OnRealizing(node, member);
-    }
-
-    public override bool Equals(object obj)
-    {
-        return Equals(obj as VirtualSite<TNode, TMember>);
-    }
-
-    public bool Equals(VirtualSite<TNode, TMember> other)
-    {
-        return other != null
-            && TargetComparer.Equals(target, other.target)
-            && MemberComparer.Equals(member, other.member);
-    }
-
-    public override int GetHashCode()
-    {
-        return 0x72F10A3D
-            + 37 * TargetComparer.GetHashCode(target)
-            + 37 * MemberComparer.GetHashCode(member);
-    }
-
-    private static readonly IEqualityComparer<IVirtualTarget<TNode, TMember>> TargetComparer =
-        ReferenceEqualityComparer<IVirtualTarget<TNode, TMember>>.Instance;
-
-    private static readonly IEqualityComparer<TMember> MemberComparer =
-        EqualityComparer<TMember>.Default;
 }

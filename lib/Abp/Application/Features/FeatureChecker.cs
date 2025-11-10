@@ -29,10 +29,7 @@ namespace Abp.Application.Features
         /// <summary>
         /// Creates a new <see cref="FeatureChecker"/> object.
         /// </summary>
-        public FeatureChecker(
-            IFeatureManager featureManager,
-            IMultiTenancyConfig multiTenancyConfig
-        )
+        public FeatureChecker(IFeatureManager featureManager, IMultiTenancyConfig multiTenancyConfig)
         {
             _featureManager = featureManager;
             _multiTenancyConfig = multiTenancyConfig;
@@ -46,9 +43,7 @@ namespace Abp.Application.Features
         {
             if (AbpSession.TenantId == null)
             {
-                throw new AbpException(
-                    "FeatureChecker can not get a feature value by name. TenantId is not set in the IAbpSession!"
-                );
+                throw new AbpException("FeatureChecker can not get a feature value by name. TenantId is not set in the IAbpSession!");
             }
 
             return GetValueAsync(AbpSession.TenantId.Value, name);
@@ -59,9 +54,7 @@ namespace Abp.Application.Features
         {
             if (AbpSession.TenantId == null)
             {
-                throw new AbpException(
-                    "FeatureChecker can not get a feature value by name. TenantId is not set in the IAbpSession!"
-                );
+                throw new AbpException("FeatureChecker can not get a feature value by name. TenantId is not set in the IAbpSession!");
             }
 
             return GetValue(AbpSession.TenantId.Value, name);
@@ -93,11 +86,7 @@ namespace Abp.Application.Features
                 return true;
             }
 
-            return string.Equals(
-                await GetValueAsync(featureName),
-                "true",
-                StringComparison.OrdinalIgnoreCase
-            );
+            return string.Equals(await GetValueAsync(featureName), "true", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc/>
@@ -114,21 +103,13 @@ namespace Abp.Application.Features
         /// <inheritdoc/>
         public async Task<bool> IsEnabledAsync(int tenantId, string featureName)
         {
-            return string.Equals(
-                await GetValueAsync(tenantId, featureName),
-                "true",
-                StringComparison.OrdinalIgnoreCase
-            );
+            return string.Equals(await GetValueAsync(tenantId, featureName), "true", StringComparison.OrdinalIgnoreCase);
         }
 
         /// <inheritdoc/>
         public bool IsEnabled(int tenantId, string featureName)
         {
-            return string.Equals(
-                GetValue(tenantId, featureName),
-                "true",
-                StringComparison.OrdinalIgnoreCase
-            );
+            return string.Equals(GetValue(tenantId, featureName), "true", StringComparison.OrdinalIgnoreCase);
         }
     }
 }

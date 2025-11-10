@@ -10,9 +10,7 @@ namespace Abp.DynamicEntityProperties
 
         public IDynamicPropertyValueStore DynamicPropertyValueStore { get; set; }
 
-        public DynamicPropertyValueManager(
-            IDynamicPropertyPermissionChecker dynamicPropertyPermissionChecker
-        )
+        public DynamicPropertyValueManager(IDynamicPropertyPermissionChecker dynamicPropertyPermissionChecker)
         {
             _dynamicPropertyPermissionChecker = dynamicPropertyPermissionChecker;
             DynamicPropertyValueStore = NullDynamicPropertyValueStore.Instance;
@@ -32,60 +30,46 @@ namespace Abp.DynamicEntityProperties
             return val;
         }
 
-        public virtual List<DynamicPropertyValue> GetAllValuesOfDynamicProperty(
-            int dynamicPropertyId
-        )
+        public virtual List<DynamicPropertyValue> GetAllValuesOfDynamicProperty(int dynamicPropertyId)
         {
             _dynamicPropertyPermissionChecker.CheckPermission(dynamicPropertyId);
             return DynamicPropertyValueStore.GetAllValuesOfDynamicProperty(dynamicPropertyId);
         }
 
-        public virtual async Task<List<DynamicPropertyValue>> GetAllValuesOfDynamicPropertyAsync(
-            int dynamicPropertyId
-        )
+        public virtual async Task<List<DynamicPropertyValue>> GetAllValuesOfDynamicPropertyAsync(int dynamicPropertyId)
         {
             await _dynamicPropertyPermissionChecker.CheckPermissionAsync(dynamicPropertyId);
-            return await DynamicPropertyValueStore.GetAllValuesOfDynamicPropertyAsync(
-                dynamicPropertyId
-            );
+            return await DynamicPropertyValueStore.GetAllValuesOfDynamicPropertyAsync(dynamicPropertyId);
         }
 
         public virtual void Add(DynamicPropertyValue dynamicPropertyValue)
         {
-            _dynamicPropertyPermissionChecker.CheckPermission(
-                dynamicPropertyValue.DynamicPropertyId
-            );
+            _dynamicPropertyPermissionChecker.CheckPermission(dynamicPropertyValue.DynamicPropertyId);
             DynamicPropertyValueStore.Add(dynamicPropertyValue);
         }
 
         public virtual async Task AddAsync(DynamicPropertyValue dynamicPropertyValue)
         {
-            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(
-                dynamicPropertyValue.DynamicPropertyId
-            );
+            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(dynamicPropertyValue.DynamicPropertyId);
             await DynamicPropertyValueStore.AddAsync(dynamicPropertyValue);
         }
 
         public virtual void Update(DynamicPropertyValue dynamicPropertyValue)
         {
-            _dynamicPropertyPermissionChecker.CheckPermission(
-                dynamicPropertyValue.DynamicPropertyId
-            );
+            _dynamicPropertyPermissionChecker.CheckPermission(dynamicPropertyValue.DynamicPropertyId);
             DynamicPropertyValueStore.Update(dynamicPropertyValue);
         }
 
         public virtual async Task UpdateAsync(DynamicPropertyValue dynamicPropertyValue)
         {
-            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(
-                dynamicPropertyValue.DynamicPropertyId
-            );
+            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(dynamicPropertyValue.DynamicPropertyId);
             await DynamicPropertyValueStore.UpdateAsync(dynamicPropertyValue);
         }
 
         public virtual void Delete(long id)
         {
             var val = Get(id);
-            if (val != null) //Get checks permission, no need to check it again
+            if (val != null)//Get checks permission, no need to check it again  
             {
                 DynamicPropertyValueStore.Delete(id);
             }
@@ -94,7 +78,7 @@ namespace Abp.DynamicEntityProperties
         public virtual async Task DeleteAsync(long id)
         {
             var val = await GetAsync(id);
-            if (val != null) //Get checks permission, no need to check it again
+            if (val != null)//Get checks permission, no need to check it again
             {
                 await DynamicPropertyValueStore.DeleteAsync(id);
             }

@@ -12,68 +12,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections;
-
-public abstract class XmlCollectionSerializer : XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    protected XmlCollectionSerializer() { }
+    using System;
+    using System.Collections;
 
-    public override XmlTypeKind Kind
+    public abstract class XmlCollectionSerializer : XmlTypeSerializer
     {
-        get { return XmlTypeKind.Collection; }
-    }
+        protected XmlCollectionSerializer() { }
 
-    public override bool CanGetStub
-    {
-        get { return true; }
-    }
+        public override XmlTypeKind Kind
+        {
+            get { return XmlTypeKind.Collection; }
+        }
 
-    public abstract Type ListTypeConstructor { get; // generic type constructor
-    }
+        public override bool CanGetStub
+        {
+            get { return true; }
+        }
 
-    public override object GetStub(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        return GetValueCore(node, parent, accessor);
-    }
+        public abstract Type ListTypeConstructor { get; // generic type constructor
+        }
 
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        return GetValueCore(node.Save(), parent, accessor);
-    }
+        public override object GetStub(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            return GetValueCore(node, parent, accessor);
+        }
 
-    private object GetValueCore(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        var itemType = node.ClrType.GetGenericArguments()[0];
-        var listType = ListTypeConstructor.MakeGenericType(itemType);
-        var subaccessor = accessor.GetCollectionAccessor(itemType);
-        return Activator.CreateInstance(listType, node, parent, subaccessor);
-    }
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            return GetValueCore(node.Save(), parent, accessor);
+        }
 
-    public override void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    )
-    {
-        var current = value as IXmlNodeSource;
-        if (current != null && current.Node.PositionEquals(node))
-            return;
+        private object GetValueCore(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
+        {
+            var itemType = node.ClrType.GetGenericArguments()[0];
+            var listType = ListTypeConstructor.MakeGenericType(itemType);
+            var subaccessor = accessor.GetCollectionAccessor(itemType);
+            return Activator.CreateInstance(listType, node, parent, subaccessor);
+        }
 
-        var newItems = value as IEnumerable;
-        if (newItems == null)
-            throw Error.NotSupported();
+        public override void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        )
+        {
+            var current = value as IXmlNodeSource;
+            if (current != null && current.Node.PositionEquals(node))
+                return;
 
-        var oldCollection = oldValue as ICollectionProjection;
-        if (oldCollection != null)
-            oldCollection.ClearReferences();
+            var newItems = value as IEnumerable;
+            if (newItems == null)
+                throw Error.NotSupported();
 
-        var newCollection = (ICollectionProjection)GetValue(node, parent, accessor);
-        newCollection.Replace(newItems);
-        value = newCollection;
+            var oldCollection = oldValue as ICollectionProjection;
+            if (oldCollection != null)
+                oldCollection.ClearReferences();
+
+            var newCollection = (ICollectionProjection)GetValue(node, parent, accessor);
+            newCollection.Replace(newItems);
+            value = newCollection;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 using Abp.Extensions;
 
@@ -92,7 +93,7 @@ namespace Abp
             return UserId + "@" + TenantId;
         }
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
         {
             if (obj == null || !(obj is UserIdentifier))
             {
@@ -123,6 +124,7 @@ namespace Abp
         }
 
         /// <inheritdoc/>
+        [SuppressMessage("ReSharper", "NonReadonlyMemberInGetHashCode")]
         public override int GetHashCode()
         {
             var hash = 17;

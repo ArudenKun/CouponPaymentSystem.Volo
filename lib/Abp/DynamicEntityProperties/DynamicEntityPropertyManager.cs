@@ -54,10 +54,7 @@ namespace Abp.DynamicEntityProperties
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
 
-            var entityProperty = DynamicEntityPropertyCache.Get(
-                cacheKey,
-                () => DynamicEntityPropertyStore.Get(id)
-            );
+            var entityProperty = DynamicEntityPropertyCache.Get(cacheKey, () => DynamicEntityPropertyStore.Get(id));
             _dynamicPropertyPermissionChecker.CheckPermission(entityProperty.DynamicPropertyId);
             return entityProperty;
         }
@@ -67,25 +64,17 @@ namespace Abp.DynamicEntityProperties
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
 
-            var entityProperty = await DynamicEntityPropertyCache.GetAsync(
-                cacheKey,
-                () => DynamicEntityPropertyStore.GetAsync(id)
-            );
-            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(
-                entityProperty.DynamicPropertyId
-            );
+            var entityProperty =
+                await DynamicEntityPropertyCache.GetAsync(cacheKey, () => DynamicEntityPropertyStore.GetAsync(id));
+            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(entityProperty.DynamicPropertyId);
             return entityProperty;
         }
 
         public List<DynamicEntityProperty> GetAll(string entityFullName)
         {
             var allProperties = DynamicEntityPropertyStore.GetAll(entityFullName);
-            allProperties = allProperties
-                .Where(dynamicEntityProperty =>
-                    _dynamicPropertyPermissionChecker.IsGranted(
-                        dynamicEntityProperty.DynamicPropertyId
-                    )
-                )
+            allProperties = allProperties.Where(dynamicEntityProperty =>
+                    _dynamicPropertyPermissionChecker.IsGranted(dynamicEntityProperty.DynamicPropertyId))
                 .ToList();
             return allProperties;
         }
@@ -97,11 +86,7 @@ namespace Abp.DynamicEntityProperties
             var controlledProperties = new List<DynamicEntityProperty>();
             foreach (var dynamicEntityProperty in allProperties)
             {
-                if (
-                    await _dynamicPropertyPermissionChecker.IsGrantedAsync(
-                        dynamicEntityProperty.DynamicPropertyId
-                    )
-                )
+                if (await _dynamicPropertyPermissionChecker.IsGrantedAsync(dynamicEntityProperty.DynamicPropertyId))
                 {
                     controlledProperties.Add(dynamicEntityProperty);
                 }
@@ -113,12 +98,8 @@ namespace Abp.DynamicEntityProperties
         public List<DynamicEntityProperty> GetAll()
         {
             var allProperties = DynamicEntityPropertyStore.GetAll();
-            allProperties = allProperties
-                .Where(dynamicEntityProperty =>
-                    _dynamicPropertyPermissionChecker.IsGranted(
-                        dynamicEntityProperty.DynamicPropertyId
-                    )
-                )
+            allProperties = allProperties.Where(dynamicEntityProperty =>
+                    _dynamicPropertyPermissionChecker.IsGranted(dynamicEntityProperty.DynamicPropertyId))
                 .ToList();
             return allProperties;
         }
@@ -130,11 +111,7 @@ namespace Abp.DynamicEntityProperties
             var controlledProperties = new List<DynamicEntityProperty>();
             foreach (var dynamicEntityProperty in allProperties)
             {
-                if (
-                    await _dynamicPropertyPermissionChecker.IsGrantedAsync(
-                        dynamicEntityProperty.DynamicPropertyId
-                    )
-                )
+                if (await _dynamicPropertyPermissionChecker.IsGrantedAsync(dynamicEntityProperty.DynamicPropertyId))
                 {
                     controlledProperties.Add(dynamicEntityProperty);
                 }
@@ -146,9 +123,7 @@ namespace Abp.DynamicEntityProperties
         public virtual void Add(DynamicEntityProperty dynamicEntityProperty)
         {
             CheckEntityName(dynamicEntityProperty.EntityFullName);
-            _dynamicPropertyPermissionChecker.CheckPermission(
-                dynamicEntityProperty.DynamicPropertyId
-            );
+            _dynamicPropertyPermissionChecker.CheckPermission(dynamicEntityProperty.DynamicPropertyId);
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
@@ -163,9 +138,7 @@ namespace Abp.DynamicEntityProperties
         public virtual async Task AddAsync(DynamicEntityProperty dynamicEntityProperty)
         {
             CheckEntityName(dynamicEntityProperty.EntityFullName);
-            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(
-                dynamicEntityProperty.DynamicPropertyId
-            );
+            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(dynamicEntityProperty.DynamicPropertyId);
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
@@ -180,9 +153,7 @@ namespace Abp.DynamicEntityProperties
         public virtual void Update(DynamicEntityProperty dynamicEntityProperty)
         {
             CheckEntityName(dynamicEntityProperty.EntityFullName);
-            _dynamicPropertyPermissionChecker.CheckPermission(
-                dynamicEntityProperty.DynamicPropertyId
-            );
+            _dynamicPropertyPermissionChecker.CheckPermission(dynamicEntityProperty.DynamicPropertyId);
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
@@ -197,9 +168,7 @@ namespace Abp.DynamicEntityProperties
         public virtual async Task UpdateAsync(DynamicEntityProperty dynamicEntityProperty)
         {
             CheckEntityName(dynamicEntityProperty.EntityFullName);
-            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(
-                dynamicEntityProperty.DynamicPropertyId
-            );
+            await _dynamicPropertyPermissionChecker.CheckPermissionAsync(dynamicEntityProperty.DynamicPropertyId);
 
             using (var uow = _unitOfWorkManager.Begin(TransactionScopeOption.RequiresNew))
             {
@@ -220,10 +189,10 @@ namespace Abp.DynamicEntityProperties
             }
 
             DynamicEntityPropertyStore.Delete(dynamicEntityProperty.Id);
-
+            
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
-
+            
             DynamicEntityPropertyCache.Remove(cacheKey);
         }
 
@@ -236,10 +205,10 @@ namespace Abp.DynamicEntityProperties
             }
 
             await DynamicEntityPropertyStore.DeleteAsync(dynamicEntityProperty.Id);
-
+            
             var tenantId = GetCurrentTenantId();
             var cacheKey = GetCacheKey(id, tenantId);
-
+            
             await DynamicEntityPropertyCache.RemoveAsync(cacheKey);
         }
 

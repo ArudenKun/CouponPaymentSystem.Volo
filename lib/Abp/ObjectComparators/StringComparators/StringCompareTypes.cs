@@ -7,6 +7,6 @@
         Equals,
         Contains,
         StartsWith,
-        EndsWith,
+        EndsWith
     }
 }

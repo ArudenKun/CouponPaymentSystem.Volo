@@ -11,10 +11,7 @@ namespace Abp.Localization
         {
             Check.NotNull(culture, nameof(culture));
 
-            return Use(
-                CultureInfo.GetCultureInfo(culture),
-                uiCulture == null ? null : CultureInfo.GetCultureInfo(uiCulture)
-            );
+            return Use(CultureInfo.GetCultureInfo(culture), uiCulture == null ? null : CultureInfo.GetCultureInfo(uiCulture));
         }
 
         public static IDisposable Use([NotNull] CultureInfo culture, CultureInfo uiCulture = null)

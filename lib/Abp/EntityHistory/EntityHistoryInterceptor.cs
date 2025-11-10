@@ -1,7 +1,7 @@
-﻿using System.Linq;
+﻿using Castle.DynamicProxy;
+using System.Linq;
 using System.Threading.Tasks;
 using Abp.Dependency;
-using Castle.DynamicProxy;
 
 namespace Abp.EntityHistory
 {
@@ -17,12 +17,8 @@ namespace Abp.EntityHistory
         public override void InterceptSynchronous(IInvocation invocation)
         {
             var methodInfo = invocation.MethodInvocationTarget;
-            var useCaseAttribute =
-                methodInfo.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault()
-                ?? methodInfo
-                    .DeclaringType.GetCustomAttributes(true)
-                    .OfType<UseCaseAttribute>()
-                    .FirstOrDefault();
+            var useCaseAttribute = methodInfo.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault()
+                                   ?? methodInfo.DeclaringType.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault();
 
             if (useCaseAttribute?.Description == null)
             {
@@ -41,12 +37,8 @@ namespace Abp.EntityHistory
             var proceedInfo = invocation.CaptureProceedInfo();
 
             var methodInfo = invocation.MethodInvocationTarget;
-            var useCaseAttribute =
-                methodInfo.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault()
-                ?? methodInfo
-                    .DeclaringType.GetCustomAttributes(true)
-                    .OfType<UseCaseAttribute>()
-                    .FirstOrDefault();
+            var useCaseAttribute = methodInfo.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault()
+                                   ?? methodInfo.DeclaringType.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault();
 
             if (useCaseAttribute?.Description == null)
             {
@@ -64,19 +56,13 @@ namespace Abp.EntityHistory
             }
         }
 
-        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(
-            IInvocation invocation
-        )
+        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();
 
             var methodInfo = invocation.MethodInvocationTarget;
-            var useCaseAttribute =
-                methodInfo.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault()
-                ?? methodInfo
-                    .DeclaringType.GetCustomAttributes(true)
-                    .OfType<UseCaseAttribute>()
-                    .FirstOrDefault();
+            var useCaseAttribute = methodInfo.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault()
+                                   ?? methodInfo.DeclaringType.GetCustomAttributes(true).OfType<UseCaseAttribute>().FirstOrDefault();
 
             if (useCaseAttribute?.Description == null)
             {

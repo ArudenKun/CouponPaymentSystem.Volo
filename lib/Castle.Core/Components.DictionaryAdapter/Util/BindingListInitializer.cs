@@ -12,108 +12,109 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.ComponentModel;
-
-public class BindingListInitializer<T> : IValueInitializer
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly Func<object> addNew;
-    private readonly Func<int, object, object> addAt;
-    private readonly Func<int, object, object> setAt;
-    private readonly Action<int> removeAt;
-    private readonly Action reset;
+    using System;
+    using System.ComponentModel;
 
-    private bool addingNew;
-
-    public BindingListInitializer(
-        Func<int, object, object> addAt,
-        Func<object> addNew,
-        Func<int, object, object> setAt,
-        Action<int> removeAt,
-        Action reset
-    )
+    public class BindingListInitializer<T> : IValueInitializer
     {
-        this.addAt = addAt;
-        this.addNew = addNew;
-        this.setAt = setAt;
-        this.removeAt = removeAt;
-        this.reset = reset;
-    }
+        private readonly Func<object> addNew;
+        private readonly Func<int, object, object> addAt;
+        private readonly Func<int, object, object> setAt;
+        private readonly Action<int> removeAt;
+        private readonly Action reset;
 
-    public void Initialize(IDictionaryAdapter dictionaryAdapter, object value)
-    {
-        var bindingList = (System.ComponentModel.BindingList<T>)value;
-        if (addNew != null)
+        private bool addingNew;
+
+        public BindingListInitializer(
+            Func<int, object, object> addAt,
+            Func<object> addNew,
+            Func<int, object, object> setAt,
+            Action<int> removeAt,
+            Action reset
+        )
         {
-            bindingList.AddingNew += (sender, args) =>
+            this.addAt = addAt;
+            this.addNew = addNew;
+            this.setAt = setAt;
+            this.removeAt = removeAt;
+            this.reset = reset;
+        }
+
+        public void Initialize(IDictionaryAdapter dictionaryAdapter, object value)
+        {
+            var bindingList = (System.ComponentModel.BindingList<T>)value;
+            if (addNew != null)
             {
-                args.NewObject = addNew();
-                addingNew = true;
+                bindingList.AddingNew += (sender, args) =>
+                {
+                    args.NewObject = addNew();
+                    addingNew = true;
+                };
+            }
+            bindingList.ListChanged += (sender, args) =>
+            {
+                switch (args.ListChangedType)
+                {
+                    case ListChangedType.ItemAdded:
+                        if (addingNew == false && addAt != null)
+                        {
+                            var item = addAt(args.NewIndex, bindingList[args.NewIndex]);
+                            if (item != null)
+                            {
+                                using (new SuppressListChangedEvents(bindingList))
+                                {
+                                    bindingList[args.NewIndex] = (T)item;
+                                }
+                            }
+                        }
+                        addingNew = false;
+                        break;
+
+                    case ListChangedType.ItemChanged:
+                        if (setAt != null)
+                        {
+                            var item = setAt(args.NewIndex, bindingList[args.NewIndex]);
+                            if (item != null)
+                            {
+                                using (new SuppressListChangedEvents(bindingList))
+                                {
+                                    bindingList[args.NewIndex] = (T)item;
+                                }
+                            }
+                        }
+                        break;
+
+                    case ListChangedType.ItemDeleted:
+                        if (removeAt != null)
+                            removeAt(args.NewIndex);
+                        break;
+
+                    case ListChangedType.Reset:
+                        if (reset != null)
+                            reset();
+                        break;
+                }
             };
         }
-        bindingList.ListChanged += (sender, args) =>
+
+        class SuppressListChangedEvents : IDisposable
         {
-            switch (args.ListChangedType)
+            private readonly bool raiseEvents;
+            private readonly System.ComponentModel.BindingList<T> bindingList;
+
+            public SuppressListChangedEvents(System.ComponentModel.BindingList<T> bindingList)
             {
-                case ListChangedType.ItemAdded:
-                    if (addingNew == false && addAt != null)
-                    {
-                        var item = addAt(args.NewIndex, bindingList[args.NewIndex]);
-                        if (item != null)
-                        {
-                            using (new SuppressListChangedEvents(bindingList))
-                            {
-                                bindingList[args.NewIndex] = (T)item;
-                            }
-                        }
-                    }
-                    addingNew = false;
-                    break;
-
-                case ListChangedType.ItemChanged:
-                    if (setAt != null)
-                    {
-                        var item = setAt(args.NewIndex, bindingList[args.NewIndex]);
-                        if (item != null)
-                        {
-                            using (new SuppressListChangedEvents(bindingList))
-                            {
-                                bindingList[args.NewIndex] = (T)item;
-                            }
-                        }
-                    }
-                    break;
-
-                case ListChangedType.ItemDeleted:
-                    if (removeAt != null)
-                        removeAt(args.NewIndex);
-                    break;
-
-                case ListChangedType.Reset:
-                    if (reset != null)
-                        reset();
-                    break;
+                this.bindingList = bindingList;
+                raiseEvents = this.bindingList.RaiseListChangedEvents;
+                this.bindingList.RaiseListChangedEvents = false;
             }
-        };
-    }
 
-    class SuppressListChangedEvents : IDisposable
-    {
-        private readonly bool raiseEvents;
-        private readonly System.ComponentModel.BindingList<T> bindingList;
-
-        public SuppressListChangedEvents(System.ComponentModel.BindingList<T> bindingList)
-        {
-            this.bindingList = bindingList;
-            raiseEvents = this.bindingList.RaiseListChangedEvents;
-            this.bindingList.RaiseListChangedEvents = false;
-        }
-
-        public void Dispose()
-        {
-            bindingList.RaiseListChangedEvents = raiseEvents;
+            public void Dispose()
+            {
+                bindingList.RaiseListChangedEvents = raiseEvents;
+            }
         }
     }
 }

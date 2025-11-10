@@ -7,11 +7,7 @@ namespace Abp.Runtime.Validation
         /// <param name="validationContext">Validation context</param>
         /// <param name="sourceName">Localization source name</param>
         /// <param name="key">Localization key</param>
-        public static string Localize(
-            this CustomValidationContext validationContext,
-            string sourceName,
-            string key
-        )
+        public static string Localize(this CustomValidationContext validationContext, string sourceName, string key)
         {
             var localizationManager = validationContext.IocResolver.Resolve<ILocalizationManager>();
             var source = localizationManager.GetSource(sourceName);

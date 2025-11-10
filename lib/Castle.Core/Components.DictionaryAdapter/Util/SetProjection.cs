@@ -12,148 +12,149 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-
-public class SetProjection<T> : ListProjection<T>, ISet<T>
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly HashSet<T> set;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Linq;
 
-    public SetProjection(ICollectionAdapter<T> adapter)
-        : base(adapter)
+    public class SetProjection<T> : ListProjection<T>, ISet<T>
     {
-        set = new HashSet<T>();
-        Repopulate();
-    }
+        private readonly HashSet<T> set;
 
-    public override bool Contains(T item)
-    {
-        return set.Contains(item);
-    }
-
-    public bool IsSubsetOf(IEnumerable<T> other)
-    {
-        return set.IsSubsetOf(other);
-    }
-
-    public bool IsSupersetOf(IEnumerable<T> other)
-    {
-        return set.IsSupersetOf(other);
-    }
-
-    public bool IsProperSubsetOf(IEnumerable<T> other)
-    {
-        return set.IsProperSubsetOf(other);
-    }
-
-    public bool IsProperSupersetOf(IEnumerable<T> other)
-    {
-        return set.IsProperSupersetOf(other);
-    }
-
-    public bool Overlaps(IEnumerable<T> other)
-    {
-        return set.Overlaps(other);
-    }
-
-    public bool SetEquals(IEnumerable<T> other)
-    {
-        return set.SetEquals(other);
-    }
-
-    private void Repopulate()
-    {
-        SuspendEvents();
-
-        var count = Count;
-        for (var index = 0; index < count; )
+        public SetProjection(ICollectionAdapter<T> adapter)
+            : base(adapter)
         {
-            var value = this[index];
-
-            if (!set.Add(value))
-            {
-                RemoveAt(index);
-                count--;
-            }
-            else
-                index++;
+            set = new HashSet<T>();
+            Repopulate();
         }
 
-        ResumeEvents();
-    }
+        public override bool Contains(T item)
+        {
+            return set.Contains(item);
+        }
 
-    public override void EndNew(int index)
-    {
-        if (IsNew(index) && OnInserting(this[index]))
-            base.EndNew(index);
-        else
-            CancelNew(index);
-    }
+        public bool IsSubsetOf(IEnumerable<T> other)
+        {
+            return set.IsSubsetOf(other);
+        }
 
-    public override bool Add(T item)
-    {
-        return !set.Contains(item) && base.Add(item);
-    }
+        public bool IsSupersetOf(IEnumerable<T> other)
+        {
+            return set.IsSupersetOf(other);
+        }
 
-    protected override bool OnInserting(T value)
-    {
-        return set.Add(value);
-    }
+        public bool IsProperSubsetOf(IEnumerable<T> other)
+        {
+            return set.IsProperSubsetOf(other);
+        }
 
-    protected override bool OnReplacing(T oldValue, T newValue)
-    {
-        if (!set.Add(newValue))
-            return false;
+        public bool IsProperSupersetOf(IEnumerable<T> other)
+        {
+            return set.IsProperSupersetOf(other);
+        }
 
-        set.Remove(oldValue);
-        return true;
-    }
+        public bool Overlaps(IEnumerable<T> other)
+        {
+            return set.Overlaps(other);
+        }
 
-    public override bool Remove(T item)
-    {
-        return set.Remove(item) && base.Remove(item);
-    }
+        public bool SetEquals(IEnumerable<T> other)
+        {
+            return set.SetEquals(other);
+        }
 
-    public override void RemoveAt(int index)
-    {
-        set.Remove(this[index]);
-        base.RemoveAt(index);
-    }
+        private void Repopulate()
+        {
+            SuspendEvents();
 
-    public override void Clear()
-    {
-        set.Clear();
-        base.Clear();
-    }
+            var count = Count;
+            for (var index = 0; index < count; )
+            {
+                var value = this[index];
 
-    public void UnionWith(IEnumerable<T> other)
-    {
-        foreach (var value in other)
-            Add(value);
-    }
+                if (!set.Add(value))
+                {
+                    RemoveAt(index);
+                    count--;
+                }
+                else
+                    index++;
+            }
 
-    public void ExceptWith(IEnumerable<T> other)
-    {
-        foreach (var value in other)
-            Remove(value);
-    }
+            ResumeEvents();
+        }
 
-    public void IntersectWith(IEnumerable<T> other)
-    {
-        var removals = set.Except(other).ToArray();
+        public override void EndNew(int index)
+        {
+            if (IsNew(index) && OnInserting(this[index]))
+                base.EndNew(index);
+            else
+                CancelNew(index);
+        }
 
-        ExceptWith(removals);
-    }
+        public override bool Add(T item)
+        {
+            return !set.Contains(item) && base.Add(item);
+        }
 
-    public void SymmetricExceptWith(IEnumerable<T> other)
-    {
-        var removals = set.Intersect(other).ToArray();
-        var additions = other.Except(removals);
+        protected override bool OnInserting(T value)
+        {
+            return set.Add(value);
+        }
 
-        ExceptWith(removals);
-        UnionWith(additions);
+        protected override bool OnReplacing(T oldValue, T newValue)
+        {
+            if (!set.Add(newValue))
+                return false;
+
+            set.Remove(oldValue);
+            return true;
+        }
+
+        public override bool Remove(T item)
+        {
+            return set.Remove(item) && base.Remove(item);
+        }
+
+        public override void RemoveAt(int index)
+        {
+            set.Remove(this[index]);
+            base.RemoveAt(index);
+        }
+
+        public override void Clear()
+        {
+            set.Clear();
+            base.Clear();
+        }
+
+        public void UnionWith(IEnumerable<T> other)
+        {
+            foreach (var value in other)
+                Add(value);
+        }
+
+        public void ExceptWith(IEnumerable<T> other)
+        {
+            foreach (var value in other)
+                Remove(value);
+        }
+
+        public void IntersectWith(IEnumerable<T> other)
+        {
+            var removals = set.Except(other).ToArray();
+
+            ExceptWith(removals);
+        }
+
+        public void SymmetricExceptWith(IEnumerable<T> other)
+        {
+            var removals = set.Intersect(other).ToArray();
+            var additions = other.Except(removals);
+
+            ExceptWith(removals);
+            UnionWith(additions);
+        }
     }
 }

@@ -12,85 +12,92 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-internal class ConstructorEmitter : IMemberEmitter
+namespace Castle.DynamicProxy.Generators.Emitters
 {
-    private readonly ConstructorBuilder builder;
-    private readonly CodeBuilder codeBuilder;
-    private readonly AbstractTypeEmitter mainType;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
-    protected internal ConstructorEmitter(AbstractTypeEmitter mainType, ConstructorBuilder builder)
+    internal class ConstructorEmitter : IMemberEmitter
     {
-        this.mainType = mainType;
-        this.builder = builder;
-        codeBuilder = new CodeBuilder();
-    }
+        private readonly ConstructorBuilder builder;
+        private readonly CodeBuilder codeBuilder;
+        private readonly AbstractTypeEmitter mainType;
 
-    internal ConstructorEmitter(AbstractTypeEmitter mainType, params ArgumentReference[] arguments)
-    {
-        this.mainType = mainType;
-
-        var args = ArgumentsUtil.InitializeAndConvert(arguments);
-
-        builder = mainType.TypeBuilder.DefineConstructor(
-            MethodAttributes.Public,
-            CallingConventions.Standard,
-            args
-        );
-        codeBuilder = new CodeBuilder();
-    }
-
-    public CodeBuilder CodeBuilder
-    {
-        get { return codeBuilder; }
-    }
-
-    public ConstructorBuilder ConstructorBuilder
-    {
-        get { return builder; }
-    }
-
-    public MemberInfo Member
-    {
-        get { return builder; }
-    }
-
-    public Type ReturnType
-    {
-        get { return typeof(void); }
-    }
-
-    private bool ImplementedByRuntime
-    {
-        get
+        protected internal ConstructorEmitter(
+            AbstractTypeEmitter mainType,
+            ConstructorBuilder builder
+        )
         {
-            var attributes = builder.MethodImplementationFlags;
-            return (attributes & MethodImplAttributes.Runtime) != 0;
-        }
-    }
-
-    public virtual void EnsureValidCodeBlock()
-    {
-        if (ImplementedByRuntime == false && CodeBuilder.IsEmpty)
-        {
-            CodeBuilder.AddStatement(new ConstructorInvocationStatement(mainType.BaseType));
-            CodeBuilder.AddStatement(new ReturnStatement());
-        }
-    }
-
-    public virtual void Generate()
-    {
-        if (ImplementedByRuntime)
-        {
-            return;
+            this.mainType = mainType;
+            this.builder = builder;
+            codeBuilder = new CodeBuilder();
         }
 
-        CodeBuilder.Generate(builder.GetILGenerator());
+        internal ConstructorEmitter(
+            AbstractTypeEmitter mainType,
+            params ArgumentReference[] arguments
+        )
+        {
+            this.mainType = mainType;
+
+            var args = ArgumentsUtil.InitializeAndConvert(arguments);
+
+            builder = mainType.TypeBuilder.DefineConstructor(
+                MethodAttributes.Public,
+                CallingConventions.Standard,
+                args
+            );
+            codeBuilder = new CodeBuilder();
+        }
+
+        public CodeBuilder CodeBuilder
+        {
+            get { return codeBuilder; }
+        }
+
+        public ConstructorBuilder ConstructorBuilder
+        {
+            get { return builder; }
+        }
+
+        public MemberInfo Member
+        {
+            get { return builder; }
+        }
+
+        public Type ReturnType
+        {
+            get { return typeof(void); }
+        }
+
+        private bool ImplementedByRuntime
+        {
+            get
+            {
+                var attributes = builder.MethodImplementationFlags;
+                return (attributes & MethodImplAttributes.Runtime) != 0;
+            }
+        }
+
+        public virtual void EnsureValidCodeBlock()
+        {
+            if (ImplementedByRuntime == false && CodeBuilder.IsEmpty)
+            {
+                CodeBuilder.AddStatement(new ConstructorInvocationStatement(mainType.BaseType));
+                CodeBuilder.AddStatement(new ReturnStatement());
+            }
+        }
+
+        public virtual void Generate()
+        {
+            if (ImplementedByRuntime)
+            {
+                return;
+            }
+
+            CodeBuilder.Generate(builder.GetILGenerator());
+        }
     }
 }

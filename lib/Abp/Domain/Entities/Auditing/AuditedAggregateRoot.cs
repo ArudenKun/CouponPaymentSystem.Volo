@@ -7,16 +7,17 @@ namespace Abp.Domain.Entities.Auditing
     /// A shortcut of <see cref="AuditedAggregateRoot{TPrimaryKey}"/> for most used primary key type (<see cref="int"/>).
     /// </summary>
     [Serializable]
-    public abstract class AuditedAggregateRoot : AuditedAggregateRoot<int> { }
+    public abstract class AuditedAggregateRoot : AuditedAggregateRoot<int>
+    {
+
+    }
 
     /// <summary>
     /// This class can be used to simplify implementing <see cref="IAudited"/> for aggregate roots.
     /// </summary>
     /// <typeparam name="TPrimaryKey">Type of the primary key of the entity</typeparam>
     [Serializable]
-    public abstract class AuditedAggregateRoot<TPrimaryKey>
-        : CreationAuditedAggregateRoot<TPrimaryKey>,
-            IAudited
+    public abstract class AuditedAggregateRoot<TPrimaryKey> : CreationAuditedAggregateRoot<TPrimaryKey>, IAudited
     {
         /// <summary>
         /// Last modification date of this entity.
@@ -35,9 +36,7 @@ namespace Abp.Domain.Entities.Auditing
     /// <typeparam name="TPrimaryKey">Type of the primary key of the entity</typeparam>
     /// <typeparam name="TUser">Type of the user</typeparam>
     [Serializable]
-    public abstract class AuditedAggregateRoot<TPrimaryKey, TUser>
-        : AuditedAggregateRoot<TPrimaryKey>,
-            IAudited<TUser>
+    public abstract class AuditedAggregateRoot<TPrimaryKey, TUser> : AuditedAggregateRoot<TPrimaryKey>, IAudited<TUser>
         where TUser : IEntity<long>
     {
         /// <summary>

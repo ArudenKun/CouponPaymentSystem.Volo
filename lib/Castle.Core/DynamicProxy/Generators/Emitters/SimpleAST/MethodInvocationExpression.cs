@@ -12,55 +12,60 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class MethodInvocationExpression : IExpression, IStatement
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    protected readonly IExpression[] args;
-    protected readonly MethodInfo method;
-    protected readonly Reference owner;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public MethodInvocationExpression(MethodInfo method, params IExpression[] args)
-        : this(SelfReference.Self, method, args) { }
-
-    public MethodInvocationExpression(MethodEmitter method, params IExpression[] args)
-        : this(SelfReference.Self, method.MethodBuilder, args) { }
-
-    public MethodInvocationExpression(
-        Reference owner,
-        MethodEmitter method,
-        params IExpression[] args
-    )
-        : this(owner, method.MethodBuilder, args) { }
-
-    public MethodInvocationExpression(Reference owner, MethodInfo method, params IExpression[] args)
+    internal class MethodInvocationExpression : IExpression, IStatement
     {
-        this.owner = owner;
-        this.method = method;
-        this.args = args;
-    }
+        protected readonly IExpression[] args;
+        protected readonly MethodInfo method;
+        protected readonly Reference owner;
 
-    public bool VirtualCall { get; set; }
+        public MethodInvocationExpression(MethodInfo method, params IExpression[] args)
+            : this(SelfReference.Self, method, args) { }
 
-    public void Emit(ILGenerator gen)
-    {
-        ArgumentsUtil.EmitLoadOwnerAndReference(owner, gen);
+        public MethodInvocationExpression(MethodEmitter method, params IExpression[] args)
+            : this(SelfReference.Self, method.MethodBuilder, args) { }
 
-        foreach (var exp in args)
+        public MethodInvocationExpression(
+            Reference owner,
+            MethodEmitter method,
+            params IExpression[] args
+        )
+            : this(owner, method.MethodBuilder, args) { }
+
+        public MethodInvocationExpression(
+            Reference owner,
+            MethodInfo method,
+            params IExpression[] args
+        )
         {
-            exp.Emit(gen);
+            this.owner = owner;
+            this.method = method;
+            this.args = args;
         }
 
-        if (VirtualCall)
+        public bool VirtualCall { get; set; }
+
+        public void Emit(ILGenerator gen)
         {
-            gen.Emit(OpCodes.Callvirt, method);
-        }
-        else
-        {
-            gen.Emit(OpCodes.Call, method);
+            ArgumentsUtil.EmitLoadOwnerAndReference(owner, gen);
+
+            foreach (var exp in args)
+            {
+                exp.Emit(gen);
+            }
+
+            if (VirtualCall)
+            {
+                gen.Emit(OpCodes.Callvirt, method);
+            }
+            else
+            {
+                gen.Emit(OpCodes.Call, method);
+            }
         }
     }
 }

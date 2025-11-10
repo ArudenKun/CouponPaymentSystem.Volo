@@ -43,7 +43,7 @@ namespace Abp.Configuration
         /// <param name="displayName">Display name of the setting</param>
         public SettingDefinitionGroup(string name, ILocalizableString displayName)
         {
-            Check.NotNullOrWhiteSpace(name, nameof(name));
+           Check.NotNullOrWhiteSpace(name, nameof(name));
 
             Name = name;
             DisplayName = displayName;
@@ -59,13 +59,7 @@ namespace Abp.Configuration
         {
             if (child.Parent != null)
             {
-                throw new AbpException(
-                    "Setting group "
-                        + child.Name
-                        + " has already a Parent ("
-                        + child.Parent.Name
-                        + ")."
-                );
+                throw new AbpException("Setting group " + child.Name + " has already a Parent (" + child.Parent.Name + ").");
             }
 
             _children.Add(child);

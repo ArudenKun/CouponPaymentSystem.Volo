@@ -12,69 +12,70 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public abstract class XmlNodeBase : IRealizableSource, IVirtual
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    protected Type type;
-    private readonly IXmlNode parent;
-    private readonly IXmlNamespaceSource namespaces;
+    using System;
 
-    protected XmlNodeBase(IXmlNamespaceSource namespaces, IXmlNode parent)
+    public abstract class XmlNodeBase : IRealizableSource, IVirtual
     {
-        if (null == namespaces)
-            throw Error.ArgumentNull(nameof(namespaces));
+        protected Type type;
+        private readonly IXmlNode parent;
+        private readonly IXmlNamespaceSource namespaces;
 
-        this.namespaces = namespaces;
-        this.parent = parent;
-    }
+        protected XmlNodeBase(IXmlNamespaceSource namespaces, IXmlNode parent)
+        {
+            if (null == namespaces)
+                throw Error.ArgumentNull(nameof(namespaces));
 
-    public virtual bool IsReal
-    {
-        get { return true; }
-    }
+            this.namespaces = namespaces;
+            this.parent = parent;
+        }
 
-    public virtual Type ClrType
-    {
-        get { return type; }
-    }
+        public virtual bool IsReal
+        {
+            get { return true; }
+        }
 
-    public IXmlNode Parent
-    {
-        get { return parent; }
-    }
+        public virtual Type ClrType
+        {
+            get { return type; }
+        }
 
-    public IXmlNamespaceSource Namespaces
-    {
-        get { return namespaces; }
-    }
+        public IXmlNode Parent
+        {
+            get { return parent; }
+        }
 
-    public virtual CompiledXPath Path
-    {
-        get { return null; }
-    }
+        public IXmlNamespaceSource Namespaces
+        {
+            get { return namespaces; }
+        }
 
-    IRealizable<T> IRealizableSource.AsRealizable<T>()
-    {
-        return this as IRealizable<T>;
-    }
+        public virtual CompiledXPath Path
+        {
+            get { return null; }
+        }
 
-    protected virtual void Realize()
-    {
-        // Default nodes are fully realized already
-    }
+        IRealizable<T> IRealizableSource.AsRealizable<T>()
+        {
+            return this as IRealizable<T>;
+        }
 
-    void IVirtual.Realize()
-    {
-        Realize();
-    }
+        protected virtual void Realize()
+        {
+            // Default nodes are fully realized already
+        }
 
-    public virtual event EventHandler Realized
-    {
-        // Default nodes never realize
-        add { }
-        remove { }
+        void IVirtual.Realize()
+        {
+            Realize();
+        }
+
+        public virtual event EventHandler Realized
+        {
+            // Default nodes never realize
+            add { }
+            remove { }
+        }
     }
 }

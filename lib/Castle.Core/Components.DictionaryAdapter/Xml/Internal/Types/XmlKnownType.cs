@@ -12,53 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public class XmlKnownType : IXmlKnownType
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly XmlName name;
-    private readonly XmlName xsiType;
-    private readonly Type clrType;
+    using System;
 
-    public XmlKnownType(XmlName name, XmlName xsiType, Type clrType)
+    public class XmlKnownType : IXmlKnownType
     {
-        if (name.LocalName == null)
-            throw Error.ArgumentNull("name.LocalName");
-        if (clrType == null)
-            throw Error.ArgumentNull(nameof(clrType));
+        private readonly XmlName name;
+        private readonly XmlName xsiType;
+        private readonly Type clrType;
 
-        this.name = name;
-        this.xsiType = xsiType;
-        this.clrType = clrType;
-    }
+        public XmlKnownType(XmlName name, XmlName xsiType, Type clrType)
+        {
+            if (name.LocalName == null)
+                throw Error.ArgumentNull("name.LocalName");
+            if (clrType == null)
+                throw Error.ArgumentNull(nameof(clrType));
 
-    public XmlKnownType(
-        string nameLocalName,
-        string nameNamespaceUri,
-        string xsiTypeLocalName,
-        string xsiTypeNamespaceUri,
-        Type clrType
-    )
-        : this(
-            new XmlName(nameLocalName, nameNamespaceUri),
-            new XmlName(xsiTypeLocalName, xsiTypeNamespaceUri),
-            clrType
-        ) { }
+            this.name = name;
+            this.xsiType = xsiType;
+            this.clrType = clrType;
+        }
 
-    public XmlName Name
-    {
-        get { return name; }
-    }
+        public XmlKnownType(
+            string nameLocalName,
+            string nameNamespaceUri,
+            string xsiTypeLocalName,
+            string xsiTypeNamespaceUri,
+            Type clrType
+        )
+            : this(
+                new XmlName(nameLocalName, nameNamespaceUri),
+                new XmlName(xsiTypeLocalName, xsiTypeNamespaceUri),
+                clrType
+            ) { }
 
-    public XmlName XsiType
-    {
-        get { return xsiType; }
-    }
+        public XmlName Name
+        {
+            get { return name; }
+        }
 
-    public Type ClrType
-    {
-        get { return clrType; }
+        public XmlName XsiType
+        {
+            get { return xsiType; }
+        }
+
+        public Type ClrType
+        {
+            get { return clrType; }
+        }
     }
 }

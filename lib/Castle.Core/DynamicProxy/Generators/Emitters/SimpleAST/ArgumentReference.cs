@@ -12,66 +12,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
-
-[DebuggerDisplay("argument {Type}")]
-internal class ArgumentReference : TypeReference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    public ArgumentReference(Type argumentType)
-        : base(argumentType)
-    {
-        Position = -1;
-    }
+    using System;
+    using System.Diagnostics;
+    using System.Reflection.Emit;
 
-    public ArgumentReference(Type argumentType, int position)
-        : base(argumentType)
+    [DebuggerDisplay("argument {Type}")]
+    internal class ArgumentReference : TypeReference
     {
-        Position = position;
-    }
-
-    internal int Position { get; set; }
-
-    public override void LoadAddressOfReference(ILGenerator gen)
-    {
-        throw new NotSupportedException();
-    }
-
-    public override void LoadReference(ILGenerator gen)
-    {
-        if (Position == -1)
+        public ArgumentReference(Type argumentType)
+            : base(argumentType)
         {
-            throw new InvalidOperationException("ArgumentReference uninitialized");
+            Position = -1;
         }
-        switch (Position)
-        {
-            case 0:
-                gen.Emit(OpCodes.Ldarg_0);
-                break;
-            case 1:
-                gen.Emit(OpCodes.Ldarg_1);
-                break;
-            case 2:
-                gen.Emit(OpCodes.Ldarg_2);
-                break;
-            case 3:
-                gen.Emit(OpCodes.Ldarg_3);
-                break;
-            default:
-                gen.Emit(OpCodes.Ldarg_S, Position);
-                break;
-        }
-    }
 
-    public override void StoreReference(ILGenerator gen)
-    {
-        if (Position == -1)
+        public ArgumentReference(Type argumentType, int position)
+            : base(argumentType)
         {
-            throw new InvalidOperationException("ArgumentReference uninitialized");
+            Position = position;
         }
-        gen.Emit(OpCodes.Starg, Position);
+
+        internal int Position { get; set; }
+
+        public override void LoadAddressOfReference(ILGenerator gen)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void LoadReference(ILGenerator gen)
+        {
+            if (Position == -1)
+            {
+                throw new InvalidOperationException("ArgumentReference uninitialized");
+            }
+            switch (Position)
+            {
+                case 0:
+                    gen.Emit(OpCodes.Ldarg_0);
+                    break;
+                case 1:
+                    gen.Emit(OpCodes.Ldarg_1);
+                    break;
+                case 2:
+                    gen.Emit(OpCodes.Ldarg_2);
+                    break;
+                case 3:
+                    gen.Emit(OpCodes.Ldarg_3);
+                    break;
+                default:
+                    gen.Emit(OpCodes.Ldarg_S, Position);
+                    break;
+            }
+        }
+
+        public override void StoreReference(ILGenerator gen)
+        {
+            if (Position == -1)
+            {
+                throw new InvalidOperationException("ArgumentReference uninitialized");
+            }
+            gen.Emit(OpCodes.Starg, Position);
+        }
     }
 }

@@ -51,8 +51,8 @@ namespace Abp.BackgroundJobs
 
         public Task<List<BackgroundJobInfo>> GetWaitingJobsAsync(int maxResultCount)
         {
-            var waitingJobs = _jobs
-                .Values.Where(t => !t.IsAbandoned && t.NextTryTime <= Clock.Now)
+            var waitingJobs = _jobs.Values
+                .Where(t => !t.IsAbandoned && t.NextTryTime <= Clock.Now)
                 .OrderByDescending(t => t.Priority)
                 .ThenBy(t => t.TryCount)
                 .ThenBy(t => t.NextTryTime)
@@ -64,8 +64,8 @@ namespace Abp.BackgroundJobs
 
         public List<BackgroundJobInfo> GetWaitingJobs(int maxResultCount)
         {
-            var waitingJobs = _jobs
-                .Values.Where(t => !t.IsAbandoned && t.NextTryTime <= Clock.Now)
+            var waitingJobs = _jobs.Values
+                .Where(t => !t.IsAbandoned && t.NextTryTime <= Clock.Now)
                 .OrderByDescending(t => t.Priority)
                 .ThenBy(t => t.TryCount)
                 .ThenBy(t => t.NextTryTime)

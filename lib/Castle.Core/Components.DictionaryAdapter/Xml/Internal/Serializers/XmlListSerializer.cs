@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public class XmlListSerializer : XmlCollectionSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlListSerializer Instance = new XmlListSerializer();
+    using System;
 
-    protected XmlListSerializer() { }
-
-    public override Type ListTypeConstructor
+    public class XmlListSerializer : XmlCollectionSerializer
     {
-        get { return typeof(XmlNodeList<>); }
+        public static readonly XmlListSerializer Instance = new XmlListSerializer();
+
+        protected XmlListSerializer() { }
+
+        public override Type ListTypeConstructor
+        {
+            get { return typeof(XmlNodeList<>); }
+        }
     }
 }

@@ -12,31 +12,32 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-/// <summary>
-///  Contract for dictionary meta-data initialization.
-/// </summary>
-public interface IDictionaryMetaInitializer : IDictionaryBehavior
+namespace Castle.Components.DictionaryAdapter
 {
     /// <summary>
-    ///		Initializes the given <see cref="DictionaryAdapterMeta"/> object.
+    ///  Contract for dictionary meta-data initialization.
     /// </summary>
-    /// <param name="factory">The dictionary adapter factory.</param>
-    /// <param name="dictionaryMeta">The dictionary adapter meta.</param>
-    ///
-    void Initialize(IDictionaryAdapterFactory factory, DictionaryAdapterMeta dictionaryMeta);
+    public interface IDictionaryMetaInitializer : IDictionaryBehavior
+    {
+        /// <summary>
+        ///		Initializes the given <see cref="DictionaryAdapterMeta"/> object.
+        /// </summary>
+        /// <param name="factory">The dictionary adapter factory.</param>
+        /// <param name="dictionaryMeta">The dictionary adapter meta.</param>
+        ///
+        void Initialize(IDictionaryAdapterFactory factory, DictionaryAdapterMeta dictionaryMeta);
 
-    /// <summary>
-    ///		Determines whether the given behavior should be included in a new
-    ///		<see cref="DictionaryAdapterMeta"/> object.
-    /// </summary>
-    /// <param name="behavior">A dictionary behavior or annotation.</param>
-    /// <returns>True if the behavior should be included; otherwise, false.</returns>
-    /// <remarks>
-    ///		<see cref="IDictionaryMetaInitializer"/> behaviors are always included,
-    ///		regardless of the result of this method.
-    ///	</remarks>
-    ///
-    bool ShouldHaveBehavior(object behavior);
+        /// <summary>
+        ///		Determines whether the given behavior should be included in a new
+        ///		<see cref="DictionaryAdapterMeta"/> object.
+        /// </summary>
+        /// <param name="behavior">A dictionary behavior or annotation.</param>
+        /// <returns>True if the behavior should be included; otherwise, false.</returns>
+        /// <remarks>
+        ///		<see cref="IDictionaryMetaInitializer"/> behaviors are always included,
+        ///		regardless of the result of this method.
+        ///	</remarks>
+        ///
+        bool ShouldHaveBehavior(object behavior);
+    }
 }

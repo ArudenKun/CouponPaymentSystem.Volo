@@ -26,11 +26,7 @@ namespace Abp.Webhooks
         /// <summary>
         /// Returns work item count by given web hook id and subscription id, (How many times publisher tried to send web hook)
         /// </summary>
-        Task<int> GetSendAttemptCountAsync(
-            int? tenantId,
-            Guid webhookId,
-            Guid webhookSubscriptionId
-        );
+        Task<int> GetSendAttemptCountAsync(int? tenantId, Guid webhookId, Guid webhookSubscriptionId);
 
         /// <summary>
         /// Returns work item count by given web hook id and subscription id. (How many times publisher tried to send web hook)
@@ -42,28 +38,13 @@ namespace Abp.Webhooks
         /// </summary>
         Task<bool> HasXConsecutiveFailAsync(int? tenantId, Guid subscriptionId, int searchCount);
 
-        Task<IPagedResult<WebhookSendAttempt>> GetAllSendAttemptsBySubscriptionAsPagedListAsync(
-            int? tenantId,
-            Guid subscriptionId,
-            int maxResultCount,
-            int skipCount
-        );
+        Task<IPagedResult<WebhookSendAttempt>> GetAllSendAttemptsBySubscriptionAsPagedListAsync(int? tenantId, Guid subscriptionId, int maxResultCount, int skipCount);
 
-        IPagedResult<WebhookSendAttempt> GetAllSendAttemptsBySubscriptionAsPagedList(
-            int? tenantId,
-            Guid subscriptionId,
-            int maxResultCount,
-            int skipCount
-        );
+        IPagedResult<WebhookSendAttempt> GetAllSendAttemptsBySubscriptionAsPagedList(int? tenantId, Guid subscriptionId, int maxResultCount, int skipCount);
 
-        Task<List<WebhookSendAttempt>> GetAllSendAttemptsByWebhookEventIdAsync(
-            int? tenantId,
-            Guid webhookEventId
-        );
+        Task<List<WebhookSendAttempt>> GetAllSendAttemptsByWebhookEventIdAsync(int? tenantId, Guid webhookEventId);
 
-        List<WebhookSendAttempt> GetAllSendAttemptsByWebhookEventId(
-            int? tenantId,
-            Guid webhookEventId
-        );
+        List<WebhookSendAttempt> GetAllSendAttemptsByWebhookEventId(int? tenantId, Guid webhookEventId);
+
     }
 }

@@ -11,14 +11,19 @@ namespace Abp.Application.Services.Dto
         /// <summary>
         /// Creates a new <see cref="EntityDto"/> object.
         /// </summary>
-        public EntityDto() { }
+        public EntityDto()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="EntityDto"/> object.
         /// </summary>
         /// <param name="id">Id of the entity</param>
         public EntityDto(int id)
-            : base(id) { }
+            : base(id)
+        {
+        }
     }
 
     /// <summary>
@@ -36,7 +41,10 @@ namespace Abp.Application.Services.Dto
         /// <summary>
         /// Creates a new <see cref="EntityDto{TPrimaryKey}"/> object.
         /// </summary>
-        public EntityDto() { }
+        public EntityDto()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="EntityDto{TPrimaryKey}"/> object.

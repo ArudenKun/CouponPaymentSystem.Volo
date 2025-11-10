@@ -12,44 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-using System.IO;
-using System.Text;
-
-/// <summary>
-/// Represents a 'streamable' resource. Can
-/// be a file, a resource in an assembly.
-/// </summary>
-public interface IResource : IDisposable
+namespace Castle.Core.Resource
 {
-    /// <remarks>
-    /// Only valid for resources that
-    /// can be obtained through relative paths
-    /// </remarks>
-    string FileBasePath { get; }
+    using System;
+    using System.IO;
+    using System.Text;
 
     /// <summary>
-    /// Returns a reader for the stream
+    /// Represents a 'streamable' resource. Can
+    /// be a file, a resource in an assembly.
     /// </summary>
-    /// <remarks>
-    /// It's up to the caller to dispose the reader.
-    /// </remarks>
-    TextReader GetStreamReader();
+    public interface IResource : IDisposable
+    {
+        /// <remarks>
+        /// Only valid for resources that
+        /// can be obtained through relative paths
+        /// </remarks>
+        string FileBasePath { get; }
 
-    /// <summary>
-    /// Returns a reader for the stream
-    /// </summary>
-    /// <remarks>
-    /// It's up to the caller to dispose the reader.
-    /// </remarks>
-    TextReader GetStreamReader(Encoding encoding);
+        /// <summary>
+        /// Returns a reader for the stream
+        /// </summary>
+        /// <remarks>
+        /// It's up to the caller to dispose the reader.
+        /// </remarks>
+        TextReader GetStreamReader();
 
-    /// <summary>
-    /// Returns an instance of <see cref="IResource"/>
-    /// created according to the <c>relativePath</c>
-    /// using itself as the root.
-    /// </summary>
-    IResource CreateRelative(string relativePath);
+        /// <summary>
+        /// Returns a reader for the stream
+        /// </summary>
+        /// <remarks>
+        /// It's up to the caller to dispose the reader.
+        /// </remarks>
+        TextReader GetStreamReader(Encoding encoding);
+
+        /// <summary>
+        /// Returns an instance of <see cref="IResource"/>
+        /// created according to the <c>relativePath</c>
+        /// using itself as the root.
+        /// </summary>
+        IResource CreateRelative(string relativePath);
+    }
 }

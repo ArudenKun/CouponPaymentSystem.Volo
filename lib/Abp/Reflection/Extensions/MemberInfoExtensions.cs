@@ -16,10 +16,7 @@ namespace Abp.Reflection.Extensions
         /// <param name="memberInfo">The member that will be checked for the attribute</param>
         /// <param name="inherit">Include inherited attributes</param>
         /// <returns>Returns the attribute object if found. Returns null if not found.</returns>
-        public static TAttribute GetSingleAttributeOrNull<TAttribute>(
-            this MemberInfo memberInfo,
-            bool inherit = true
-        )
+        public static TAttribute GetSingleAttributeOrNull<TAttribute>(this MemberInfo memberInfo, bool inherit = true)
             where TAttribute : Attribute
         {
             if (memberInfo == null)
@@ -36,10 +33,8 @@ namespace Abp.Reflection.Extensions
             return default(TAttribute);
         }
 
-        public static TAttribute GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(
-            this Type type,
-            bool inherit = true
-        )
+
+        public static TAttribute GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(this Type type, bool inherit = true)
             where TAttribute : Attribute
         {
             var attr = type.GetTypeInfo().GetSingleAttributeOrNull<TAttribute>();
@@ -53,8 +48,7 @@ namespace Abp.Reflection.Extensions
                 return null;
             }
 
-            return type.GetTypeInfo()
-                .BaseType.GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(inherit);
+            return type.GetTypeInfo().BaseType.GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(inherit);
         }
     }
 }

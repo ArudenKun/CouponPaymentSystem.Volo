@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class LiteralStringExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly string value;
+    using System.Reflection.Emit;
 
-    public LiteralStringExpression(string value)
+    internal class LiteralStringExpression : IExpression
     {
-        this.value = value;
-    }
+        private readonly string value;
 
-    public void Emit(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldstr, value);
+        public LiteralStringExpression(string value)
+        {
+            this.value = value;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldstr, value);
+        }
     }
 }

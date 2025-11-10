@@ -6,7 +6,7 @@
         LessThan,
         LessOrEqualThan,
         BiggerThan,
-        BiggerOrEqualThan,
+        BiggerOrEqualThan
     }
 
     public enum NullableLongCompareTypes
@@ -17,6 +17,6 @@
         LessThan,
         LessOrEqualThan,
         BiggerThan,
-        BiggerOrEqualThan,
+        BiggerOrEqualThan
     }
 }

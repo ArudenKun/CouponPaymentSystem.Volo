@@ -12,56 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections;
-using System.Collections.Generic;
-
-internal class MetaTypeElementCollection<TElement> : IEnumerable<TElement>
-    where TElement : MetaTypeElement, IEquatable<TElement>
+namespace Castle.DynamicProxy.Generators
 {
-    private readonly ICollection<TElement> items = new List<TElement>();
+    using System;
+    using System.Collections;
+    using System.Collections.Generic;
 
-    public void Add(TElement item)
+    internal class MetaTypeElementCollection<TElement> : IEnumerable<TElement>
+        where TElement : MetaTypeElement, IEquatable<TElement>
     {
-        if (item.CanBeImplementedExplicitly == false)
+        private readonly ICollection<TElement> items = new List<TElement>();
+
+        public void Add(TElement item)
         {
-            items.Add(item);
-            return;
-        }
-        if (Contains(item))
-        {
-            item.SwitchToExplicitImplementation();
+            if (item.CanBeImplementedExplicitly == false)
+            {
+                items.Add(item);
+                return;
+            }
             if (Contains(item))
             {
-                // there is something *really* wrong going on here
-                throw new DynamicProxyException("Duplicate element: " + item);
+                item.SwitchToExplicitImplementation();
+                if (Contains(item))
+                {
+                    // there is something *really* wrong going on here
+                    throw new DynamicProxyException("Duplicate element: " + item);
+                }
             }
+            items.Add(item);
         }
-        items.Add(item);
-    }
 
-    public bool Contains(TElement item)
-    {
-        foreach (var element in items)
+        public bool Contains(TElement item)
         {
-            if (element.Equals(item))
+            foreach (var element in items)
             {
-                return true;
+                if (element.Equals(item))
+                {
+                    return true;
+                }
             }
+
+            return false;
         }
 
-        return false;
-    }
+        public IEnumerator<TElement> GetEnumerator()
+        {
+            return items.GetEnumerator();
+        }
 
-    public IEnumerator<TElement> GetEnumerator()
-    {
-        return items.GetEnumerator();
-    }
-
-    IEnumerator IEnumerable.GetEnumerator()
-    {
-        return GetEnumerator();
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 }

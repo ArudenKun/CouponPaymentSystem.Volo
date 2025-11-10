@@ -1,7 +1,7 @@
 ﻿using System;
-using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
+using System.ComponentModel;
 
 namespace Abp.Extensions
 {
@@ -11,7 +11,7 @@ namespace Abp.Extensions
     public static class ObjectExtensions
     {
         /// <summary>
-        /// Used to simplify and beautify casting an object to a type.
+        /// Used to simplify and beautify casting an object to a type. 
         /// </summary>
         /// <typeparam name="T">Type to be casted</typeparam>
         /// <param name="obj">Object to cast</param>
@@ -33,10 +33,7 @@ namespace Abp.Extensions
         {
             if (typeof(T) == typeof(Guid) || typeof(T) == typeof(TimeSpan))
             {
-                return (T)
-                    TypeDescriptor
-                        .GetConverter(typeof(T))
-                        .ConvertFromInvariantString(obj.ToString());
+                return (T)TypeDescriptor.GetConverter(typeof(T)).ConvertFromInvariantString(obj.ToString());
             }
             if (typeof(T).IsEnum)
             {

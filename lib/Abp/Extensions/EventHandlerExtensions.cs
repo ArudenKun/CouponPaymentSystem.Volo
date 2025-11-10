@@ -40,11 +40,7 @@ namespace Abp.Extensions
         /// <param name="eventHandler">The event handler</param>
         /// <param name="sender">Source of the event</param>
         /// <param name="e">Event argument</param>
-        public static void InvokeSafely<TEventArgs>(
-            this EventHandler<TEventArgs> eventHandler,
-            object sender,
-            TEventArgs e
-        )
+        public static void InvokeSafely<TEventArgs>(this EventHandler<TEventArgs> eventHandler, object sender, TEventArgs e)
             where TEventArgs : EventArgs
         {
             if (eventHandler == null)

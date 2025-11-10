@@ -11,20 +11,29 @@ namespace Abp.Application.Services.Dto
         /// <summary>
         /// Creates a new <see cref="NameValueDto"/>.
         /// </summary>
-        public NameValueDto() { }
+        public NameValueDto()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="NameValueDto"/>.
         /// </summary>
         public NameValueDto(string name, string value)
-            : base(name, value) { }
+            : base(name, value)
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="NameValueDto"/>.
         /// </summary>
         /// <param name="nameValue">A <see cref="NameValue"/> object to get it's name and value</param>
         public NameValueDto(NameValue nameValue)
-            : this(nameValue.Name, nameValue.Value) { }
+            : this(nameValue.Name, nameValue.Value)
+        {
+
+        }
     }
 
     /// <summary>
@@ -36,19 +45,28 @@ namespace Abp.Application.Services.Dto
         /// <summary>
         /// Creates a new <see cref="NameValueDto"/>.
         /// </summary>
-        public NameValueDto() { }
+        public NameValueDto()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="NameValueDto"/>.
         /// </summary>
         public NameValueDto(string name, T value)
-            : base(name, value) { }
+            : base(name, value)
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="NameValueDto"/>.
         /// </summary>
         /// <param name="nameValue">A <see cref="NameValue"/> object to get it's name and value</param>
         public NameValueDto(NameValue<T> nameValue)
-            : this(nameValue.Name, nameValue.Value) { }
+            : this(nameValue.Name, nameValue.Value)
+        {
+
+        }
     }
 }

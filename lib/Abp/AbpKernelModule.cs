@@ -47,14 +47,8 @@ namespace Abp
         {
             IocManager.AddConventionalRegistrar(new BasicConventionalRegistrar());
 
-            IocManager.Register<IScopedIocResolver, ScopedIocResolver>(
-                DependencyLifeStyle.Transient
-            );
-            IocManager.Register(
-                typeof(IAmbientScopeProvider<>),
-                typeof(DataContextAmbientScopeProvider<>),
-                DependencyLifeStyle.Transient
-            );
+            IocManager.Register<IScopedIocResolver, ScopedIocResolver>(DependencyLifeStyle.Transient);
+            IocManager.Register(typeof(IAmbientScopeProvider<>), typeof(DataContextAmbientScopeProvider<>), DependencyLifeStyle.Transient);
 
             AddAuditingSelectors();
             AddLocalizationSources();
@@ -68,52 +62,31 @@ namespace Abp
 
         public override void Initialize()
         {
-            foreach (
-                var replaceAction in ((AbpStartupConfiguration)Configuration)
-                    .ServiceReplaceActions
-                    .Values
-            )
+            foreach (var replaceAction in ((AbpStartupConfiguration)Configuration).ServiceReplaceActions.Values)
             {
                 replaceAction();
             }
 
             IocManager.IocContainer.Install(new EventBusInstaller(IocManager));
 
-            IocManager.Register(
-                typeof(EventTriggerAsyncBackgroundJob<>),
-                DependencyLifeStyle.Transient
-            );
+            IocManager.Register(typeof(EventTriggerAsyncBackgroundJob<>), DependencyLifeStyle.Transient);
 
-            IocManager.RegisterAssemblyByConvention(
-                typeof(AbpKernelModule).GetAssembly(),
-                new ConventionalRegistrationConfig { InstallInstallers = false }
-            );
+            IocManager.RegisterAssemblyByConvention(typeof(AbpKernelModule).GetAssembly(),
+                new ConventionalRegistrationConfig
+                {
+                    InstallInstallers = false
+                });
 
             RegisterInterceptors();
         }
 
         private void RegisterInterceptors()
         {
-            IocManager.Register(
-                typeof(AbpAsyncDeterminationInterceptor<UnitOfWorkInterceptor>),
-                DependencyLifeStyle.Transient
-            );
-            IocManager.Register(
-                typeof(AbpAsyncDeterminationInterceptor<AuditingInterceptor>),
-                DependencyLifeStyle.Transient
-            );
-            IocManager.Register(
-                typeof(AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>),
-                DependencyLifeStyle.Transient
-            );
-            IocManager.Register(
-                typeof(AbpAsyncDeterminationInterceptor<ValidationInterceptor>),
-                DependencyLifeStyle.Transient
-            );
-            IocManager.Register(
-                typeof(AbpAsyncDeterminationInterceptor<EntityHistoryInterceptor>),
-                DependencyLifeStyle.Transient
-            );
+            IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<UnitOfWorkInterceptor>), DependencyLifeStyle.Transient);
+            IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<AuditingInterceptor>), DependencyLifeStyle.Transient);
+            IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<AuthorizationInterceptor>), DependencyLifeStyle.Transient);
+            IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<ValidationInterceptor>), DependencyLifeStyle.Transient);
+            IocManager.Register(typeof(AbpAsyncDeterminationInterceptor<EntityHistoryInterceptor>), DependencyLifeStyle.Transient);
         }
 
         public override void PostInitialize()
@@ -154,26 +127,11 @@ namespace Abp
 
         private void AddUnitOfWorkAuditFieldConfiguration()
         {
-            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(
-                AbpAuditFields.CreatorUserId,
-                true
-            );
-            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(
-                AbpAuditFields.LastModifierUserId,
-                true
-            );
-            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(
-                AbpAuditFields.LastModificationTime,
-                true
-            );
-            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(
-                AbpAuditFields.DeleterUserId,
-                true
-            );
-            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(
-                AbpAuditFields.DeletionTime,
-                true
-            );
+            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(AbpAuditFields.CreatorUserId, true);
+            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(AbpAuditFields.LastModifierUserId, true);
+            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(AbpAuditFields.LastModificationTime, true);
+            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(AbpAuditFields.DeleterUserId, true);
+            Configuration.UnitOfWork.RegisterAuditFieldConfiguration(AbpAuditFields.DeletionTime, true);
         }
 
         private void AddSettingProviders()
@@ -200,43 +158,35 @@ namespace Abp
                 new DictionaryBasedLocalizationSource(
                     AbpConsts.LocalizationSourceName,
                     new XmlEmbeddedFileLocalizationDictionaryProvider(
-                        typeof(AbpKernelModule).GetAssembly(),
-                        "Abp.Localization.Sources.AbpXmlSource"
-                    )
-                )
-            );
+                        typeof(AbpKernelModule).GetAssembly(), "Abp.Localization.Sources.AbpXmlSource"
+                    )));
         }
 
         private void ConfigureCaches()
         {
-            Configuration.Caching.Configure(
-                AbpCacheNames.ApplicationSettings,
-                cache =>
-                {
-                    cache.DefaultSlidingExpireTime = TimeSpan.FromHours(8);
-                }
-            );
+            Configuration.Caching.Configure(AbpCacheNames.ApplicationSettings, cache =>
+            {
+                cache.DefaultSlidingExpireTime = TimeSpan.FromHours(8);
+            });
 
-            Configuration.Caching.Configure(
-                AbpCacheNames.TenantSettings,
-                cache =>
-                {
-                    cache.DefaultSlidingExpireTime = TimeSpan.FromMinutes(60);
-                }
-            );
+            Configuration.Caching.Configure(AbpCacheNames.TenantSettings, cache =>
+            {
+                cache.DefaultSlidingExpireTime = TimeSpan.FromMinutes(60);
+            });
 
-            Configuration.Caching.Configure(
-                AbpCacheNames.UserSettings,
-                cache =>
-                {
-                    cache.DefaultSlidingExpireTime = TimeSpan.FromMinutes(20);
-                }
-            );
+            Configuration.Caching.Configure(AbpCacheNames.UserSettings, cache =>
+            {
+                cache.DefaultSlidingExpireTime = TimeSpan.FromMinutes(20);
+            });
         }
 
         private void AddIgnoredTypes()
         {
-            var commonIgnoredTypes = new[] { typeof(Stream), typeof(Expression) };
+            var commonIgnoredTypes = new[]
+            {
+                typeof(Stream),
+                typeof(Expression)
+            };
 
             foreach (var ignoredType in commonIgnoredTypes)
             {
@@ -270,43 +220,23 @@ namespace Abp
             }
 
             IocManager.RegisterIfNot<IUnitOfWork, NullUnitOfWork>(DependencyLifeStyle.Transient);
-            IocManager.RegisterIfNot<IAuditingStore, SimpleLogAuditingStore>(
-                DependencyLifeStyle.Singleton
-            );
-            IocManager.RegisterIfNot<IPermissionChecker, NullPermissionChecker>(
-                DependencyLifeStyle.Singleton
-            );
-            IocManager.RegisterIfNot<INotificationStore, NullNotificationStore>(
-                DependencyLifeStyle.Singleton
-            );
-            IocManager.RegisterIfNot<IUnitOfWorkFilterExecuter, NullUnitOfWorkFilterExecuter>(
-                DependencyLifeStyle.Singleton
-            );
-            IocManager.RegisterIfNot<IClientInfoProvider, NullClientInfoProvider>(
-                DependencyLifeStyle.Singleton
-            );
+            IocManager.RegisterIfNot<IAuditingStore, SimpleLogAuditingStore>(DependencyLifeStyle.Singleton);
+            IocManager.RegisterIfNot<IPermissionChecker, NullPermissionChecker>(DependencyLifeStyle.Singleton);
+            IocManager.RegisterIfNot<INotificationStore, NullNotificationStore>(DependencyLifeStyle.Singleton);
+            IocManager.RegisterIfNot<IUnitOfWorkFilterExecuter, NullUnitOfWorkFilterExecuter>(DependencyLifeStyle.Singleton);
+            IocManager.RegisterIfNot<IClientInfoProvider, NullClientInfoProvider>(DependencyLifeStyle.Singleton);
             IocManager.RegisterIfNot<ITenantStore, NullTenantStore>(DependencyLifeStyle.Singleton);
-            IocManager.RegisterIfNot<ITenantResolverCache, NullTenantResolverCache>(
-                DependencyLifeStyle.Singleton
-            );
-            IocManager.RegisterIfNot<IEntityHistoryStore, NullEntityHistoryStore>(
-                DependencyLifeStyle.Singleton
-            );
-            IocManager.RegisterIfNot<ICachedUniqueKeyPerUser, CachedUniqueKeyPerUser>(
-                DependencyLifeStyle.Transient
-            );
+            IocManager.RegisterIfNot<ITenantResolverCache, NullTenantResolverCache>(DependencyLifeStyle.Singleton);
+            IocManager.RegisterIfNot<IEntityHistoryStore, NullEntityHistoryStore>(DependencyLifeStyle.Singleton);
+            IocManager.RegisterIfNot<ICachedUniqueKeyPerUser, CachedUniqueKeyPerUser>(DependencyLifeStyle.Transient);
 
             if (Configuration.BackgroundJobs.IsJobExecutionEnabled)
             {
-                IocManager.RegisterIfNot<IBackgroundJobStore, InMemoryBackgroundJobStore>(
-                    DependencyLifeStyle.Singleton
-                );
+                IocManager.RegisterIfNot<IBackgroundJobStore, InMemoryBackgroundJobStore>(DependencyLifeStyle.Singleton);
             }
             else
             {
-                IocManager.RegisterIfNot<IBackgroundJobStore, NullBackgroundJobStore>(
-                    DependencyLifeStyle.Singleton
-                );
+                IocManager.RegisterIfNot<IBackgroundJobStore, NullBackgroundJobStore>(DependencyLifeStyle.Singleton);
             }
         }
     }

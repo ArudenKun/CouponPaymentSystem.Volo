@@ -16,32 +16,30 @@ namespace Abp.Events.Bus
         /// </summary>
         public static NullEventBus Instance { get; } = new NullEventBus();
 
-        private NullEventBus() { }
+        private NullEventBus()
+        {
+        }
 
         /// <inheritdoc/>
-        public IDisposable Register<TEventData>(Action<TEventData> action)
-            where TEventData : IEventData
+        public IDisposable Register<TEventData>(Action<TEventData> action) where TEventData : IEventData
         {
             return NullDisposable.Instance;
         }
 
         /// <inheritdoc/>
-        public IDisposable AsyncRegister<TEventData>(Func<TEventData, Task> action)
-            where TEventData : IEventData
+        public IDisposable AsyncRegister<TEventData>(Func<TEventData, Task> action) where TEventData : IEventData
         {
             return NullDisposable.Instance;
         }
 
         /// <inheritdoc/>
-        public IDisposable Register<TEventData>(IEventHandler<TEventData> handler)
-            where TEventData : IEventData
+        public IDisposable Register<TEventData>(IEventHandler<TEventData> handler) where TEventData : IEventData
         {
             return NullDisposable.Instance;
         }
 
         /// <inheritdoc/>
-        public IDisposable AsyncRegister<TEventData>(IAsyncEventHandler<TEventData> handler)
-            where TEventData : IEventData
+        public IDisposable AsyncRegister<TEventData>(IAsyncEventHandler<TEventData> handler) where TEventData : IEventData
         {
             return NullDisposable.Instance;
         }
@@ -61,8 +59,7 @@ namespace Abp.Events.Bus
         }
 
         /// <inheritdoc/>
-        public IDisposable Register<TEventData>(IEventHandlerFactory handlerFactory)
-            where TEventData : IEventData
+        public IDisposable Register<TEventData>(IEventHandlerFactory handlerFactory) where TEventData : IEventData
         {
             return NullDisposable.Instance;
         }
@@ -74,62 +71,78 @@ namespace Abp.Events.Bus
         }
 
         /// <inheritdoc/>
-        public void Unregister<TEventData>(Action<TEventData> action)
-            where TEventData : IEventData { }
+        public void Unregister<TEventData>(Action<TEventData> action) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void AsyncUnregister<TEventData>(Func<TEventData, Task> action)
-            where TEventData : IEventData { }
+        public void AsyncUnregister<TEventData>(Func<TEventData, Task> action) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void Unregister<TEventData>(IEventHandler<TEventData> handler)
-            where TEventData : IEventData { }
+        public void Unregister<TEventData>(IEventHandler<TEventData> handler) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void AsyncUnregister<TEventData>(IAsyncEventHandler<TEventData> handler)
-            where TEventData : IEventData { }
+        public void AsyncUnregister<TEventData>(IAsyncEventHandler<TEventData> handler) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void Unregister(Type eventType, IEventHandler handler) { }
+        public void Unregister(Type eventType, IEventHandler handler)
+        {
+        }
 
         /// <inheritdoc/>
-        public void Unregister<TEventData>(IEventHandlerFactory factory)
-            where TEventData : IEventData { }
+        public void Unregister<TEventData>(IEventHandlerFactory factory) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void Unregister(Type eventType, IEventHandlerFactory factory) { }
+        public void Unregister(Type eventType, IEventHandlerFactory factory)
+        {
+        }
 
         /// <inheritdoc/>
-        public void UnregisterAll<TEventData>()
-            where TEventData : IEventData { }
+        public void UnregisterAll<TEventData>() where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void UnregisterAll(Type eventType) { }
+        public void UnregisterAll(Type eventType)
+        {
+        }
 
         /// <inheritdoc/>
-        public void Trigger<TEventData>(TEventData eventData)
-            where TEventData : IEventData { }
+        public void Trigger<TEventData>(TEventData eventData) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void Trigger<TEventData>(object eventSource, TEventData eventData)
-            where TEventData : IEventData { }
+        public void Trigger<TEventData>(object eventSource, TEventData eventData) where TEventData : IEventData
+        {
+        }
 
         /// <inheritdoc/>
-        public void Trigger(Type eventType, IEventData eventData) { }
+        public void Trigger(Type eventType, IEventData eventData)
+        {
+        }
 
         /// <inheritdoc/>
-        public void Trigger(Type eventType, object eventSource, IEventData eventData) { }
+        public void Trigger(Type eventType, object eventSource, IEventData eventData)
+        {
+        }
 
         /// <inheritdoc/>
-        public Task TriggerAsync<TEventData>(TEventData eventData)
-            where TEventData : IEventData
+        public Task TriggerAsync<TEventData>(TEventData eventData) where TEventData : IEventData
         {
             return Task.CompletedTask;
         }
 
         /// <inheritdoc/>
-        public Task TriggerAsync<TEventData>(object eventSource, TEventData eventData)
-            where TEventData : IEventData
+        public Task TriggerAsync<TEventData>(object eventSource, TEventData eventData) where TEventData : IEventData
         {
             return Task.CompletedTask;
         }

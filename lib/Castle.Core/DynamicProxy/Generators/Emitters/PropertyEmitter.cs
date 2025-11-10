@@ -12,133 +12,134 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class PropertyEmitter : IMemberEmitter
+namespace Castle.DynamicProxy.Generators.Emitters
 {
-    private readonly PropertyBuilder builder;
-    private readonly AbstractTypeEmitter parentTypeEmitter;
-    private MethodEmitter getMethod;
-    private MethodEmitter setMethod;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public PropertyEmitter(
-        AbstractTypeEmitter parentTypeEmitter,
-        string name,
-        PropertyAttributes attributes,
-        Type propertyType,
-        Type[] arguments
-    )
+    internal class PropertyEmitter : IMemberEmitter
     {
-        this.parentTypeEmitter = parentTypeEmitter;
+        private readonly PropertyBuilder builder;
+        private readonly AbstractTypeEmitter parentTypeEmitter;
+        private MethodEmitter getMethod;
+        private MethodEmitter setMethod;
 
-        builder = parentTypeEmitter.TypeBuilder.DefineProperty(
-            name,
-            attributes,
-            CallingConventions.HasThis,
-            propertyType,
-            null,
-            null,
-            arguments,
-            null,
-            null
-        );
-    }
-
-    public MemberInfo Member
-    {
-        get { return null; }
-    }
-
-    public Type ReturnType
-    {
-        get { return builder.PropertyType; }
-    }
-
-    public MethodEmitter CreateGetMethod(
-        string name,
-        MethodAttributes attrs,
-        MethodInfo methodToOverride,
-        params Type[] parameters
-    )
-    {
-        if (getMethod != null)
+        public PropertyEmitter(
+            AbstractTypeEmitter parentTypeEmitter,
+            string name,
+            PropertyAttributes attributes,
+            Type propertyType,
+            Type[] arguments
+        )
         {
-            throw new InvalidOperationException("A get method exists");
+            this.parentTypeEmitter = parentTypeEmitter;
+
+            builder = parentTypeEmitter.TypeBuilder.DefineProperty(
+                name,
+                attributes,
+                CallingConventions.HasThis,
+                propertyType,
+                null,
+                null,
+                arguments,
+                null,
+                null
+            );
         }
 
-        getMethod = new MethodEmitter(parentTypeEmitter, name, attrs, methodToOverride);
-        return getMethod;
-    }
-
-    public MethodEmitter CreateGetMethod(
-        string name,
-        MethodAttributes attributes,
-        MethodInfo methodToOverride
-    )
-    {
-        return CreateGetMethod(name, attributes, methodToOverride, Type.EmptyTypes);
-    }
-
-    public MethodEmitter CreateSetMethod(
-        string name,
-        MethodAttributes attrs,
-        MethodInfo methodToOverride,
-        params Type[] parameters
-    )
-    {
-        if (setMethod != null)
+        public MemberInfo Member
         {
-            throw new InvalidOperationException("A set method exists");
+            get { return null; }
         }
 
-        setMethod = new MethodEmitter(parentTypeEmitter, name, attrs, methodToOverride);
-        return setMethod;
-    }
-
-    public MethodEmitter CreateSetMethod(
-        string name,
-        MethodAttributes attributes,
-        MethodInfo methodToOverride
-    )
-    {
-        var method = CreateSetMethod(name, attributes, methodToOverride, Type.EmptyTypes);
-        return method;
-    }
-
-    public void DefineCustomAttribute(CustomAttributeBuilder attribute)
-    {
-        builder.SetCustomAttribute(attribute);
-    }
-
-    public void EnsureValidCodeBlock()
-    {
-        if (setMethod != null)
+        public Type ReturnType
         {
-            setMethod.EnsureValidCodeBlock();
+            get { return builder.PropertyType; }
         }
 
-        if (getMethod != null)
+        public MethodEmitter CreateGetMethod(
+            string name,
+            MethodAttributes attrs,
+            MethodInfo methodToOverride,
+            params Type[] parameters
+        )
         {
-            getMethod.EnsureValidCodeBlock();
-        }
-    }
+            if (getMethod != null)
+            {
+                throw new InvalidOperationException("A get method exists");
+            }
 
-    public void Generate()
-    {
-        if (setMethod != null)
-        {
-            setMethod.Generate();
-            builder.SetSetMethod(setMethod.MethodBuilder);
+            getMethod = new MethodEmitter(parentTypeEmitter, name, attrs, methodToOverride);
+            return getMethod;
         }
 
-        if (getMethod != null)
+        public MethodEmitter CreateGetMethod(
+            string name,
+            MethodAttributes attributes,
+            MethodInfo methodToOverride
+        )
         {
-            getMethod.Generate();
-            builder.SetGetMethod(getMethod.MethodBuilder);
+            return CreateGetMethod(name, attributes, methodToOverride, Type.EmptyTypes);
+        }
+
+        public MethodEmitter CreateSetMethod(
+            string name,
+            MethodAttributes attrs,
+            MethodInfo methodToOverride,
+            params Type[] parameters
+        )
+        {
+            if (setMethod != null)
+            {
+                throw new InvalidOperationException("A set method exists");
+            }
+
+            setMethod = new MethodEmitter(parentTypeEmitter, name, attrs, methodToOverride);
+            return setMethod;
+        }
+
+        public MethodEmitter CreateSetMethod(
+            string name,
+            MethodAttributes attributes,
+            MethodInfo methodToOverride
+        )
+        {
+            var method = CreateSetMethod(name, attributes, methodToOverride, Type.EmptyTypes);
+            return method;
+        }
+
+        public void DefineCustomAttribute(CustomAttributeBuilder attribute)
+        {
+            builder.SetCustomAttribute(attribute);
+        }
+
+        public void EnsureValidCodeBlock()
+        {
+            if (setMethod != null)
+            {
+                setMethod.EnsureValidCodeBlock();
+            }
+
+            if (getMethod != null)
+            {
+                getMethod.EnsureValidCodeBlock();
+            }
+        }
+
+        public void Generate()
+        {
+            if (setMethod != null)
+            {
+                setMethod.Generate();
+                builder.SetSetMethod(setMethod.MethodBuilder);
+            }
+
+            if (getMethod != null)
+            {
+                getMethod.Generate();
+                builder.SetGetMethod(getMethod.MethodBuilder);
+            }
         }
     }
 }

@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;net48</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Autofac.Mvc5" />
+    <PackageReference Include="Microsoft.AspNet.Mvc" />
+    <PackageReference Include="Volo.Abp.VirtualFileSystem" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Volo.Abp.Web\Volo.Abp.Web.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Web" />
+  </ItemGroup>
+</Project>

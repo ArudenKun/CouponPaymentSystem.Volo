@@ -14,6 +14,9 @@ namespace Abp.Events.Bus.Entities
         /// </summary>
         /// <param name="entity">The entity which is deleted</param>
         public EntityDeletedEventData(TEntity entity)
-            : base(entity) { }
+            : base(entity)
+        {
+
+        }
     }
 }

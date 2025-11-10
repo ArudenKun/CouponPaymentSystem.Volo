@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public enum XmlTypeKind
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    Simple,
-    Complex,
-    Collection,
+    public enum XmlTypeKind
+    {
+        Simple,
+        Complex,
+        Collection,
+    }
 }

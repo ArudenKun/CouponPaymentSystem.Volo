@@ -61,8 +61,7 @@ namespace Abp.Runtime.Security
             string passPhrase = null,
             byte[] salt = null,
             int? keySize = null,
-            byte[] initVectorBytes = null
-        )
+            byte[] initVectorBytes = null)
         {
             if (plainText == null)
             {
@@ -100,13 +99,7 @@ namespace Abp.Runtime.Security
                     {
                         using (var memoryStream = new MemoryStream())
                         {
-                            using (
-                                var cryptoStream = new CryptoStream(
-                                    memoryStream,
-                                    encryptor,
-                                    CryptoStreamMode.Write
-                                )
-                            )
+                            using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
                             {
                                 cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
                                 cryptoStream.FlushFinalBlock();
@@ -124,8 +117,7 @@ namespace Abp.Runtime.Security
             string passPhrase = null,
             byte[] salt = null,
             int? keySize = null,
-            byte[] initVectorBytes = null
-        )
+            byte[] initVectorBytes = null)
         {
             if (string.IsNullOrEmpty(cipherText))
             {
@@ -163,13 +155,7 @@ namespace Abp.Runtime.Security
                     {
                         using (var memoryStream = new MemoryStream(cipherTextBytes))
                         {
-                            using (
-                                var cryptoStream = new CryptoStream(
-                                    memoryStream,
-                                    decryptor,
-                                    CryptoStreamMode.Read
-                                )
-                            )
+                            using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
                             {
                                 var plainTextBytes = new byte[cipherTextBytes.Length];
                                 int totalDecryptedByteCount = 0;
@@ -180,7 +166,7 @@ namespace Abp.Runtime.Security
                                         totalDecryptedByteCount,
                                         plainTextBytes.Length - totalDecryptedByteCount
                                     );
-
+                                    
                                     if (decryptedByteCount == 0)
                                     {
                                         break;
@@ -189,11 +175,7 @@ namespace Abp.Runtime.Security
                                     totalDecryptedByteCount += decryptedByteCount;
                                 }
 
-                                return Encoding.UTF8.GetString(
-                                    plainTextBytes,
-                                    0,
-                                    totalDecryptedByteCount
-                                );
+                                return Encoding.UTF8.GetString(plainTextBytes, 0, totalDecryptedByteCount);
                             }
                         }
                     }

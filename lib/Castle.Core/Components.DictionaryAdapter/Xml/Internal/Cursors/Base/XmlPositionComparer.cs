@@ -12,76 +12,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public class XmlPositionComparer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlPositionComparer Instance = new XmlPositionComparer();
-
-    public bool Equals(IXmlNode nodeA, IXmlNode nodeB)
+    public class XmlPositionComparer
     {
-        var comparer = XmlNameComparer.Default;
-        var a = new ComparandIterator { Node = nodeA };
-        var b = new ComparandIterator { Node = nodeB };
+        public static readonly XmlPositionComparer Instance = new XmlPositionComparer();
 
-        for (; ; )
+        public bool Equals(IXmlNode nodeA, IXmlNode nodeB)
         {
-            if (a.Node.IsReal && b.Node.IsReal)
-                return a.Node.UnderlyingPositionEquals(b.Node);
-            if (!a.MoveNext() || !b.MoveNext())
+            var comparer = XmlNameComparer.Default;
+            var a = new ComparandIterator { Node = nodeA };
+            var b = new ComparandIterator { Node = nodeB };
+
+            for (; ; )
+            {
+                if (a.Node.IsReal && b.Node.IsReal)
+                    return a.Node.UnderlyingPositionEquals(b.Node);
+                if (!a.MoveNext() || !b.MoveNext())
+                    return false;
+                if (!comparer.Equals(a.Name, b.Name))
+                    return false;
+            }
+        }
+
+        private struct ComparandIterator
+        {
+            public IXmlNode Node;
+            public XmlName Name;
+            public CompiledXPathNode Step;
+
+            public bool MoveNext()
+            {
+                return Step != null ? ConsumeStep()
+                    : Node != null ? ConsumeNode()
+                    : Stop();
+            }
+
+            private bool ConsumeNode()
+            {
+                var result = true;
+                var path = Node.Path;
+                if (path != null)
+                    result = ConsumeFirstStep(path);
+                else
+                    Name = Node.Name;
+
+                Node = Node.Parent;
+                return result;
+            }
+
+            private bool Stop()
+            {
+                Name = XmlName.Empty;
                 return false;
-            if (!comparer.Equals(a.Name, b.Name))
-                return false;
-        }
-    }
+            }
 
-    private struct ComparandIterator
-    {
-        public IXmlNode Node;
-        public XmlName Name;
-        public CompiledXPathNode Step;
+            private bool ConsumeFirstStep(CompiledXPath path)
+            {
+                if (!path.IsCreatable)
+                    return false;
 
-        public bool MoveNext()
-        {
-            return Step != null ? ConsumeStep()
-                : Node != null ? ConsumeNode()
-                : Stop();
-        }
+                Step = path.LastStep;
+                return ConsumeStep();
+            }
 
-        private bool ConsumeNode()
-        {
-            var result = true;
-            var path = Node.Path;
-            if (path != null)
-                result = ConsumeFirstStep(path);
-            else
-                Name = Node.Name;
+            private bool ConsumeStep()
+            {
+                Name = new XmlName(Step.LocalName, Node.LookupNamespaceUri(Step.Prefix));
 
-            Node = Node.Parent;
-            return result;
-        }
-
-        private bool Stop()
-        {
-            Name = XmlName.Empty;
-            return false;
-        }
-
-        private bool ConsumeFirstStep(CompiledXPath path)
-        {
-            if (!path.IsCreatable)
-                return false;
-
-            Step = path.LastStep;
-            return ConsumeStep();
-        }
-
-        private bool ConsumeStep()
-        {
-            Name = new XmlName(Step.LocalName, Node.LookupNamespaceUri(Step.Prefix));
-
-            Step = Step.PreviousNode;
-            return true;
+                Step = Step.PreviousNode;
+                return true;
+            }
         }
     }
 }

@@ -22,10 +22,7 @@ namespace Abp.Json
         protected List<string> InputDateTimeFormats { get; set; }
         protected string OutputDateTimeFormat { get; set; }
 
-        public AbpDateTimeConverter(
-            List<string> inputDateTimeFormats = null,
-            string outputDateTimeFormat = null
-        )
+        public AbpDateTimeConverter(List<string> inputDateTimeFormats = null, string outputDateTimeFormat = null)
         {
             InputDateTimeFormats = inputDateTimeFormats ?? new List<string>();
             OutputDateTimeFormat = outputDateTimeFormat;
@@ -36,21 +33,14 @@ namespace Abp.Json
             return objectType == typeof(DateTime) || objectType == typeof(DateTime?);
         }
 
-        public override object ReadJson(
-            JsonReader reader,
-            Type objectType,
-            object existingValue,
-            JsonSerializer serializer
-        )
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
         {
             var nullable = Nullable.GetUnderlyingType(objectType) != null;
             if (reader.TokenType == JsonToken.Null)
             {
                 if (!nullable)
                 {
-                    throw new JsonSerializationException(
-                        $"Cannot convert null value to {objectType.FullName}."
-                    );
+                    throw new JsonSerializationException($"Cannot convert null value to {objectType.FullName}.");
                 }
 
                 return null;
@@ -63,9 +53,7 @@ namespace Abp.Json
 
             if (reader.TokenType != JsonToken.String)
             {
-                throw new JsonSerializationException(
-                    $"Unexpected token parsing date. Expected String, got {reader.TokenType}."
-                );
+                throw new JsonSerializationException($"Unexpected token parsing date. Expected String, got {reader.TokenType}.");
             }
 
             var dateText = reader.Value?.ToString();
@@ -79,15 +67,7 @@ namespace Abp.Json
             {
                 foreach (var format in InputDateTimeFormats)
                 {
-                    if (
-                        DateTime.TryParseExact(
-                            dateText,
-                            format,
-                            _culture,
-                            _dateTimeStyles,
-                            out var d1
-                        )
-                    )
+                    if (DateTime.TryParseExact(dateText, format, _culture, _dateTimeStyles, out var d1))
                     {
                         return Clock.Normalize(d1);
                     }
@@ -108,43 +88,31 @@ namespace Abp.Json
 
             if (value is DateTime dateTime)
             {
-                if (
-                    (_dateTimeStyles & DateTimeStyles.AdjustToUniversal)
-                        == DateTimeStyles.AdjustToUniversal
-                    || (_dateTimeStyles & DateTimeStyles.AssumeUniversal)
-                        == DateTimeStyles.AssumeUniversal
-                )
+                if ((_dateTimeStyles & DateTimeStyles.AdjustToUniversal) == DateTimeStyles.AdjustToUniversal ||
+                    (_dateTimeStyles & DateTimeStyles.AssumeUniversal) == DateTimeStyles.AssumeUniversal)
                 {
                     dateTime = dateTime.ToUniversalTime();
                 }
 
-                writer.WriteValue(
-                    OutputDateTimeFormat.IsNullOrWhiteSpace()
-                        ? dateTime.ToString(DefaultDateTimeFormat, _culture)
-                        : dateTime.ToString(OutputDateTimeFormat, _culture)
-                );
+                writer.WriteValue(OutputDateTimeFormat.IsNullOrWhiteSpace()
+                    ? dateTime.ToString(DefaultDateTimeFormat, _culture)
+                    : dateTime.ToString(OutputDateTimeFormat, _culture));
             }
             else
             {
-                throw new JsonSerializationException(
-                    $"Unexpected value when converting date. Expected DateTime or DateTimeOffset, got {value.GetType()}."
-                );
+                throw new JsonSerializationException($"Unexpected value when converting date. Expected DateTime or DateTimeOffset, got {value.GetType()}.");
             }
         }
 
         internal static bool ShouldNormalize(MemberInfo member, JsonProperty property)
         {
-            if (
-                property.PropertyType != typeof(DateTime)
-                && property.PropertyType != typeof(DateTime?)
-            )
+            if (property.PropertyType != typeof(DateTime) &&
+                property.PropertyType != typeof(DateTime?))
             {
                 return false;
             }
 
-            return ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableDateTimeNormalizationAttribute>(
-                    member
-                ) == null;
+            return ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableDateTimeNormalizationAttribute>(member) == null;
         }
     }
 }

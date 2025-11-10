@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-public interface IVirtualTarget<TNode, TMember>
+namespace Castle.Components.DictionaryAdapter
 {
-    void OnRealizing(TNode node, TMember member);
+    public interface IVirtualTarget<TNode, TMember>
+    {
+        void OnRealizing(TNode node, TMember member);
+    }
 }

@@ -12,47 +12,48 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-using System.Xml;
-using System.Xml.Serialization;
-using System.Xml.XPath;
-
-public static class SysXmlExtensions
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static void DefineNamespace(this XmlElement node, string prefix, string namespaceUri)
-    {
-        var attribute = node.OwnerDocument.CreateAttribute(
-            Xmlns.Prefix,
-            prefix,
-            Xmlns.NamespaceUri
-        );
-        attribute.Value = namespaceUri;
-        node.SetAttributeNode(attribute);
-    }
+    using System;
+    using System.Collections.Generic;
+    using System.Xml;
+    using System.Xml.Serialization;
+    using System.Xml.XPath;
 
-    public static bool IsNamespace(this XmlAttribute attribute)
+    public static class SysXmlExtensions
     {
-        return attribute.Prefix == Xmlns.Prefix
-            || (string.IsNullOrEmpty(attribute.Prefix) && attribute.LocalName == Xmlns.Prefix);
-    }
-
-    public static XmlElement FindRoot(this XmlElement node)
-    {
-        for (; ; )
+        public static void DefineNamespace(this XmlElement node, string prefix, string namespaceUri)
         {
-            var next = node.ParentNode as XmlElement;
-            if (next == null)
-                return node;
-            node = next;
+            var attribute = node.OwnerDocument.CreateAttribute(
+                Xmlns.Prefix,
+                prefix,
+                Xmlns.NamespaceUri
+            );
+            attribute.Value = namespaceUri;
+            node.SetAttributeNode(attribute);
         }
-    }
 
-    public static bool IsXsiType(this XmlAttribute attribute)
-    {
-        return attribute.LocalName == Xsi.Type.LocalName
-            && attribute.NamespaceURI == Xsi.NamespaceUri;
+        public static bool IsNamespace(this XmlAttribute attribute)
+        {
+            return attribute.Prefix == Xmlns.Prefix
+                || (string.IsNullOrEmpty(attribute.Prefix) && attribute.LocalName == Xmlns.Prefix);
+        }
+
+        public static XmlElement FindRoot(this XmlElement node)
+        {
+            for (; ; )
+            {
+                var next = node.ParentNode as XmlElement;
+                if (next == null)
+                    return node;
+                node = next;
+            }
+        }
+
+        public static bool IsXsiType(this XmlAttribute attribute)
+        {
+            return attribute.LocalName == Xsi.Type.LocalName
+                && attribute.NamespaceURI == Xsi.NamespaceUri;
+        }
     }
 }

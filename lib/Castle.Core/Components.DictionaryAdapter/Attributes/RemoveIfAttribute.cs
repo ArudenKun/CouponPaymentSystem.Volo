@@ -12,122 +12,123 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections;
-using System.Linq;
-using System.Reflection;
-
-/// <summary>
-/// Removes a property if matches value.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
-public class RemoveIfAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
+namespace Castle.Components.DictionaryAdapter
 {
-    private ICondition condition;
+    using System;
+    using System.Collections;
+    using System.Linq;
+    using System.Reflection;
 
-    public RemoveIfAttribute()
+    /// <summary>
+    /// Removes a property if matches value.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
+    public class RemoveIfAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
     {
-        ExecutionOrder += 10;
-    }
+        private ICondition condition;
 
-    public RemoveIfAttribute(params object[] values)
-        : this()
-    {
-        values = values ?? new object[] { null };
-        condition = new ValueCondition(values, null);
-    }
-
-    public RemoveIfAttribute(object[] values, Type comparerType)
-        : this()
-    {
-        var comparer = Construct<IEqualityComparer>(comparerType, nameof(comparerType));
-        condition = new ValueCondition(values, comparer);
-    }
-
-    protected RemoveIfAttribute(ICondition condition)
-        : this()
-    {
-        this.condition = condition;
-    }
-
-    public Type Condition
-    {
-        set { condition = Construct<ICondition>(value, nameof(value)); }
-    }
-
-    bool IDictionaryPropertySetter.SetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        ref object value,
-        PropertyDescriptor property
-    )
-    {
-        if (ShouldRemove(value))
+        public RemoveIfAttribute()
         {
-            dictionaryAdapter.ClearProperty(property, key);
-            return false;
-        }
-        return true;
-    }
-
-    internal bool ShouldRemove(object value)
-    {
-        return condition != null && condition.SatisfiedBy(value);
-    }
-
-    private static TBase Construct<TBase>(Type type, string paramName)
-        where TBase : class
-    {
-        if (type == null)
-        {
-            throw new ArgumentNullException(paramName);
+            ExecutionOrder += 10;
         }
 
-        if (type.IsAbstract == false && typeof(TBase).IsAssignableFrom(type))
+        public RemoveIfAttribute(params object[] values)
+            : this()
         {
-            var constructor = type.GetConstructor(Type.EmptyTypes);
-            if (constructor != null)
+            values = values ?? new object[] { null };
+            condition = new ValueCondition(values, null);
+        }
+
+        public RemoveIfAttribute(object[] values, Type comparerType)
+            : this()
+        {
+            var comparer = Construct<IEqualityComparer>(comparerType, nameof(comparerType));
+            condition = new ValueCondition(values, comparer);
+        }
+
+        protected RemoveIfAttribute(ICondition condition)
+            : this()
+        {
+            this.condition = condition;
+        }
+
+        public Type Condition
+        {
+            set { condition = Construct<ICondition>(value, nameof(value)); }
+        }
+
+        bool IDictionaryPropertySetter.SetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            ref object value,
+            PropertyDescriptor property
+        )
+        {
+            if (ShouldRemove(value))
             {
-                return (TBase)constructor.Invoke(new object[0]);
+                dictionaryAdapter.ClearProperty(property, key);
+                return false;
+            }
+            return true;
+        }
+
+        internal bool ShouldRemove(object value)
+        {
+            return condition != null && condition.SatisfiedBy(value);
+        }
+
+        private static TBase Construct<TBase>(Type type, string paramName)
+            where TBase : class
+        {
+            if (type == null)
+            {
+                throw new ArgumentNullException(paramName);
+            }
+
+            if (type.IsAbstract == false && typeof(TBase).IsAssignableFrom(type))
+            {
+                var constructor = type.GetConstructor(Type.EmptyTypes);
+                if (constructor != null)
+                {
+                    return (TBase)constructor.Invoke(new object[0]);
+                }
+            }
+
+            throw new ArgumentException(
+                string.Format(
+                    "{0} is not a concrete type implementing {1} with a default constructor",
+                    type.FullName,
+                    typeof(TBase).FullName
+                )
+            );
+        }
+
+        #region Nested Class: ValueCondition
+
+        class ValueCondition : ICondition
+        {
+            private readonly object[] values;
+            private readonly IEqualityComparer comparer;
+
+            public ValueCondition(object[] values, IEqualityComparer comparer)
+            {
+                this.values = values;
+                this.comparer = comparer;
+            }
+
+            public bool SatisfiedBy(object value)
+            {
+                return values.Any(valueToMatch =>
+                {
+                    if (comparer == null)
+                    {
+                        return Equals(value, valueToMatch);
+                    }
+                    return comparer.Equals(value, valueToMatch);
+                });
             }
         }
 
-        throw new ArgumentException(
-            string.Format(
-                "{0} is not a concrete type implementing {1} with a default constructor",
-                type.FullName,
-                typeof(TBase).FullName
-            )
-        );
+        #endregion
     }
-
-    #region Nested Class: ValueCondition
-
-    class ValueCondition : ICondition
-    {
-        private readonly object[] values;
-        private readonly IEqualityComparer comparer;
-
-        public ValueCondition(object[] values, IEqualityComparer comparer)
-        {
-            this.values = values;
-            this.comparer = comparer;
-        }
-
-        public bool SatisfiedBy(object value)
-        {
-            return values.Any(valueToMatch =>
-            {
-                if (comparer == null)
-                {
-                    return Equals(value, valueToMatch);
-                }
-                return comparer.Equals(value, valueToMatch);
-            });
-        }
-    }
-
-    #endregion
 }

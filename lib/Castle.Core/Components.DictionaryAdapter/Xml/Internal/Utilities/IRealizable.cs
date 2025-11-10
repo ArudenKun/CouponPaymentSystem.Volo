@@ -12,28 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-// OBSOLETE: This has been replaced with IVirtual<T>.
-
-public interface IRealizable<T> : IRealizableSource
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    bool IsReal { get; }
-    T Value { get; }
-}
+    // OBSOLETE: This has been replaced with IVirtual<T>.
 
-public interface IRealizableSource
-{
-    IRealizable<T> AsRealizable<T>();
-}
-
-public static class RealizableExtensions
-{
-    public static IRealizable<T> RequireRealizable<T>(this IRealizableSource obj)
+    public interface IRealizable<T> : IRealizableSource
     {
-        var realizable = obj.AsRealizable<T>();
-        if (realizable == null)
-            throw Error.NotRealizable<T>();
-        return realizable;
+        bool IsReal { get; }
+        T Value { get; }
+    }
+
+    public interface IRealizableSource
+    {
+        IRealizable<T> AsRealizable<T>();
+    }
+
+    public static class RealizableExtensions
+    {
+        public static IRealizable<T> RequireRealizable<T>(this IRealizableSource obj)
+        {
+            var realizable = obj.AsRealizable<T>();
+            if (realizable == null)
+                throw Error.NotRealizable<T>();
+            return realizable;
+        }
     }
 }

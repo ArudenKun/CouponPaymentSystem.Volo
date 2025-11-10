@@ -6,25 +6,15 @@ namespace Abp.Domain.Uow
 {
     internal static class UnitOfWorkDefaultOptionsExtensions
     {
-        public static UnitOfWorkAttribute GetUnitOfWorkAttributeOrNull(
-            this IUnitOfWorkDefaultOptions unitOfWorkDefaultOptions,
-            MethodInfo methodInfo
-        )
+        public static UnitOfWorkAttribute GetUnitOfWorkAttributeOrNull(this IUnitOfWorkDefaultOptions unitOfWorkDefaultOptions, MethodInfo methodInfo)
         {
-            var attrs = methodInfo
-                .GetCustomAttributes(true)
-                .OfType<UnitOfWorkAttribute>()
-                .ToArray();
+            var attrs = methodInfo.GetCustomAttributes(true).OfType<UnitOfWorkAttribute>().ToArray();
             if (attrs.Length > 0)
             {
                 return attrs[0];
             }
 
-            attrs = methodInfo
-                .DeclaringType.GetTypeInfo()
-                .GetCustomAttributes(true)
-                .OfType<UnitOfWorkAttribute>()
-                .ToArray();
+            attrs = methodInfo.DeclaringType.GetTypeInfo().GetCustomAttributes(true).OfType<UnitOfWorkAttribute>().ToArray();
             if (attrs.Length > 0)
             {
                 return attrs[0];
@@ -38,14 +28,9 @@ namespace Abp.Domain.Uow
             return null;
         }
 
-        public static bool IsConventionalUowClass(
-            this IUnitOfWorkDefaultOptions unitOfWorkDefaultOptions,
-            Type type
-        )
+        public static bool IsConventionalUowClass(this IUnitOfWorkDefaultOptions unitOfWorkDefaultOptions, Type type)
         {
-            return unitOfWorkDefaultOptions.ConventionalUowSelectors.Any(selector =>
-                selector(type)
-            );
+            return unitOfWorkDefaultOptions.ConventionalUowSelectors.Any(selector => selector(type));
         }
     }
 }

@@ -22,7 +22,9 @@ namespace Abp.Localization.Dictionaries.Json
         /// </summary>
         /// <param name="cultureInfo">Culture of the dictionary</param>
         private JsonLocalizationDictionary(CultureInfo cultureInfo)
-            : base(cultureInfo) { }
+            : base(cultureInfo)
+        {
+        }
 
         /// <summary>
         ///     Builds an <see cref="JsonLocalizationDictionary" /> from given file.
@@ -53,9 +55,8 @@ namespace Abp.Localization.Dictionaries.Json
                     jsonString,
                     new JsonSerializerSettings
                     {
-                        ContractResolver = new CamelCasePropertyNamesContractResolver(),
-                    }
-                );
+                        ContractResolver = new CamelCasePropertyNamesContractResolver()
+                    });
             }
             catch (JsonException ex)
             {
@@ -68,9 +69,7 @@ namespace Abp.Localization.Dictionaries.Json
                 throw new AbpException("Culture is empty in language json file.");
             }
 
-            var dictionary = new JsonLocalizationDictionary(
-                CultureInfo.GetCultureInfo(cultureCode)
-            );
+            var dictionary = new JsonLocalizationDictionary(CultureInfo.GetCultureInfo(cultureCode));
             var dublicateNames = new List<string>();
             foreach (var item in jsonFile.Texts)
             {
@@ -90,9 +89,8 @@ namespace Abp.Localization.Dictionaries.Json
             if (dublicateNames.Count > 0)
             {
                 throw new AbpException(
-                    "A dictionary can not contain same key twice. There are some duplicated names: "
-                        + dublicateNames.JoinAsString(", ")
-                );
+                    "A dictionary can not contain same key twice. There are some duplicated names: " +
+                    dublicateNames.JoinAsString(", "));
             }
 
             return dictionary;

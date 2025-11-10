@@ -14,28 +14,29 @@
 
 #nullable enable
 
-namespace Castle.DynamicProxy;
-
-using System;
+namespace Castle.DynamicProxy
+{
+    using System;
 
 #if FEATURE_SERIALIZATION
-[Serializable]
+    [Serializable]
 #endif
-public class StandardInterceptor : IInterceptor
-{
-    public void Intercept(IInvocation invocation)
+    public class StandardInterceptor : IInterceptor
     {
-        PreProceed(invocation);
-        PerformProceed(invocation);
-        PostProceed(invocation);
+        public void Intercept(IInvocation invocation)
+        {
+            PreProceed(invocation);
+            PerformProceed(invocation);
+            PostProceed(invocation);
+        }
+
+        protected virtual void PerformProceed(IInvocation invocation)
+        {
+            invocation.Proceed();
+        }
+
+        protected virtual void PreProceed(IInvocation invocation) { }
+
+        protected virtual void PostProceed(IInvocation invocation) { }
     }
-
-    protected virtual void PerformProceed(IInvocation invocation)
-    {
-        invocation.Proceed();
-    }
-
-    protected virtual void PreProceed(IInvocation invocation) { }
-
-    protected virtual void PostProceed(IInvocation invocation) { }
 }

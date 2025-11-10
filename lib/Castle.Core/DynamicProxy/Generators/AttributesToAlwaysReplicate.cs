@@ -12,44 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-
-public static class AttributesToAlwaysReplicate
+namespace Castle.DynamicProxy.Generators
 {
-    private static readonly object lockObject = new object();
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
 
-    private static IList<Type> attributes;
-
-    static AttributesToAlwaysReplicate()
+    public static class AttributesToAlwaysReplicate
     {
-        attributes = new List<Type>() { typeof(ParamArrayAttribute) };
-    }
+        private static readonly object lockObject = new object();
 
-    public static void Add(Type attribute)
-    {
-        // note: this class is made thread-safe by replacing the backing list rather than adding to it
-        lock (lockObject)
+        private static IList<Type> attributes;
+
+        static AttributesToAlwaysReplicate()
         {
-            attributes = new List<Type>(attributes) { attribute };
+            attributes = new List<Type>() { typeof(ParamArrayAttribute) };
         }
-    }
 
-    public static void Add<T>()
-    {
-        Add(typeof(T));
-    }
+        public static void Add(Type attribute)
+        {
+            // note: this class is made thread-safe by replacing the backing list rather than adding to it
+            lock (lockObject)
+            {
+                attributes = new List<Type>(attributes) { attribute };
+            }
+        }
 
-    public static bool Contains(Type attribute)
-    {
-        return attributes.Contains(attribute);
-    }
+        public static void Add<T>()
+        {
+            Add(typeof(T));
+        }
 
-    internal static bool ShouldAdd(Type attribute)
-    {
-        return attributes.Any(attr => attr.IsAssignableFrom(attribute));
+        public static bool Contains(Type attribute)
+        {
+            return attributes.Contains(attribute);
+        }
+
+        internal static bool ShouldAdd(Type attribute)
+        {
+            return attributes.Any(attr => attr.IsAssignableFrom(attribute));
+        }
     }
 }

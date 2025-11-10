@@ -12,49 +12,50 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System.Collections.Generic;
-using System.Diagnostics;
-
-internal class NamingScope : INamingScope
+namespace Castle.DynamicProxy.Generators
 {
-    private readonly IDictionary<string, int> names = new Dictionary<string, int>();
-    private readonly INamingScope parentScope;
+    using System.Collections.Generic;
+    using System.Diagnostics;
 
-    public NamingScope() { }
-
-    private NamingScope(INamingScope parent)
+    internal class NamingScope : INamingScope
     {
-        parentScope = parent;
-    }
+        private readonly IDictionary<string, int> names = new Dictionary<string, int>();
+        private readonly INamingScope parentScope;
 
-    public INamingScope ParentScope
-    {
-        get { return parentScope; }
-    }
+        public NamingScope() { }
 
-    public string GetUniqueName(string suggestedName)
-    {
-        Debug.Assert(
-            string.IsNullOrEmpty(suggestedName) == false,
-            "string.IsNullOrEmpty(suggestedName) == false"
-        );
-
-        int counter;
-        if (!names.TryGetValue(suggestedName, out counter))
+        private NamingScope(INamingScope parent)
         {
-            names.Add(suggestedName, 0);
-            return suggestedName;
+            parentScope = parent;
         }
 
-        counter++;
-        names[suggestedName] = counter;
-        return suggestedName + "_" + counter.ToString();
-    }
+        public INamingScope ParentScope
+        {
+            get { return parentScope; }
+        }
 
-    public INamingScope SafeSubScope()
-    {
-        return new NamingScope(this);
+        public string GetUniqueName(string suggestedName)
+        {
+            Debug.Assert(
+                string.IsNullOrEmpty(suggestedName) == false,
+                "string.IsNullOrEmpty(suggestedName) == false"
+            );
+
+            int counter;
+            if (!names.TryGetValue(suggestedName, out counter))
+            {
+                names.Add(suggestedName, 0);
+                return suggestedName;
+            }
+
+            counter++;
+            names[suggestedName] = counter;
+            return suggestedName + "_" + counter.ToString();
+        }
+
+        public INamingScope SafeSubScope()
+        {
+            return new NamingScope(this);
+        }
     }
 }

@@ -26,8 +26,7 @@ namespace Abp.Threading.Extensions
         /// <typeparam name="T">Type of the object (to be locked)</typeparam>
         /// <param name="source">Source object (to be locked)</param>
         /// <param name="action">Action (to be executed)</param>
-        public static void Locking<T>(this T source, Action<T> action)
-            where T : class
+        public static void Locking<T>(this T source, Action<T> action) where T : class
         {
             lock (source)
             {
@@ -58,8 +57,7 @@ namespace Abp.Threading.Extensions
         /// <param name="source">Source object (to be locked)</param>
         /// <param name="func">Function (to be executed)</param>
         /// <returns>Return value of the <paramnref name="func"/></returns>
-        public static TResult Locking<T, TResult>(this T source, Func<T, TResult> func)
-            where T : class
+        public static TResult Locking<T, TResult>(this T source, Func<T, TResult> func) where T : class
         {
             lock (source)
             {

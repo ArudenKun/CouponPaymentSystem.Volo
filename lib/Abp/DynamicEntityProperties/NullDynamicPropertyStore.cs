@@ -37,21 +37,27 @@ namespace Abp.DynamicEntityProperties
             return Task.FromResult(new List<DynamicProperty>());
         }
 
-        public void Add(DynamicProperty dynamicProperty) { }
+        public void Add(DynamicProperty dynamicProperty)
+        {
+        }
 
         public Task AddAsync(DynamicProperty dynamicProperty)
         {
             return Task.CompletedTask;
         }
 
-        public void Update(DynamicProperty dynamicProperty) { }
+        public void Update(DynamicProperty dynamicProperty)
+        {
+        }
 
         public Task UpdateAsync(DynamicProperty dynamicProperty)
         {
             return Task.CompletedTask;
         }
 
-        public void Delete(int id) { }
+        public void Delete(int id)
+        {
+        }
 
         public Task DeleteAsync(int id)
         {

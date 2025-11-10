@@ -12,53 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Linq;
-using System.Reflection;
-
-public abstract partial class DictionaryAdapterBase
+namespace Castle.Components.DictionaryAdapter
 {
-    public void CopyTo(IDictionaryAdapter other)
-    {
-        CopyTo(other, null);
-    }
+    using System;
+    using System.Linq;
+    using System.Reflection;
 
-    public void CopyTo(IDictionaryAdapter other, Func<PropertyDescriptor, bool> selector)
+    public abstract partial class DictionaryAdapterBase
     {
-        if (ReferenceEquals(this, other))
+        public void CopyTo(IDictionaryAdapter other)
         {
-            return;
+            CopyTo(other, null);
         }
 
-        if (other.Meta.Type.IsAssignableFrom(Meta.Type) == false)
+        public void CopyTo(IDictionaryAdapter other, Func<PropertyDescriptor, bool> selector)
         {
-            throw new ArgumentException(
-                string.Format(
-                    "Unable to copy to {0}.  The type must be assignable from {1}.",
-                    other.Meta.Type.FullName,
-                    Meta.Type.FullName
+            if (ReferenceEquals(this, other))
+            {
+                return;
+            }
+
+            if (other.Meta.Type.IsAssignableFrom(Meta.Type) == false)
+            {
+                throw new ArgumentException(
+                    string.Format(
+                        "Unable to copy to {0}.  The type must be assignable from {1}.",
+                        other.Meta.Type.FullName,
+                        Meta.Type.FullName
+                    )
+                );
+            }
+
+            if (
+                This.CopyStrategies.Aggregate(
+                    false,
+                    (copied, s) => copied | s.Copy(this, other, ref selector)
                 )
-            );
-        }
-
-        if (
-            This.CopyStrategies.Aggregate(
-                false,
-                (copied, s) => copied | s.Copy(this, other, ref selector)
             )
-        )
-        {
-            return;
-        }
+            {
+                return;
+            }
 
-        selector = selector ?? (property => true);
+            selector = selector ?? (property => true);
 
-        foreach (var property in This.Properties.Values.Where(property => selector(property)))
-        {
-            var propertyValue = GetProperty(property.PropertyName, true);
-            other.SetProperty(property.PropertyName, ref propertyValue);
+            foreach (var property in This.Properties.Values.Where(property => selector(property)))
+            {
+                var propertyValue = GetProperty(property.PropertyName, true);
+                other.SetProperty(property.PropertyName, ref propertyValue);
+            }
         }
     }
 }

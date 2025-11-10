@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Tokens;
-
-using System;
-using System.Reflection;
-
-internal static class TypeMethods
+namespace Castle.DynamicProxy.Tokens
 {
-    public static readonly MethodInfo GetTypeFromHandle = typeof(Type).GetMethod(
-        "GetTypeFromHandle"
-    );
+    using System;
+    using System.Reflection;
 
-    public static readonly MethodInfo StaticGetType = typeof(Type).GetMethod(
-        "GetType",
-        new[] { typeof(string), typeof(bool), typeof(bool) }
-    );
+    internal static class TypeMethods
+    {
+        public static readonly MethodInfo GetTypeFromHandle = typeof(Type).GetMethod(
+            "GetTypeFromHandle"
+        );
+
+        public static readonly MethodInfo StaticGetType = typeof(Type).GetMethod(
+            "GetType",
+            new[] { typeof(string), typeof(bool), typeof(bool) }
+        );
+    }
 }

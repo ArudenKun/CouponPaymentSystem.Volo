@@ -13,38 +13,35 @@ namespace Abp.Dependency
         {
             //Transient
             context.IocManager.IocContainer.Register(
-                Classes
-                    .FromAssembly(context.Assembly)
+                Classes.FromAssembly(context.Assembly)
                     .IncludeNonPublicTypes()
                     .BasedOn<ITransientDependency>()
                     .If(type => !type.GetTypeInfo().IsGenericTypeDefinition)
                     .WithService.Self()
                     .WithService.DefaultInterfaces()
                     .LifestyleTransient()
-            );
+                );
 
             //Singleton
             context.IocManager.IocContainer.Register(
-                Classes
-                    .FromAssembly(context.Assembly)
+                Classes.FromAssembly(context.Assembly)
                     .IncludeNonPublicTypes()
                     .BasedOn<ISingletonDependency>()
                     .If(type => !type.GetTypeInfo().IsGenericTypeDefinition)
                     .WithService.Self()
                     .WithService.DefaultInterfaces()
                     .LifestyleSingleton()
-            );
+                );
 
             //Windsor Interceptors
             context.IocManager.IocContainer.Register(
-                Classes
-                    .FromAssembly(context.Assembly)
+                Classes.FromAssembly(context.Assembly)
                     .IncludeNonPublicTypes()
                     .BasedOn<IInterceptor>()
                     .If(type => !type.GetTypeInfo().IsGenericTypeDefinition)
                     .WithService.Self()
                     .LifestyleTransient()
-            );
+                );
         }
     }
 }

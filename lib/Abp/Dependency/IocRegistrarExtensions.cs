@@ -16,10 +16,7 @@ namespace Abp.Dependency
         /// <param name="iocRegistrar">Registrar</param>
         /// <param name="lifeStyle">Lifestyle of the objects of this type</param>
         /// <returns>True, if registered for given implementation.</returns>
-        public static bool RegisterIfNot<T>(
-            this IIocRegistrar iocRegistrar,
-            DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton
-        )
+        public static bool RegisterIfNot<T>(this IIocRegistrar iocRegistrar, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton)
             where T : class
         {
             if (iocRegistrar.IsRegistered<T>())
@@ -38,11 +35,7 @@ namespace Abp.Dependency
         /// <param name="type">Type of the class</param>
         /// <param name="lifeStyle">Lifestyle of the objects of this type</param>
         /// <returns>True, if registered for given implementation.</returns>
-        public static bool RegisterIfNot(
-            this IIocRegistrar iocRegistrar,
-            Type type,
-            DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton
-        )
+        public static bool RegisterIfNot(this IIocRegistrar iocRegistrar, Type type, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton)
         {
             if (iocRegistrar.IsRegistered(type))
             {
@@ -61,10 +54,7 @@ namespace Abp.Dependency
         /// <param name="iocRegistrar">Registrar</param>
         /// <param name="lifeStyle">Lifestyle of the objects of this type</param>
         /// <returns>True, if registered for given implementation.</returns>
-        public static bool RegisterIfNot<TType, TImpl>(
-            this IIocRegistrar iocRegistrar,
-            DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton
-        )
+        public static bool RegisterIfNot<TType, TImpl>(this IIocRegistrar iocRegistrar, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton)
             where TType : class
             where TImpl : class, TType
         {
@@ -77,6 +67,7 @@ namespace Abp.Dependency
             return true;
         }
 
+
         /// <summary>
         /// Registers a type with it's implementation if it's not registered before.
         /// </summary>
@@ -85,12 +76,7 @@ namespace Abp.Dependency
         /// <param name="impl">The type that implements <paramref name="type"/></param>
         /// <param name="lifeStyle">Lifestyle of the objects of this type</param>
         /// <returns>True, if registered for given implementation.</returns>
-        public static bool RegisterIfNot(
-            this IIocRegistrar iocRegistrar,
-            Type type,
-            Type impl,
-            DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton
-        )
+        public static bool RegisterIfNot(this IIocRegistrar iocRegistrar, Type type, Type impl, DependencyLifeStyle lifeStyle = DependencyLifeStyle.Singleton)
         {
             if (iocRegistrar.IsRegistered(type))
             {

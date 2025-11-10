@@ -12,55 +12,56 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class ReferencesToObjectArrayExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly TypeReference[] args;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public ReferencesToObjectArrayExpression(params TypeReference[] args)
+    internal class ReferencesToObjectArrayExpression : IExpression
     {
-        this.args = args;
-    }
+        private readonly TypeReference[] args;
 
-    public void Emit(ILGenerator gen)
-    {
-        var local = gen.DeclareLocal(typeof(object[]));
-
-        gen.Emit(OpCodes.Ldc_I4, args.Length);
-        gen.Emit(OpCodes.Newarr, typeof(object));
-        gen.Emit(OpCodes.Stloc, local);
-
-        for (var i = 0; i < args.Length; i++)
+        public ReferencesToObjectArrayExpression(params TypeReference[] args)
         {
-            gen.Emit(OpCodes.Ldloc, local);
-            gen.Emit(OpCodes.Ldc_I4, i);
-
-            var reference = args[i];
-
-            ArgumentsUtil.EmitLoadOwnerAndReference(reference, gen);
-
-            if (reference.Type.IsByRef)
-            {
-                throw new NotSupportedException();
-            }
-
-            if (reference.Type.IsValueType)
-            {
-                gen.Emit(OpCodes.Box, reference.Type);
-            }
-            else if (reference.Type.IsGenericParameter)
-            {
-                gen.Emit(OpCodes.Box, reference.Type);
-            }
-
-            gen.Emit(OpCodes.Stelem_Ref);
+            this.args = args;
         }
 
-        gen.Emit(OpCodes.Ldloc, local);
+        public void Emit(ILGenerator gen)
+        {
+            var local = gen.DeclareLocal(typeof(object[]));
+
+            gen.Emit(OpCodes.Ldc_I4, args.Length);
+            gen.Emit(OpCodes.Newarr, typeof(object));
+            gen.Emit(OpCodes.Stloc, local);
+
+            for (var i = 0; i < args.Length; i++)
+            {
+                gen.Emit(OpCodes.Ldloc, local);
+                gen.Emit(OpCodes.Ldc_I4, i);
+
+                var reference = args[i];
+
+                ArgumentsUtil.EmitLoadOwnerAndReference(reference, gen);
+
+                if (reference.Type.IsByRef)
+                {
+                    throw new NotSupportedException();
+                }
+
+                if (reference.Type.IsValueType)
+                {
+                    gen.Emit(OpCodes.Box, reference.Type);
+                }
+                else if (reference.Type.IsGenericParameter)
+                {
+                    gen.Emit(OpCodes.Box, reference.Type);
+                }
+
+                gen.Emit(OpCodes.Stelem_Ref);
+            }
+
+            gen.Emit(OpCodes.Ldloc, local);
+        }
     }
 }

@@ -12,140 +12,141 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-
-[DebuggerDisplay("{Method}")]
-internal class MetaMethod : MetaTypeElement, IEquatable<MetaMethod>
+namespace Castle.DynamicProxy.Generators
 {
-    private const MethodAttributes ExplicitImplementationAttributes =
-        MethodAttributes.Virtual
-        | MethodAttributes.Public
-        | MethodAttributes.HideBySig
-        | MethodAttributes.NewSlot
-        | MethodAttributes.Final;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
 
-    public MetaMethod(
-        MethodInfo method,
-        MethodInfo methodOnTarget,
-        bool standalone,
-        bool proxyable,
-        bool hasTarget
-    )
-        : base(method)
+    [DebuggerDisplay("{Method}")]
+    internal class MetaMethod : MetaTypeElement, IEquatable<MetaMethod>
     {
-        Method = method;
-        MethodOnTarget = methodOnTarget;
-        Standalone = standalone;
-        Proxyable = proxyable;
-        HasTarget = hasTarget;
-        Attributes = ObtainAttributes();
-    }
+        private const MethodAttributes ExplicitImplementationAttributes =
+            MethodAttributes.Virtual
+            | MethodAttributes.Public
+            | MethodAttributes.HideBySig
+            | MethodAttributes.NewSlot
+            | MethodAttributes.Final;
 
-    public MethodAttributes Attributes { get; private set; }
-    public bool HasTarget { get; private set; }
-    public MethodInfo Method { get; private set; }
-
-    public MethodInfo MethodOnTarget { get; private set; }
-
-    public bool Ignore { get; internal set; }
-
-    public bool Proxyable { get; private set; }
-
-    public bool Standalone { get; private set; }
-
-    public bool Equals(MetaMethod other)
-    {
-        if (ReferenceEquals(null, other))
+        public MetaMethod(
+            MethodInfo method,
+            MethodInfo methodOnTarget,
+            bool standalone,
+            bool proxyable,
+            bool hasTarget
+        )
+            : base(method)
         {
-            return false;
+            Method = method;
+            MethodOnTarget = methodOnTarget;
+            Standalone = standalone;
+            Proxyable = proxyable;
+            HasTarget = hasTarget;
+            Attributes = ObtainAttributes();
         }
-        if (ReferenceEquals(this, other))
+
+        public MethodAttributes Attributes { get; private set; }
+        public bool HasTarget { get; private set; }
+        public MethodInfo Method { get; private set; }
+
+        public MethodInfo MethodOnTarget { get; private set; }
+
+        public bool Ignore { get; internal set; }
+
+        public bool Proxyable { get; private set; }
+
+        public bool Standalone { get; private set; }
+
+        public bool Equals(MetaMethod other)
         {
+            if (ReferenceEquals(null, other))
+            {
+                return false;
+            }
+            if (ReferenceEquals(this, other))
+            {
+                return true;
+            }
+
+            if (!StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name))
+            {
+                return false;
+            }
+
+            var comparer = MethodSignatureComparer.Instance;
+            if (!comparer.EqualReturnTypes(Method, other.Method))
+            {
+                return false;
+            }
+
+            if (!comparer.EqualGenericParameters(Method, other.Method))
+            {
+                return false;
+            }
+
+            if (!comparer.EqualParameters(Method, other.Method))
+            {
+                return false;
+            }
+
             return true;
         }
 
-        if (!StringComparer.OrdinalIgnoreCase.Equals(Name, other.Name))
+        public override void SwitchToExplicitImplementation()
         {
-            return false;
+            Attributes = ExplicitImplementationAttributes;
+            if (Standalone == false)
+            {
+                Attributes |= MethodAttributes.SpecialName;
+            }
+
+            SwitchToExplicitImplementationName();
         }
 
-        var comparer = MethodSignatureComparer.Instance;
-        if (!comparer.EqualReturnTypes(Method, other.Method))
+        private MethodAttributes ObtainAttributes()
         {
-            return false;
-        }
+            var methodInfo = Method;
+            var attributes = MethodAttributes.Virtual;
 
-        if (!comparer.EqualGenericParameters(Method, other.Method))
-        {
-            return false;
-        }
+            if (methodInfo.IsFinal || Method.DeclaringType.IsInterface)
+            {
+                attributes |= MethodAttributes.NewSlot;
+            }
 
-        if (!comparer.EqualParameters(Method, other.Method))
-        {
-            return false;
-        }
+            if (methodInfo.IsPublic)
+            {
+                attributes |= MethodAttributes.Public;
+            }
 
-        return true;
-    }
+            if (methodInfo.IsHideBySig)
+            {
+                attributes |= MethodAttributes.HideBySig;
+            }
+            if (
+                ProxyUtil.IsInternal(methodInfo)
+                && ProxyUtil.AreInternalsVisibleToDynamicProxy(methodInfo.DeclaringType.Assembly)
+            )
+            {
+                attributes |= MethodAttributes.Assembly;
+            }
+            if (methodInfo.IsFamilyAndAssembly)
+            {
+                attributes |= MethodAttributes.FamANDAssem;
+            }
+            else if (methodInfo.IsFamilyOrAssembly)
+            {
+                attributes |= MethodAttributes.FamORAssem;
+            }
+            else if (methodInfo.IsFamily)
+            {
+                attributes |= MethodAttributes.Family;
+            }
 
-    public override void SwitchToExplicitImplementation()
-    {
-        Attributes = ExplicitImplementationAttributes;
-        if (Standalone == false)
-        {
-            Attributes |= MethodAttributes.SpecialName;
+            if (Standalone == false)
+            {
+                attributes |= MethodAttributes.SpecialName;
+            }
+            return attributes;
         }
-
-        SwitchToExplicitImplementationName();
-    }
-
-    private MethodAttributes ObtainAttributes()
-    {
-        var methodInfo = Method;
-        var attributes = MethodAttributes.Virtual;
-
-        if (methodInfo.IsFinal || Method.DeclaringType.IsInterface)
-        {
-            attributes |= MethodAttributes.NewSlot;
-        }
-
-        if (methodInfo.IsPublic)
-        {
-            attributes |= MethodAttributes.Public;
-        }
-
-        if (methodInfo.IsHideBySig)
-        {
-            attributes |= MethodAttributes.HideBySig;
-        }
-        if (
-            ProxyUtil.IsInternal(methodInfo)
-            && ProxyUtil.AreInternalsVisibleToDynamicProxy(methodInfo.DeclaringType.Assembly)
-        )
-        {
-            attributes |= MethodAttributes.Assembly;
-        }
-        if (methodInfo.IsFamilyAndAssembly)
-        {
-            attributes |= MethodAttributes.FamANDAssem;
-        }
-        else if (methodInfo.IsFamilyOrAssembly)
-        {
-            attributes |= MethodAttributes.FamORAssem;
-        }
-        else if (methodInfo.IsFamily)
-        {
-            attributes |= MethodAttributes.Family;
-        }
-
-        if (Standalone == false)
-        {
-            attributes |= MethodAttributes.SpecialName;
-        }
-        return attributes;
     }
 }

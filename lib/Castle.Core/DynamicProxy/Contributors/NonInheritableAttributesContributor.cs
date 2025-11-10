@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Internal;
-
-/// <summary>
-///   Reproduces the proxied type's non-inheritable custom attributes on the proxy type.
-/// </summary>
-internal sealed class NonInheritableAttributesContributor : ITypeContributor
+namespace Castle.DynamicProxy.Contributors
 {
-    private readonly Type targetType;
+    using System;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Internal;
 
-    public NonInheritableAttributesContributor(Type targetType)
+    /// <summary>
+    ///   Reproduces the proxied type's non-inheritable custom attributes on the proxy type.
+    /// </summary>
+    internal sealed class NonInheritableAttributesContributor : ITypeContributor
     {
-        this.targetType = targetType;
-    }
+        private readonly Type targetType;
 
-    public void Generate(ClassEmitter emitter)
-    {
-        foreach (var attribute in targetType.GetNonInheritableAttributes())
+        public NonInheritableAttributesContributor(Type targetType)
         {
-            emitter.DefineCustomAttribute(attribute.Builder);
+            this.targetType = targetType;
         }
-    }
 
-    public void CollectElementsToProxy(IProxyGenerationHook hook, MetaType model) { }
+        public void Generate(ClassEmitter emitter)
+        {
+            foreach (var attribute in targetType.GetNonInheritableAttributes())
+            {
+                emitter.DefineCustomAttribute(attribute.Builder);
+            }
+        }
+
+        public void CollectElementsToProxy(IProxyGenerationHook hook, MetaType model) { }
+    }
 }

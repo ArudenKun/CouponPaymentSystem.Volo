@@ -12,42 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Assigns a specific dictionary key.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-public class KeyAttribute : DictionaryBehaviorAttribute, IDictionaryKeyBuilder
+namespace Castle.Components.DictionaryAdapter
 {
-    /// <summary>
-    /// Initializes a new instance of the <see cref="KeyAttribute"/> class.
-    /// </summary>
-    /// <param name="key">The key.</param>
-    public KeyAttribute(string key)
-    {
-        Key = key;
-    }
+    using System;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="KeyAttribute"/> class.
+    /// Assigns a specific dictionary key.
     /// </summary>
-    /// <param name="keys">The compound key.</param>
-    public KeyAttribute(string[] keys)
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class KeyAttribute : DictionaryBehaviorAttribute, IDictionaryKeyBuilder
     {
-        Key = string.Join(",", keys);
-    }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyAttribute"/> class.
+        /// </summary>
+        /// <param name="key">The key.</param>
+        public KeyAttribute(string key)
+        {
+            Key = key;
+        }
 
-    public string Key { get; private set; }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeyAttribute"/> class.
+        /// </summary>
+        /// <param name="keys">The compound key.</param>
+        public KeyAttribute(string[] keys)
+        {
+            Key = string.Join(",", keys);
+        }
 
-    string IDictionaryKeyBuilder.GetKey(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        PropertyDescriptor property
-    )
-    {
-        return Key;
+        public string Key { get; private set; }
+
+        string IDictionaryKeyBuilder.GetKey(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            PropertyDescriptor property
+        )
+        {
+            return Key;
+        }
     }
 }

@@ -12,41 +12,43 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Generators.Emitters;
-
-internal class InterfaceProxyWithOptionalTargetContributor : InterfaceProxyWithoutTargetContributor
+namespace Castle.DynamicProxy.Contributors
 {
-    private readonly GetTargetReferenceDelegate getTargetReference;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
 
-    public InterfaceProxyWithOptionalTargetContributor(
-        INamingScope namingScope,
-        GetTargetExpressionDelegate getTarget,
-        GetTargetReferenceDelegate getTargetReference
-    )
-        : base(namingScope, getTarget)
+    internal class InterfaceProxyWithOptionalTargetContributor
+        : InterfaceProxyWithoutTargetContributor
     {
-        this.getTargetReference = getTargetReference;
-        canChangeTarget = true;
-    }
+        private readonly GetTargetReferenceDelegate getTargetReference;
 
-    protected override MethodGenerator GetMethodGenerator(
-        MetaMethod method,
-        ClassEmitter @class,
-        OverrideMethodDelegate overrideMethod
-    )
-    {
-        if (!method.Proxyable)
+        public InterfaceProxyWithOptionalTargetContributor(
+            INamingScope namingScope,
+            GetTargetExpressionDelegate getTarget,
+            GetTargetReferenceDelegate getTargetReference
+        )
+            : base(namingScope, getTarget)
         {
-            return new OptionallyForwardingMethodGenerator(
-                method,
-                overrideMethod,
-                getTargetReference
-            );
+            this.getTargetReference = getTargetReference;
+            canChangeTarget = true;
         }
 
-        return base.GetMethodGenerator(method, @class, overrideMethod);
+        protected override MethodGenerator GetMethodGenerator(
+            MetaMethod method,
+            ClassEmitter @class,
+            OverrideMethodDelegate overrideMethod
+        )
+        {
+            if (!method.Proxyable)
+            {
+                return new OptionallyForwardingMethodGenerator(
+                    method,
+                    overrideMethod,
+                    getTargetReference
+                );
+            }
+
+            return base.GetMethodGenerator(method, @class, overrideMethod);
+        }
     }
 }

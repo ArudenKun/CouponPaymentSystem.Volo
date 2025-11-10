@@ -15,6 +15,9 @@ namespace Abp.Timing
             return dateTime;
         }
 
-        internal UnspecifiedClockProvider() { }
+        internal UnspecifiedClockProvider()
+        {
+            
+        }
     }
 }

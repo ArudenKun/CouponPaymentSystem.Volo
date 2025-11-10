@@ -12,37 +12,38 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
-
-[DebuggerDisplay("local {Type}")]
-internal class LocalReference : TypeReference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private LocalBuilder localBuilder;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection.Emit;
 
-    public LocalReference(Type type)
-        : base(type) { }
-
-    public override void Generate(ILGenerator gen)
+    [DebuggerDisplay("local {Type}")]
+    internal class LocalReference : TypeReference
     {
-        localBuilder = gen.DeclareLocal(base.Type);
-    }
+        private LocalBuilder localBuilder;
 
-    public override void LoadAddressOfReference(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldloca, localBuilder);
-    }
+        public LocalReference(Type type)
+            : base(type) { }
 
-    public override void LoadReference(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldloc, localBuilder);
-    }
+        public override void Generate(ILGenerator gen)
+        {
+            localBuilder = gen.DeclareLocal(base.Type);
+        }
 
-    public override void StoreReference(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Stloc, localBuilder);
+        public override void LoadAddressOfReference(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldloca, localBuilder);
+        }
+
+        public override void LoadReference(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldloc, localBuilder);
+        }
+
+        public override void StoreReference(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Stloc, localBuilder);
+        }
     }
 }

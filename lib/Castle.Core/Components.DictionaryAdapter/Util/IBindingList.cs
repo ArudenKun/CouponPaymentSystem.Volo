@@ -12,34 +12,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.Collections.Generic;
-using System.ComponentModel;
-using SysPropertyDescriptor = System.ComponentModel.PropertyDescriptor;
-
-public interface IBindingList<T>
-    : IList<T>,
-        IBindingListSource,
-        ICancelAddNew,
-        IRaiseItemChangedEvents
+namespace Castle.Components.DictionaryAdapter
 {
-    bool AllowNew { get; }
-    bool AllowEdit { get; }
-    bool AllowRemove { get; }
-    bool SupportsChangeNotification { get; }
-    bool SupportsSearching { get; }
-    bool SupportsSorting { get; }
-    bool IsSorted { get; }
-    SysPropertyDescriptor SortProperty { get; }
-    ListSortDirection SortDirection { get; }
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using SysPropertyDescriptor = System.ComponentModel.PropertyDescriptor;
 
-    event ListChangedEventHandler ListChanged;
+    public interface IBindingList<T>
+        : IList<T>,
+            IBindingListSource,
+            ICancelAddNew,
+            IRaiseItemChangedEvents
+    {
+        bool AllowNew { get; }
+        bool AllowEdit { get; }
+        bool AllowRemove { get; }
+        bool SupportsChangeNotification { get; }
+        bool SupportsSearching { get; }
+        bool SupportsSorting { get; }
+        bool IsSorted { get; }
+        SysPropertyDescriptor SortProperty { get; }
+        ListSortDirection SortDirection { get; }
 
-    T AddNew();
-    int Find(SysPropertyDescriptor property, object key);
-    void AddIndex(SysPropertyDescriptor property);
-    void RemoveIndex(SysPropertyDescriptor property);
-    void ApplySort(SysPropertyDescriptor property, ListSortDirection direction);
-    void RemoveSort();
+        event ListChangedEventHandler ListChanged;
+
+        T AddNew();
+        int Find(SysPropertyDescriptor property, object key);
+        void AddIndex(SysPropertyDescriptor property);
+        void RemoveIndex(SysPropertyDescriptor property);
+        void ApplySort(SysPropertyDescriptor property, ListSortDirection direction);
+        void RemoveSort();
+    }
 }

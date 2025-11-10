@@ -12,50 +12,51 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Reflection;
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Castle.DynamicProxy.Internal;
-using Castle.DynamicProxy.Tokens;
-
-internal class InheritanceInvocationTypeGenerator : InvocationTypeGenerator
+namespace Castle.DynamicProxy.Generators
 {
-    public static readonly Type BaseType = typeof(InheritanceInvocation);
+    using System;
+    using System.Reflection;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Internal;
+    using Castle.DynamicProxy.Tokens;
 
-    public InheritanceInvocationTypeGenerator(
-        Type targetType,
-        MetaMethod method,
-        MethodInfo callback,
-        IInvocationCreationContributor contributor
-    )
-        : base(targetType, method, callback, false, contributor) { }
-
-    protected override ArgumentReference[] GetBaseCtorArguments(
-        Type targetFieldType,
-        out ConstructorInfo baseConstructor
-    )
+    internal class InheritanceInvocationTypeGenerator : InvocationTypeGenerator
     {
-        baseConstructor = InvocationMethods.InheritanceInvocationConstructor;
-        return new[]
+        public static readonly Type BaseType = typeof(InheritanceInvocation);
+
+        public InheritanceInvocationTypeGenerator(
+            Type targetType,
+            MetaMethod method,
+            MethodInfo callback,
+            IInvocationCreationContributor contributor
+        )
+            : base(targetType, method, callback, false, contributor) { }
+
+        protected override ArgumentReference[] GetBaseCtorArguments(
+            Type targetFieldType,
+            out ConstructorInfo baseConstructor
+        )
         {
-            new ArgumentReference(typeof(Type)),
-            new ArgumentReference(typeof(object)),
-            new ArgumentReference(typeof(IInterceptor[])),
-            new ArgumentReference(typeof(MethodInfo)),
-            new ArgumentReference(typeof(object[])),
-        };
-    }
+            baseConstructor = InvocationMethods.InheritanceInvocationConstructor;
+            return new[]
+            {
+                new ArgumentReference(typeof(Type)),
+                new ArgumentReference(typeof(object)),
+                new ArgumentReference(typeof(IInterceptor[])),
+                new ArgumentReference(typeof(MethodInfo)),
+                new ArgumentReference(typeof(object[])),
+            };
+        }
 
-    protected override Type GetBaseType()
-    {
-        return BaseType;
-    }
+        protected override Type GetBaseType()
+        {
+            return BaseType;
+        }
 
-    protected override FieldReference GetTargetReference()
-    {
-        return new FieldReference(InvocationMethods.ProxyObject);
+        protected override FieldReference GetTargetReference()
+        {
+            return new FieldReference(InvocationMethods.ProxyObject);
+        }
     }
 }

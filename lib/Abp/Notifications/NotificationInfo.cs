@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Abp.Domain.Entities.Auditing;
+using Abp.Extensions;
+using Abp.MultiTenancy;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
-using Abp.Domain.Entities.Auditing;
-using Abp.Extensions;
-using Abp.MultiTenancy;
 
 namespace Abp.Notifications
 {
@@ -73,7 +73,7 @@ namespace Abp.Notifications
         public const int MaxTenantIdsLength = 128 * 1024;
 
         public const int MaxTargetNotifiersLength = 1024;
-
+        
         /// <summary>
         /// Notification target list separation character.
         /// </summary>
@@ -155,12 +155,14 @@ namespace Abp.Notifications
         public virtual string TargetNotifiers { get; set; }
 
         [NotMapped]
-        public virtual List<string> TargetNotifiersList =>
-            TargetNotifiers.IsNullOrWhiteSpace()
-                ? new List<string>()
-                : TargetNotifiers.Split(NotificationTargetSeparator).ToList();
+        public virtual List<string> TargetNotifiersList => TargetNotifiers.IsNullOrWhiteSpace()
+            ? new List<string>()
+            : TargetNotifiers.Split(NotificationTargetSeparator).ToList();
 
-        public NotificationInfo() { }
+        public NotificationInfo()
+        {
+
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NotificationInfo"/> class.

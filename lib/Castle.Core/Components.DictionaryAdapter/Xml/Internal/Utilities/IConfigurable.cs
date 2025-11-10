@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public interface IConfigurable<T>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    void Configure(T value);
+    public interface IConfigurable<T>
+    {
+        void Configure(T value);
+    }
 }

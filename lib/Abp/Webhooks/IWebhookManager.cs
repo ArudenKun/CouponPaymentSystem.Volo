@@ -12,7 +12,7 @@ namespace Abp.Webhooks
         WebhookPayload GetWebhookPayload(WebhookSenderArgs webhookSenderArgs);
 
         void SignWebhookRequest(HttpRequestMessage request, string serializedBody, string secret);
-
+        
         string GetSerializedBody(WebhookSenderArgs webhookSenderArgs);
 
         Task<string> GetSerializedBodyAsync(WebhookSenderArgs webhookSenderArgs);
@@ -20,10 +20,7 @@ namespace Abp.Webhooks
         Task<Guid> InsertAndGetIdWebhookSendAttemptAsync(WebhookSenderArgs webhookSenderArgs);
 
         Task StoreResponseOnWebhookSendAttemptAsync(
-            Guid webhookSendAttemptId,
-            int? tenantId,
-            HttpStatusCode? statusCode,
-            string content
-        );
+            Guid webhookSendAttemptId, int? tenantId,
+            HttpStatusCode? statusCode, string content);
     }
 }

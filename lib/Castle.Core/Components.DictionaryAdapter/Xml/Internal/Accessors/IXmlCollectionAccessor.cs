@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections;
-
-public interface IXmlCollectionAccessor : IXmlAccessor
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    IXmlCursor SelectCollectionItems(IXmlNode parentNode, bool mutable);
-    void GetCollectionItems(
-        IXmlNode parentNode,
-        IDictionaryAdapter parentObject,
-        XmlReferenceManager references,
-        IList values
-    );
+    using System;
+    using System.Collections;
+
+    public interface IXmlCollectionAccessor : IXmlAccessor
+    {
+        IXmlCursor SelectCollectionItems(IXmlNode parentNode, bool mutable);
+        void GetCollectionItems(
+            IXmlNode parentNode,
+            IDictionaryAdapter parentObject,
+            XmlReferenceManager references,
+            IList values
+        );
+    }
 }

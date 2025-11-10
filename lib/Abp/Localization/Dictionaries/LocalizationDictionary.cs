@@ -53,11 +53,8 @@ namespace Abp.Localization.Dictionaries
         /// <inheritdoc/>
         public virtual IReadOnlyList<LocalizedString> GetStringsOrNull(List<string> names)
         {
-            return names
-                .Select(name =>
-                    _dictionary.Values.FirstOrDefault(x => x.Name == name)
-                    ?? new LocalizedString(name, null, CultureInfo)
-                )
+            return names.Select(name => _dictionary.Values.FirstOrDefault(x => x.Name == name) ??
+                                        new LocalizedString(name, null, CultureInfo))
                 .ToImmutableList();
         }
 

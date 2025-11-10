@@ -20,13 +20,12 @@ namespace Abp.Domain.Entities.Caching
         protected IRepository<TEntity, TPrimaryKey> Repository { get; private set; }
 
         protected IUnitOfWorkManager UnitOfWorkManager { get; private set; }
-
+        
         public EntityCacheBase(
-            ICacheManager cacheManager,
+            ICacheManager cacheManager, 
             IRepository<TEntity, TPrimaryKey> repository,
             IUnitOfWorkManager unitOfWorkManager,
-            string cacheName = null
-        )
+            string cacheName = null)
         {
             CacheManager = cacheManager;
             Repository = repository;
@@ -51,7 +50,9 @@ namespace Abp.Domain.Entities.Caching
 
         protected virtual TEntity GetEntityFromDataSource(TPrimaryKey id)
         {
-            return UnitOfWorkManager.WithUnitOfWork(() => Repository.FirstOrDefault(id));
+            return UnitOfWorkManager.WithUnitOfWork(() =>
+                Repository.FirstOrDefault(id)
+            );
         }
 
         protected virtual async Task<TEntity> GetEntityFromDataSourceAsync(TPrimaryKey id)
@@ -68,13 +69,13 @@ namespace Abp.Domain.Entities.Caching
                 throw new AbpException(
                     string.Format(
                         "MapToCacheItem method should be overridden or IObjectMapper should be implemented in order to map {0} to {1}",
-                        typeof(TEntity),
-                        typeof(TCacheItem)
-                    )
-                );
+                        typeof (TEntity),
+                        typeof (TCacheItem)
+                        )
+                    );
             }
 
-            return ObjectMapper.Map<TEntity, TCacheItem>(entity);
+            return ObjectMapper.Map<TCacheItem>(entity);
         }
 
         protected virtual string GenerateDefaultCacheName()

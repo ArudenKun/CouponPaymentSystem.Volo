@@ -14,6 +14,6 @@ namespace Abp.Dependency
         /// <summary>
         /// Transient object. Created one object for every resolving.
         /// </summary>
-        Transient,
+        Transient
     }
 }

@@ -4,11 +4,7 @@ namespace Abp.ObjectComparators.DateTimeComparators
 {
     public class DateTimeObjectComparator : ObjectComparatorBase<DateTime, DateTimeCompareTypes>
     {
-        protected override bool Compare(
-            DateTime baseObject,
-            DateTime compareObject,
-            DateTimeCompareTypes compareType
-        )
+        protected override bool Compare(DateTime baseObject, DateTime compareObject, DateTimeCompareTypes compareType)
         {
             switch (compareType)
             {
@@ -28,14 +24,9 @@ namespace Abp.ObjectComparators.DateTimeComparators
         }
     }
 
-    public class NullableDateTimeObjectComparator
-        : ObjectComparatorBase<DateTime?, NullableDateTimeCompareTypes>
+    public class NullableDateTimeObjectComparator : ObjectComparatorBase<DateTime?, NullableDateTimeCompareTypes>
     {
-        protected override bool Compare(
-            DateTime? baseObject,
-            DateTime? compareObject,
-            NullableDateTimeCompareTypes compareType
-        )
+        protected override bool Compare(DateTime? baseObject, DateTime? compareObject, NullableDateTimeCompareTypes compareType)
         {
             var conditionBothHasValue = baseObject.HasValue && compareObject.HasValue;
             switch (compareType)
@@ -43,17 +34,13 @@ namespace Abp.ObjectComparators.DateTimeComparators
                 case NullableDateTimeCompareTypes.Equals:
                     return baseObject.Equals(compareObject);
                 case NullableDateTimeCompareTypes.LessThan:
-                    return conditionBothHasValue
-                        && baseObject.Value.CompareTo(compareObject.Value) < 0;
+                    return conditionBothHasValue && baseObject.Value.CompareTo(compareObject.Value) < 0;
                 case NullableDateTimeCompareTypes.LessOrEqualThan:
-                    return conditionBothHasValue
-                        && baseObject.Value.CompareTo(compareObject.Value) <= 0;
+                    return conditionBothHasValue && baseObject.Value.CompareTo(compareObject.Value) <= 0;
                 case NullableDateTimeCompareTypes.BiggerThan:
-                    return conditionBothHasValue
-                        && baseObject.Value.CompareTo(compareObject.Value) > 0;
+                    return conditionBothHasValue && baseObject.Value.CompareTo(compareObject.Value) > 0;
                 case NullableDateTimeCompareTypes.BiggerOrEqualThan:
-                    return conditionBothHasValue
-                        && baseObject.Value.CompareTo(compareObject.Value) >= 0;
+                    return conditionBothHasValue && baseObject.Value.CompareTo(compareObject.Value) >= 0;
                 case NullableDateTimeCompareTypes.Null:
                     return !baseObject.HasValue;
                 case NullableDateTimeCompareTypes.NotNull:

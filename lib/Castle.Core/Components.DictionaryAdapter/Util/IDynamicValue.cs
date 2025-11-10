@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-/// <summary>
-/// Contract for dynamic value resolution.
-/// </summary>
-public interface IDynamicValue
+namespace Castle.Components.DictionaryAdapter
 {
-    object GetValue();
-}
+    /// <summary>
+    /// Contract for dynamic value resolution.
+    /// </summary>
+    public interface IDynamicValue
+    {
+        object GetValue();
+    }
 
-/// <summary>
-/// Contract for typed dynamic value resolution.
-/// </summary>
-/// <typeparam name="T"></typeparam>
-public interface IDynamicValue<T> : IDynamicValue
-{
-    T Value { get; }
+    /// <summary>
+    /// Contract for typed dynamic value resolution.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public interface IDynamicValue<T> : IDynamicValue
+    {
+        T Value { get; }
+    }
 }

@@ -10,7 +10,10 @@ namespace Abp.UI.Inputs
 
         public ILocalizableString DisplayText { get; set; }
 
-        public LocalizableComboboxItem() { }
+        public LocalizableComboboxItem()
+        {
+            
+        }
 
         public LocalizableComboboxItem(string value, ILocalizableString displayText)
         {

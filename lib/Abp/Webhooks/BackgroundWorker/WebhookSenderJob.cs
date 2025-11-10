@@ -1,7 +1,8 @@
-﻿using System.Transactions;
+﻿using System;
+using System.Threading.Tasks;
+using System.Transactions;
 using Abp.BackgroundJobs;
 using Abp.Dependency;
-using Microsoft.Extensions.Logging;
 
 namespace Abp.Webhooks.BackgroundWorker
 {
@@ -16,8 +17,7 @@ namespace Abp.Webhooks.BackgroundWorker
             IWebhooksConfiguration webhooksConfiguration,
             IWebhookSubscriptionManager webhookSubscriptionManager,
             IWebhookSendAttemptStore webhookSendAttemptStore,
-            IWebhookSender webhookSender
-        )
+            IWebhookSender webhookSender)
         {
             _webhooksConfiguration = webhooksConfiguration;
             _webhookSubscriptionManager = webhookSubscriptionManager;
@@ -35,7 +35,7 @@ namespace Abp.Webhooks.BackgroundWorker
                 }
                 catch (Exception e)
                 {
-                    Logger.LogWarning("An error occured while sending webhook with try once.", e);
+                    Logger.Warn("An error occured while sending webhook with try once.", e);
                     // ignored
                 }
             }
@@ -78,33 +78,29 @@ namespace Abp.Webhooks.BackgroundWorker
             catch (Exception)
             {
                 // no need to retry to send webhook since subscription disabled
-                if (
-                    !await TryDeactivateSubscriptionIfReachedMaxConsecutiveFailCount(
+                if (!await TryDeactivateSubscriptionIfReachedMaxConsecutiveFailCount(
                         args.TenantId,
-                        args.WebhookSubscriptionId
-                    )
-                )
+                        args.WebhookSubscriptionId))
                 {
                     throw; //Throw exception to re-try sending webhook
                 }
             }
         }
 
-        private async Task<bool> TryDeactivateSubscriptionIfReachedMaxConsecutiveFailCount(
-            int? tenantId,
-            Guid subscriptionId
-        )
+        private async Task<bool> TryDeactivateSubscriptionIfReachedMaxConsecutiveFailCount(int? tenantId,
+            Guid subscriptionId)
         {
             if (!_webhooksConfiguration.IsAutomaticSubscriptionDeactivationEnabled)
             {
                 return false;
             }
 
-            var hasXConsecutiveFail = await _webhookSendAttemptStore.HasXConsecutiveFailAsync(
-                tenantId,
-                subscriptionId,
-                _webhooksConfiguration.MaxConsecutiveFailCountBeforeDeactivateSubscription
-            );
+            var hasXConsecutiveFail = await _webhookSendAttemptStore
+                .HasXConsecutiveFailAsync(
+                    tenantId,
+                    subscriptionId,
+                    _webhooksConfiguration.MaxConsecutiveFailCountBeforeDeactivateSubscription
+                );
 
             if (!hasXConsecutiveFail)
             {
@@ -113,10 +109,7 @@ namespace Abp.Webhooks.BackgroundWorker
 
             using (var uow = UnitOfWorkManager.Begin(TransactionScopeOption.Required))
             {
-                await _webhookSubscriptionManager.ActivateWebhookSubscriptionAsync(
-                    subscriptionId,
-                    false
-                );
+                await _webhookSubscriptionManager.ActivateWebhookSubscriptionAsync(subscriptionId, false);
                 await uow.CompleteAsync();
                 return true;
             }

@@ -12,16 +12,17 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public interface IXmlReferenceFormat
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    bool TryGetIdentity(IXmlNode node, out int id);
-    bool TryGetReference(IXmlNode node, out int id);
+    public interface IXmlReferenceFormat
+    {
+        bool TryGetIdentity(IXmlNode node, out int id);
+        bool TryGetReference(IXmlNode node, out int id);
 
-    void SetIdentity(IXmlNode node, int id);
-    void SetReference(IXmlNode node, int id);
+        void SetIdentity(IXmlNode node, int id);
+        void SetReference(IXmlNode node, int id);
 
-    void ClearIdentity(IXmlNode node);
-    void ClearReference(IXmlNode node);
+        void ClearIdentity(IXmlNode node);
+        void ClearReference(IXmlNode node);
+    }
 }

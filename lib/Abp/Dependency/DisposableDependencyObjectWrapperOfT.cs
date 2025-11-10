@@ -1,11 +1,12 @@
 namespace Abp.Dependency
 {
-    internal class DisposableDependencyObjectWrapper
-        : DisposableDependencyObjectWrapper<object>,
-            IDisposableDependencyObjectWrapper
+    internal class DisposableDependencyObjectWrapper : DisposableDependencyObjectWrapper<object>, IDisposableDependencyObjectWrapper
     {
         public DisposableDependencyObjectWrapper(IIocResolver iocResolver, object obj)
-            : base(iocResolver, obj) { }
+            : base(iocResolver, obj)
+        {
+
+        }
     }
 
     internal class DisposableDependencyObjectWrapper<T> : IDisposableDependencyObjectWrapper<T>

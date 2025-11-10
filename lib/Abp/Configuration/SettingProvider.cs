@@ -12,8 +12,6 @@ namespace Abp.Configuration
         /// Gets all setting definitions provided by this provider.
         /// </summary>
         /// <returns>List of settings</returns>
-        public abstract IEnumerable<SettingDefinition> GetSettingDefinitions(
-            SettingDefinitionProviderContext context
-        );
+        public abstract IEnumerable<SettingDefinition> GetSettingDefinitions(SettingDefinitionProviderContext context);
     }
 }

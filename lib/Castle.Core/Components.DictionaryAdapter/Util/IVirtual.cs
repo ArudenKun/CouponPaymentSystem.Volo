@@ -12,24 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-public interface IVirtual
+namespace Castle.Components.DictionaryAdapter
 {
-    bool IsReal { get; }
+    using System;
 
-    void Realize();
+    public interface IVirtual
+    {
+        bool IsReal { get; }
 
-    event EventHandler Realized;
-}
+        void Realize();
 
-public interface IVirtual<T> : IVirtual
-{
-    new T Realize();
+        event EventHandler Realized;
+    }
 
-    void AddSite(IVirtualSite<T> site);
+    public interface IVirtual<T> : IVirtual
+    {
+        new T Realize();
 
-    void RemoveSite(IVirtualSite<T> site);
+        void AddSite(IVirtualSite<T> site);
+
+        void RemoveSite(IVirtualSite<T> site);
+    }
 }

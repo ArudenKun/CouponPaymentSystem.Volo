@@ -14,41 +14,42 @@
 
 #nullable enable
 
-namespace Castle.DynamicProxy.Internal;
-
-using System;
-using System.Reflection;
-
-public abstract class InheritanceInvocation : AbstractInvocation
+namespace Castle.DynamicProxy.Internal
 {
-    private readonly Type targetType;
+    using System;
+    using System.Reflection;
 
-    protected InheritanceInvocation(
-        Type targetType,
-        object proxy,
-        IInterceptor[] interceptors,
-        MethodInfo proxiedMethod,
-        object?[] arguments
-    )
-        : base(proxy, interceptors, proxiedMethod, arguments)
+    public abstract class InheritanceInvocation : AbstractInvocation
     {
-        this.targetType = targetType;
-    }
+        private readonly Type targetType;
 
-    public override object InvocationTarget
-    {
-        get { return Proxy; }
-    }
+        protected InheritanceInvocation(
+            Type targetType,
+            object proxy,
+            IInterceptor[] interceptors,
+            MethodInfo proxiedMethod,
+            object?[] arguments
+        )
+            : base(proxy, interceptors, proxiedMethod, arguments)
+        {
+            this.targetType = targetType;
+        }
 
-    public override MethodInfo MethodInvocationTarget
-    {
-        get { return InvocationHelper.GetMethodOnType(targetType, Method); }
-    }
+        public override object InvocationTarget
+        {
+            get { return Proxy; }
+        }
 
-    public override Type TargetType
-    {
-        get { return targetType; }
-    }
+        public override MethodInfo MethodInvocationTarget
+        {
+            get { return InvocationHelper.GetMethodOnType(targetType, Method); }
+        }
 
-    protected abstract override void InvokeMethodOnTarget();
+        public override Type TargetType
+        {
+            get { return targetType; }
+        }
+
+        protected abstract override void InvokeMethodOnTarget();
+    }
 }

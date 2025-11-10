@@ -5,14 +5,11 @@ using Abp.Runtime.Session;
 
 namespace Abp.Configuration
 {
-    public class RequiresPermissionSettingClientVisibilityProvider
-        : ISettingClientVisibilityProvider
+    public class RequiresPermissionSettingClientVisibilityProvider : ISettingClientVisibilityProvider
     {
         private readonly IPermissionDependency _permissionDependency;
 
-        public RequiresPermissionSettingClientVisibilityProvider(
-            IPermissionDependency permissionDependency
-        )
+        public RequiresPermissionSettingClientVisibilityProvider(IPermissionDependency permissionDependency)
         {
             _permissionDependency = permissionDependency;
         }

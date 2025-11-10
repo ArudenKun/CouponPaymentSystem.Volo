@@ -12,8 +12,7 @@ namespace Abp.Json.SystemTextJson
         public override object Read(
             ref Utf8JsonReader reader,
             Type typeToConvert,
-            JsonSerializerOptions options
-        )
+            JsonSerializerOptions options)
         {
             switch (reader.TokenType)
             {
@@ -43,8 +42,7 @@ namespace Abp.Json.SystemTextJson
         public override void Write(
             Utf8JsonWriter writer,
             object objectToWrite,
-            JsonSerializerOptions options
-        )
+            JsonSerializerOptions options)
         {
             JsonSerializer.Serialize(writer, objectToWrite, objectToWrite.GetType(), options);
         }

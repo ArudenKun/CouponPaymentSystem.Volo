@@ -9,14 +9,16 @@ namespace Abp.PlugIns
     {
         public List<Assembly> GetAllAssemblies()
         {
-            return this.SelectMany(pluginSource => pluginSource.GetAssemblies())
+            return this
+                .SelectMany(pluginSource => pluginSource.GetAssemblies())
                 .Distinct()
                 .ToList();
         }
 
         public List<Type> GetAllModules()
         {
-            return this.SelectMany(pluginSource => pluginSource.GetModulesWithAllDependencies())
+            return this
+                .SelectMany(pluginSource => pluginSource.GetModulesWithAllDependencies())
                 .Distinct()
                 .ToList();
         }

@@ -12,55 +12,56 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-internal sealed class CodeBuilder
+namespace Castle.DynamicProxy.Generators.Emitters
 {
-    private readonly List<LocalReference> locals;
-    private readonly List<IStatement> statements;
-    private bool isEmpty;
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection.Emit;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
-    public CodeBuilder()
+    internal sealed class CodeBuilder
     {
-        statements = new List<IStatement>();
-        locals = new List<LocalReference>();
-        isEmpty = true;
-    }
+        private readonly List<LocalReference> locals;
+        private readonly List<IStatement> statements;
+        private bool isEmpty;
 
-    internal bool IsEmpty
-    {
-        get { return isEmpty; }
-    }
-
-    public CodeBuilder AddStatement(IStatement statement)
-    {
-        isEmpty = false;
-        statements.Add(statement);
-        return this;
-    }
-
-    public LocalReference DeclareLocal(Type type)
-    {
-        var local = new LocalReference(type);
-        locals.Add(local);
-        return local;
-    }
-
-    internal void Generate(ILGenerator il)
-    {
-        foreach (var local in locals)
+        public CodeBuilder()
         {
-            local.Generate(il);
+            statements = new List<IStatement>();
+            locals = new List<LocalReference>();
+            isEmpty = true;
         }
 
-        foreach (var statement in statements)
+        internal bool IsEmpty
         {
-            statement.Emit(il);
+            get { return isEmpty; }
+        }
+
+        public CodeBuilder AddStatement(IStatement statement)
+        {
+            isEmpty = false;
+            statements.Add(statement);
+            return this;
+        }
+
+        public LocalReference DeclareLocal(Type type)
+        {
+            var local = new LocalReference(type);
+            locals.Add(local);
+            return local;
+        }
+
+        internal void Generate(ILGenerator il)
+        {
+            foreach (var local in locals)
+            {
+                local.Generate(il);
+            }
+
+            foreach (var statement in statements)
+            {
+                statement.Emit(il);
+            }
         }
     }
 }

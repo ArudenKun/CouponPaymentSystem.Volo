@@ -7,9 +7,6 @@ namespace Abp.Orm
     {
         string OrmContextKey { get; }
 
-        void RegisterRepositories(
-            IIocManager iocManager,
-            AutoRepositoryTypesAttribute defaultRepositoryTypes
-        );
+        void RegisterRepositories(IIocManager iocManager, AutoRepositoryTypesAttribute defaultRepositoryTypes);
     }
 }

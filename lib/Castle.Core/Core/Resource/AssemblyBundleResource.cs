@@ -12,66 +12,67 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-using System.Globalization;
-using System.IO;
-using System.Reflection;
-using System.Resources;
-using System.Text;
-
-public class AssemblyBundleResource : AbstractResource
+namespace Castle.Core.Resource
 {
-    private readonly CustomUri resource;
+    using System;
+    using System.Globalization;
+    using System.IO;
+    using System.Reflection;
+    using System.Resources;
+    using System.Text;
 
-    public AssemblyBundleResource(CustomUri resource)
+    public class AssemblyBundleResource : AbstractResource
     {
-        this.resource = resource;
-    }
+        private readonly CustomUri resource;
 
-    public override TextReader GetStreamReader()
-    {
-        var assembly = ObtainAssembly(resource.Host);
-
-        var paths = resource.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
-        if (paths.Length != 2)
+        public AssemblyBundleResource(CustomUri resource)
         {
-            throw new ResourceException(
-                "AssemblyBundleResource does not support paths with more than 2 levels in depth. See "
-                    + resource.Path
-            );
+            this.resource = resource;
         }
 
-        var rm = new ResourceManager(paths[0], assembly);
-
-        return new StringReader(rm.GetString(paths[1]));
-    }
-
-    public override TextReader GetStreamReader(Encoding encoding)
-    {
-        return GetStreamReader();
-    }
-
-    public override IResource CreateRelative(string relativePath)
-    {
-        throw new NotImplementedException();
-    }
-
-    private static Assembly ObtainAssembly(string assemblyName)
-    {
-        try
+        public override TextReader GetStreamReader()
         {
-            return Assembly.Load(assemblyName);
+            var assembly = ObtainAssembly(resource.Host);
+
+            var paths = resource.Path.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+            if (paths.Length != 2)
+            {
+                throw new ResourceException(
+                    "AssemblyBundleResource does not support paths with more than 2 levels in depth. See "
+                        + resource.Path
+                );
+            }
+
+            var rm = new ResourceManager(paths[0], assembly);
+
+            return new StringReader(rm.GetString(paths[1]));
         }
-        catch (Exception ex)
+
+        public override TextReader GetStreamReader(Encoding encoding)
         {
-            var message = string.Format(
-                CultureInfo.InvariantCulture,
-                "The assembly {0} could not be loaded",
-                assemblyName
-            );
-            throw new ResourceException(message, ex);
+            return GetStreamReader();
+        }
+
+        public override IResource CreateRelative(string relativePath)
+        {
+            throw new NotImplementedException();
+        }
+
+        private static Assembly ObtainAssembly(string assemblyName)
+        {
+            try
+            {
+                return Assembly.Load(assemblyName);
+            }
+            catch (Exception ex)
+            {
+                var message = string.Format(
+                    CultureInfo.InvariantCulture,
+                    "The assembly {0} could not be loaded",
+                    assemblyName
+                );
+                throw new ResourceException(message, ex);
+            }
         }
     }
 }

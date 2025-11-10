@@ -12,18 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
+namespace Castle.DynamicProxy.Contributors
+{
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
-using System.Reflection;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    internal delegate MethodEmitter OverrideMethodDelegate(
+        string name,
+        MethodAttributes attributes,
+        MethodInfo methodToOverride
+    );
 
-internal delegate MethodEmitter OverrideMethodDelegate(
-    string name,
-    MethodAttributes attributes,
-    MethodInfo methodToOverride
-);
+    internal delegate IExpression GetTargetExpressionDelegate(
+        ClassEmitter @class,
+        MethodInfo method
+    );
 
-internal delegate IExpression GetTargetExpressionDelegate(ClassEmitter @class, MethodInfo method);
-
-internal delegate Reference GetTargetReferenceDelegate(ClassEmitter @class, MethodInfo method);
+    internal delegate Reference GetTargetReferenceDelegate(ClassEmitter @class, MethodInfo method);
+}

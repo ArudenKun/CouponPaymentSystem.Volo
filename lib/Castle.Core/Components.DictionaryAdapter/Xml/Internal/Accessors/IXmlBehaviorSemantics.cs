@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public interface IXmlBehaviorSemantics<T>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    string GetLocalName(T behavior);
-    string GetNamespaceUri(T behavior);
-    Type GetClrType(T behavior);
+    using System;
+
+    public interface IXmlBehaviorSemantics<T>
+    {
+        string GetLocalName(T behavior);
+        string GetNamespaceUri(T behavior);
+        Type GetClrType(T behavior);
+    }
 }

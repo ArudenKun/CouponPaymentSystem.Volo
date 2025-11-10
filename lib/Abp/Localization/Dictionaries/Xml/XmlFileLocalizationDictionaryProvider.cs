@@ -20,18 +20,11 @@ namespace Abp.Localization.Dictionaries.Xml
 
         protected override void InitializeDictionaries()
         {
-            var fileNames = Directory.GetFiles(
-                _directoryPath,
-                "*.xml",
-                SearchOption.TopDirectoryOnly
-            );
+            var fileNames = Directory.GetFiles(_directoryPath, "*.xml", SearchOption.TopDirectoryOnly);
 
             foreach (var fileName in fileNames)
             {
-                InitializeDictionary(
-                    CreateXmlLocalizationDictionary(fileName),
-                    isDefault: fileName.EndsWith(SourceName + ".xml")
-                );
+                InitializeDictionary(CreateXmlLocalizationDictionary(fileName), isDefault: fileName.EndsWith(SourceName + ".xml"));
             }
         }
 

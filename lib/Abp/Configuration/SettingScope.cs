@@ -27,6 +27,6 @@ namespace Abp.Configuration
         /// <summary>
         /// Represents a setting that can be configured/changed for all levels
         /// </summary>
-        All = Application | Tenant | User,
+        All = Application | Tenant | User
     }
 }

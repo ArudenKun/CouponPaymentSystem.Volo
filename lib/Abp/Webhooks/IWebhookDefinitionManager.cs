@@ -34,7 +34,7 @@ namespace Abp.Webhooks
         bool Remove(string name);
 
         /// <summary>
-        /// Checks if webhook definitions contains given webhook name
+        /// Checks if webhook definitions contains given webhook name 
         /// </summary>
         bool Contains(string name);
 

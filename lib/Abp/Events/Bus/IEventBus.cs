@@ -18,8 +18,7 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <param name="action">Action to handle events</param>
         /// <typeparam name="TEventData">Event type</typeparam>
-        IDisposable Register<TEventData>(Action<TEventData> action)
-            where TEventData : IEventData;
+        IDisposable Register<TEventData>(Action<TEventData> action) where TEventData : IEventData;
 
         /// <summary>
         /// Registers to an event.
@@ -27,26 +26,23 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <param name="action">Action to handle events</param>
         /// <typeparam name="TEventData">Event type</typeparam>
-        IDisposable AsyncRegister<TEventData>(Func<TEventData, Task> action)
-            where TEventData : IEventData;
+        IDisposable AsyncRegister<TEventData>(Func<TEventData, Task> action) where TEventData : IEventData;
 
         /// <summary>
-        /// Registers to an event.
+        /// Registers to an event. 
         /// Same (given) instance of the handler is used for all event occurrences.
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="handler">Object to handle the event</param>
-        IDisposable Register<TEventData>(IEventHandler<TEventData> handler)
-            where TEventData : IEventData;
+        IDisposable Register<TEventData>(IEventHandler<TEventData> handler) where TEventData : IEventData;
 
         /// <summary>
-        /// Registers to an event.
+        /// Registers to an event. 
         /// Same (given) instance of the async handler is used for all event occurrences.
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="handler">Object to handle the event</param>
-        IDisposable AsyncRegister<TEventData>(IAsyncEventHandler<TEventData> handler)
-            where TEventData : IEventData;
+        IDisposable AsyncRegister<TEventData>(IAsyncEventHandler<TEventData> handler) where TEventData : IEventData;
 
         /// <summary>
         /// Registers to an event.
@@ -54,9 +50,7 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <typeparam name="THandler">Type of the event handler</typeparam>
-        IDisposable Register<TEventData, THandler>()
-            where TEventData : IEventData
-            where THandler : IEventHandler, new();
+        IDisposable Register<TEventData, THandler>() where TEventData : IEventData where THandler : IEventHandler, new();
 
         /// <summary>
         /// Registers to an event.
@@ -72,8 +66,7 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="factory">A factory to create/release handlers</param>
-        IDisposable Register<TEventData>(IEventHandlerFactory factory)
-            where TEventData : IEventData;
+        IDisposable Register<TEventData>(IEventHandlerFactory factory) where TEventData : IEventData;
 
         /// <summary>
         /// Registers to an event.
@@ -91,32 +84,28 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="action"></param>
-        void Unregister<TEventData>(Action<TEventData> action)
-            where TEventData : IEventData;
+        void Unregister<TEventData>(Action<TEventData> action) where TEventData : IEventData;
 
         /// <summary>
         /// Unregisters from an event.
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="action"></param>
-        void AsyncUnregister<TEventData>(Func<TEventData, Task> action)
-            where TEventData : IEventData;
+        void AsyncUnregister<TEventData>(Func<TEventData, Task> action) where TEventData : IEventData;
 
         /// <summary>
         /// Unregisters from an event.
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="handler">Handler object that is registered before</param>
-        void Unregister<TEventData>(IEventHandler<TEventData> handler)
-            where TEventData : IEventData;
+        void Unregister<TEventData>(IEventHandler<TEventData> handler) where TEventData : IEventData;
 
         /// <summary>
         /// Unregisters from an event.
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="handler">Handler object that is registered before</param>
-        void AsyncUnregister<TEventData>(IAsyncEventHandler<TEventData> handler)
-            where TEventData : IEventData;
+        void AsyncUnregister<TEventData>(IAsyncEventHandler<TEventData> handler) where TEventData : IEventData;
 
         /// <summary>
         /// Unregisters from an event.
@@ -130,8 +119,7 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="factory">Factory object that is registered before</param>
-        void Unregister<TEventData>(IEventHandlerFactory factory)
-            where TEventData : IEventData;
+        void Unregister<TEventData>(IEventHandlerFactory factory) where TEventData : IEventData;
 
         /// <summary>
         /// Unregisters from an event.
@@ -144,8 +132,7 @@ namespace Abp.Events.Bus
         /// Unregisters all event handlers of given event type.
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
-        void UnregisterAll<TEventData>()
-            where TEventData : IEventData;
+        void UnregisterAll<TEventData>() where TEventData : IEventData;
 
         /// <summary>
         /// Unregisters all event handlers of given event type.
@@ -162,8 +149,7 @@ namespace Abp.Events.Bus
         /// </summary>
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="eventData">Related data for the event</param>
-        void Trigger<TEventData>(TEventData eventData)
-            where TEventData : IEventData;
+        void Trigger<TEventData>(TEventData eventData) where TEventData : IEventData;
 
         /// <summary>
         /// Triggers an event.
@@ -171,8 +157,7 @@ namespace Abp.Events.Bus
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="eventSource">The object which triggers the event</param>
         /// <param name="eventData">Related data for the event</param>
-        void Trigger<TEventData>(object eventSource, TEventData eventData)
-            where TEventData : IEventData;
+        void Trigger<TEventData>(object eventSource, TEventData eventData) where TEventData : IEventData;
 
         /// <summary>
         /// Triggers an event.
@@ -195,8 +180,7 @@ namespace Abp.Events.Bus
         /// <typeparam name="TEventData">Event type</typeparam>
         /// <param name="eventData">Related data for the event</param>
         /// <returns>The task to handle async operation</returns>
-        Task TriggerAsync<TEventData>(TEventData eventData)
-            where TEventData : IEventData;
+        Task TriggerAsync<TEventData>(TEventData eventData) where TEventData : IEventData;
 
         /// <summary>
         /// Triggers an event asynchronously.
@@ -205,8 +189,7 @@ namespace Abp.Events.Bus
         /// <param name="eventSource">The object which triggers the event</param>
         /// <param name="eventData">Related data for the event</param>
         /// <returns>The task to handle async operation</returns>
-        Task TriggerAsync<TEventData>(object eventSource, TEventData eventData)
-            where TEventData : IEventData;
+        Task TriggerAsync<TEventData>(object eventSource, TEventData eventData) where TEventData : IEventData;
 
         /// <summary>
         /// Triggers an event asynchronously.
@@ -224,6 +207,7 @@ namespace Abp.Events.Bus
         /// <param name="eventData">Related data for the event</param>
         /// <returns>The task to handle async operation</returns>
         Task TriggerAsync(Type eventType, object eventSource, IEventData eventData);
+
 
         #endregion
     }

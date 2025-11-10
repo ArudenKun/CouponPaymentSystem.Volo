@@ -19,9 +19,7 @@ namespace Abp.Domain.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Type of the Entity for this repository</typeparam>
     /// <typeparam name="TPrimaryKey">Primary key of the entity</typeparam>
-    public abstract class AbpRepositoryBase<TEntity, TPrimaryKey>
-        : IRepository<TEntity, TPrimaryKey>,
-            IUnitOfWorkManagerAccessor
+    public abstract class AbpRepositoryBase<TEntity, TPrimaryKey> : IRepository<TEntity, TPrimaryKey>, IUnitOfWorkManagerAccessor
         where TEntity : class, IEntity<TPrimaryKey>
     {
         /// <summary>
@@ -36,8 +34,7 @@ namespace Abp.Domain.Repositories
 
         static AbpRepositoryBase()
         {
-            var attr =
-                typeof(TEntity).GetSingleAttributeOfTypeOrBaseTypesOrNull<MultiTenancySideAttribute>();
+            var attr = typeof(TEntity).GetSingleAttributeOfTypeOrBaseTypesOrNull<MultiTenancySideAttribute>();
             if (attr != null)
             {
                 MultiTenancySide = attr.Side;
@@ -57,36 +54,27 @@ namespace Abp.Domain.Repositories
         }
 
         public abstract Task<IQueryable<TEntity>> GetAllAsync();
-
         public virtual Task<IQueryable<TEntity>> GetAllReadonlyAsync()
         {
             return Task.FromResult(GetAllReadonly());
         }
 
-        public virtual IQueryable<TEntity> GetAllIncluding(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        )
+        public virtual IQueryable<TEntity> GetAllIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
             return GetAll();
         }
 
-        public virtual IQueryable<TEntity> GetAllReadonlyIncluding(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        )
+        public virtual IQueryable<TEntity> GetAllReadonlyIncluding(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
             return GetAllReadonly();
         }
 
-        public virtual Task<IQueryable<TEntity>> GetAllIncludingAsync(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        )
+        public virtual Task<IQueryable<TEntity>> GetAllIncludingAsync(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
             return GetAllAsync();
         }
-
-        public virtual Task<IQueryable<TEntity>> GetAllReadonlyIncludingAsync(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        )
+        
+        public virtual Task<IQueryable<TEntity>> GetAllReadonlyIncludingAsync(params Expression<Func<TEntity, object>>[] propertySelectors)
         {
             return GetAllReadonlyAsync();
         }
@@ -106,9 +94,7 @@ namespace Abp.Domain.Repositories
             return GetAll().Where(predicate).ToList();
         }
 
-        public virtual Task<List<TEntity>> GetAllListAsync(
-            Expression<Func<TEntity, bool>> predicate
-        )
+        public virtual Task<List<TEntity>> GetAllListAsync(Expression<Func<TEntity, bool>> predicate)
         {
             return Task.FromResult(GetAllList(predicate));
         }
@@ -195,12 +181,16 @@ namespace Abp.Domain.Repositories
 
         public virtual TEntity InsertOrUpdate(TEntity entity)
         {
-            return entity.IsTransient() ? Insert(entity) : Update(entity);
+            return entity.IsTransient()
+                ? Insert(entity)
+                : Update(entity);
         }
 
         public virtual async Task<TEntity> InsertOrUpdateAsync(TEntity entity)
         {
-            return entity.IsTransient() ? await InsertAsync(entity) : await UpdateAsync(entity);
+            return entity.IsTransient()
+                ? await InsertAsync(entity)
+                : await UpdateAsync(entity);
         }
 
         public virtual TPrimaryKey InsertOrUpdateAndGetId(TEntity entity)
@@ -228,10 +218,7 @@ namespace Abp.Domain.Repositories
             return entity;
         }
 
-        public virtual async Task<TEntity> UpdateAsync(
-            TPrimaryKey id,
-            Func<TEntity, Task> updateAction
-        )
+        public virtual async Task<TEntity> UpdateAsync(TPrimaryKey id, Func<TEntity, Task> updateAction)
         {
             var entity = await GetAsync(id);
             await updateAction(entity);
@@ -312,9 +299,7 @@ namespace Abp.Domain.Repositories
             return Task.FromResult(LongCount(predicate));
         }
 
-        protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(
-            TPrimaryKey id
-        )
+        protected virtual Expression<Func<TEntity, bool>> CreateEqualityExpressionForId(TPrimaryKey id)
         {
             var lambdaParam = Expression.Parameter(typeof(TEntity));
 

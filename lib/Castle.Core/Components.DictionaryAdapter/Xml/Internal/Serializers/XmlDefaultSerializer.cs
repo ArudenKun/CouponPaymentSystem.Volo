@@ -12,46 +12,51 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.Serialization;
-
-public class XmlDefaultSerializer : XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly XmlSerializer serializer;
+    using System;
+    using System.Xml.Serialization;
 
-    public XmlDefaultSerializer(Type type)
+    public class XmlDefaultSerializer : XmlTypeSerializer
     {
-        serializer = new XmlSerializer(type, Root);
+        private readonly XmlSerializer serializer;
+
+        public XmlDefaultSerializer(Type type)
+        {
+            serializer = new XmlSerializer(type, Root);
+        }
+
+        public override XmlTypeKind Kind
+        {
+            get { return XmlTypeKind.Complex; }
+        }
+
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            using (var reader = new XmlSubtreeReader(node, Root))
+                return serializer.CanDeserialize(reader) ? serializer.Deserialize(reader) : null;
+        }
+
+        public override void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        )
+        {
+            using (var writer = new XmlSubtreeWriter(node))
+                serializer.Serialize(writer, value);
+        }
+
+        public static readonly XmlRootAttribute Root = new XmlRootAttribute
+        {
+            ElementName = "Root",
+            Namespace = string.Empty,
+        };
     }
-
-    public override XmlTypeKind Kind
-    {
-        get { return XmlTypeKind.Complex; }
-    }
-
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        using (var reader = new XmlSubtreeReader(node, Root))
-            return serializer.CanDeserialize(reader) ? serializer.Deserialize(reader) : null;
-    }
-
-    public override void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    )
-    {
-        using (var writer = new XmlSubtreeWriter(node))
-            serializer.Serialize(writer, value);
-    }
-
-    public static readonly XmlRootAttribute Root = new XmlRootAttribute
-    {
-        ElementName = "Root",
-        Namespace = string.Empty,
-    };
 }

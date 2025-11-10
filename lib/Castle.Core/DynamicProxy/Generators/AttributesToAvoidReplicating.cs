@@ -12,53 +12,54 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-
-public static class AttributesToAvoidReplicating
+namespace Castle.DynamicProxy.Generators
 {
-    private static readonly object lockObject = new object();
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
 
-    private static IList<Type> attributes;
-
-    static AttributesToAvoidReplicating()
+    public static class AttributesToAvoidReplicating
     {
-        attributes = new List<Type>()
+        private static readonly object lockObject = new object();
+
+        private static IList<Type> attributes;
+
+        static AttributesToAvoidReplicating()
         {
-            typeof(System.Runtime.InteropServices.ComImportAttribute),
-            typeof(System.Runtime.InteropServices.MarshalAsAttribute),
-            typeof(System.Runtime.InteropServices.TypeIdentifierAttribute),
+            attributes = new List<Type>()
+            {
+                typeof(System.Runtime.InteropServices.ComImportAttribute),
+                typeof(System.Runtime.InteropServices.MarshalAsAttribute),
+                typeof(System.Runtime.InteropServices.TypeIdentifierAttribute),
 #pragma warning disable SYSLIB0003
-            typeof(System.Security.Permissions.SecurityAttribute),
+                typeof(System.Security.Permissions.SecurityAttribute),
 #pragma warning restore SYSLIB0003
-        };
-    }
-
-    public static void Add(Type attribute)
-    {
-        // note: this class is made thread-safe by replacing the backing list rather than adding to it
-        lock (lockObject)
-        {
-            attributes = new List<Type>(attributes) { attribute };
+            };
         }
-    }
 
-    public static void Add<T>()
-    {
-        Add(typeof(T));
-    }
+        public static void Add(Type attribute)
+        {
+            // note: this class is made thread-safe by replacing the backing list rather than adding to it
+            lock (lockObject)
+            {
+                attributes = new List<Type>(attributes) { attribute };
+            }
+        }
 
-    public static bool Contains(Type attribute)
-    {
-        return attributes.Contains(attribute);
-    }
+        public static void Add<T>()
+        {
+            Add(typeof(T));
+        }
 
-    internal static bool ShouldAvoid(Type attribute)
-    {
-        return attributes.Any(attr => attr.IsAssignableFrom(attribute));
+        public static bool Contains(Type attribute)
+        {
+            return attributes.Contains(attribute);
+        }
+
+        internal static bool ShouldAvoid(Type attribute)
+        {
+            return attributes.Any(attr => attr.IsAssignableFrom(attribute));
+        }
     }
 }

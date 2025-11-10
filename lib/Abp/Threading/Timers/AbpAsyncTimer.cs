@@ -124,14 +124,17 @@ namespace Abp.Threading.Timers
 
             _ = Timer_Elapsed();
         }
-
+        
         private async Task Timer_Elapsed()
         {
             try
             {
                 await Elapsed(this);
             }
-            catch (Exception) { }
+            catch(Exception)
+            {
+                
+            }
             finally
             {
                 lock (_taskTimer)

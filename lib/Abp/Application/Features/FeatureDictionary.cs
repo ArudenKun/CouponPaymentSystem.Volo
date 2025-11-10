@@ -26,9 +26,7 @@ namespace Abp.Application.Features
             {
                 if (existingFeature != feature)
                 {
-                    throw new AbpInitializationException(
-                        "Duplicate feature name detected for " + feature.Name
-                    );
+                    throw new AbpInitializationException("Duplicate feature name detected for " + feature.Name);
                 }
             }
             else

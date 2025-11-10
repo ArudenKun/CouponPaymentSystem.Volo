@@ -13,7 +13,7 @@ namespace Abp.Notifications
         public NotificationSeverity Severity { get; set; }
 
         public bool IsPublished { get; set; }
-
+        
         public DateTime CreationTime { get; set; }
     }
 }

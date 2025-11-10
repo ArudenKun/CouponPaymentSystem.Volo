@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Castle.DynamicProxy;
+﻿using Castle.DynamicProxy;
+using System.Threading.Tasks;
 
 namespace Abp.Dependency
 {
@@ -19,8 +19,6 @@ namespace Abp.Dependency
 
         protected abstract Task InternalInterceptAsynchronous(IInvocation invocation);
 
-        protected abstract Task<TResult> InternalInterceptAsynchronous<TResult>(
-            IInvocation invocation
-        );
+        protected abstract Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation);
     }
 }

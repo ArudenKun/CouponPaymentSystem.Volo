@@ -15,11 +15,8 @@ namespace Abp.PlugIns
         public SearchOption SearchOption { get; set; }
 
         private readonly Lazy<List<Assembly>> _assemblies;
-
-        public FolderPlugInSource(
-            string folder,
-            SearchOption searchOption = SearchOption.TopDirectoryOnly
-        )
+        
+        public FolderPlugInSource(string folder, SearchOption searchOption = SearchOption.TopDirectoryOnly)
         {
             Folder = folder;
             SearchOption = searchOption;
@@ -50,10 +47,7 @@ namespace Abp.PlugIns
                 }
                 catch (Exception ex)
                 {
-                    throw new AbpInitializationException(
-                        "Could not get module types from assembly: " + assembly.FullName,
-                        ex
-                    );
+                    throw new AbpInitializationException("Could not get module types from assembly: " + assembly.FullName, ex);
                 }
             }
 

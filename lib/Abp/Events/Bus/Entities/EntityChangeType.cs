@@ -4,6 +4,6 @@ namespace Abp.Events.Bus.Entities
     {
         Created = 0,
         Updated = 1,
-        Deleted = 2,
+        Deleted = 2
     }
 }

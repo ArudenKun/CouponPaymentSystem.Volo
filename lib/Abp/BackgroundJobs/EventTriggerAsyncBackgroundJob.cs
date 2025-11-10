@@ -4,9 +4,7 @@ using Abp.Events.Bus;
 
 namespace Abp.BackgroundJobs
 {
-    public class EventTriggerAsyncBackgroundJob<TEventData>
-        : IAsyncBackgroundJob<TEventData>,
-            ITransientDependency
+    public class EventTriggerAsyncBackgroundJob<TEventData> : IAsyncBackgroundJob<TEventData>, ITransientDependency
         where TEventData : EventData
     {
         public IEventBus EventBus { get; set; }

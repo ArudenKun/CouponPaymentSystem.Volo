@@ -12,86 +12,87 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections.Generic;
-
-public abstract class VirtualObject<TNode> : IVirtual<TNode>
+namespace Castle.Components.DictionaryAdapter
 {
-    private List<IVirtualSite<TNode>> sites;
+    using System;
+    using System.Collections.Generic;
 
-    protected VirtualObject() { }
-
-    protected VirtualObject(IVirtualSite<TNode> site)
+    public abstract class VirtualObject<TNode> : IVirtual<TNode>
     {
-        sites = new List<IVirtualSite<TNode>> { site };
-    }
+        private List<IVirtualSite<TNode>> sites;
 
-    public abstract bool IsReal { get; }
+        protected VirtualObject() { }
 
-    protected void AddSite(IVirtualSite<TNode> site)
-    {
-        if (sites != null)
+        protected VirtualObject(IVirtualSite<TNode> site)
         {
-            sites.Add(site);
+            sites = new List<IVirtualSite<TNode>> { site };
         }
-    }
 
-    void IVirtual<TNode>.AddSite(IVirtualSite<TNode> site)
-    {
-        AddSite(site);
-    }
+        public abstract bool IsReal { get; }
 
-    protected void RemoveSite(IVirtualSite<TNode> site)
-    {
-        if (sites != null)
-        {
-            var index = sites.IndexOf(site);
-            if (index != -1)
-                sites.RemoveAt(index);
-        }
-    }
-
-    void IVirtual<TNode>.RemoveSite(IVirtualSite<TNode> site)
-    {
-        RemoveSite(site);
-    }
-
-    public TNode Realize()
-    {
-        TNode node;
-        if (TryRealize(out node))
+        protected void AddSite(IVirtualSite<TNode> site)
         {
             if (sites != null)
             {
-                var count = sites.Count;
-                for (var i = 0; i < count; i++)
-                    sites[i].OnRealizing(node);
-                sites = null;
+                sites.Add(site);
             }
-
-            OnRealized();
         }
-        return node;
-    }
 
-    void IVirtual.Realize()
-    {
-        Realize();
-    }
-
-    protected abstract bool TryRealize(out TNode node);
-
-    public event EventHandler Realized;
-
-    protected virtual void OnRealized()
-    {
-        var handler = Realized;
-        if (handler != null)
+        void IVirtual<TNode>.AddSite(IVirtualSite<TNode> site)
         {
-            handler(this, EventArgs.Empty);
-            Realized = null;
+            AddSite(site);
+        }
+
+        protected void RemoveSite(IVirtualSite<TNode> site)
+        {
+            if (sites != null)
+            {
+                var index = sites.IndexOf(site);
+                if (index != -1)
+                    sites.RemoveAt(index);
+            }
+        }
+
+        void IVirtual<TNode>.RemoveSite(IVirtualSite<TNode> site)
+        {
+            RemoveSite(site);
+        }
+
+        public TNode Realize()
+        {
+            TNode node;
+            if (TryRealize(out node))
+            {
+                if (sites != null)
+                {
+                    var count = sites.Count;
+                    for (var i = 0; i < count; i++)
+                        sites[i].OnRealizing(node);
+                    sites = null;
+                }
+
+                OnRealized();
+            }
+            return node;
+        }
+
+        void IVirtual.Realize()
+        {
+            Realize();
+        }
+
+        protected abstract bool TryRealize(out TNode node);
+
+        public event EventHandler Realized;
+
+        protected virtual void OnRealized()
+        {
+            var handler = Realized;
+            if (handler != null)
+            {
+                handler(this, EventArgs.Empty);
+                Realized = null;
+            }
         }
     }
 }

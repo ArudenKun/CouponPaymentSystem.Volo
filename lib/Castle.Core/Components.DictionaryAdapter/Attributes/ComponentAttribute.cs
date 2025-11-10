@@ -12,100 +12,101 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Identifies a property should be represented as a nested component.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
-public class ComponentAttribute
-    : DictionaryBehaviorAttribute,
-        IDictionaryKeyBuilder,
-        IDictionaryPropertyGetter,
-        IDictionaryPropertySetter
+namespace Castle.Components.DictionaryAdapter
 {
-    /// <summary>
-    /// Applies no prefix.
-    /// </summary>
-    public bool NoPrefix
-    {
-        get { return Prefix == ""; }
-        set
-        {
-            if (value)
-            {
-                Prefix = "";
-            }
-        }
-    }
+    using System;
 
     /// <summary>
-    /// Gets or sets the prefix.
+    /// Identifies a property should be represented as a nested component.
     /// </summary>
-    /// <value>The prefix.</value>
-    public string Prefix { get; set; }
-
-    #region IDictionaryKeyBuilder Members
-
-    string IDictionaryKeyBuilder.GetKey(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        PropertyDescriptor property
-    )
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
+    public class ComponentAttribute
+        : DictionaryBehaviorAttribute,
+            IDictionaryKeyBuilder,
+            IDictionaryPropertyGetter,
+            IDictionaryPropertySetter
     {
-        return Prefix ?? key + "_";
-    }
-
-    #endregion
-
-    #region IDictionaryPropertyGetter
-
-    object IDictionaryPropertyGetter.GetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        object storedValue,
-        PropertyDescriptor property,
-        bool ifExists
-    )
-    {
-        if (storedValue == null)
+        /// <summary>
+        /// Applies no prefix.
+        /// </summary>
+        public bool NoPrefix
         {
-            var component = dictionaryAdapter.This.ExtendedProperties[property.PropertyName];
-
-            if (component == null)
+            get { return Prefix == ""; }
+            set
             {
-                var descriptor = new PropertyDescriptor(property.Property, null);
-                descriptor.AddBehavior(new KeyPrefixAttribute(key));
-                component = dictionaryAdapter.This.Factory.GetAdapter(
-                    property.Property.PropertyType,
-                    dictionaryAdapter.This.Dictionary,
-                    descriptor
-                );
-                dictionaryAdapter.This.ExtendedProperties[property.PropertyName] = component;
+                if (value)
+                {
+                    Prefix = "";
+                }
             }
-
-            return component;
         }
 
-        return storedValue;
+        /// <summary>
+        /// Gets or sets the prefix.
+        /// </summary>
+        /// <value>The prefix.</value>
+        public string Prefix { get; set; }
+
+        #region IDictionaryKeyBuilder Members
+
+        string IDictionaryKeyBuilder.GetKey(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            PropertyDescriptor property
+        )
+        {
+            return Prefix ?? key + "_";
+        }
+
+        #endregion
+
+        #region IDictionaryPropertyGetter
+
+        object IDictionaryPropertyGetter.GetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            object storedValue,
+            PropertyDescriptor property,
+            bool ifExists
+        )
+        {
+            if (storedValue == null)
+            {
+                var component = dictionaryAdapter.This.ExtendedProperties[property.PropertyName];
+
+                if (component == null)
+                {
+                    var descriptor = new PropertyDescriptor(property.Property, null);
+                    descriptor.AddBehavior(new KeyPrefixAttribute(key));
+                    component = dictionaryAdapter.This.Factory.GetAdapter(
+                        property.Property.PropertyType,
+                        dictionaryAdapter.This.Dictionary,
+                        descriptor
+                    );
+                    dictionaryAdapter.This.ExtendedProperties[property.PropertyName] = component;
+                }
+
+                return component;
+            }
+
+            return storedValue;
+        }
+
+        #endregion
+
+        #region IDictionaryPropertySetter Members
+
+        public bool SetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            ref object value,
+            PropertyDescriptor property
+        )
+        {
+            dictionaryAdapter.This.ExtendedProperties.Remove(property.PropertyName);
+            return false;
+        }
+
+        #endregion
     }
-
-    #endregion
-
-    #region IDictionaryPropertySetter Members
-
-    public bool SetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        ref object value,
-        PropertyDescriptor property
-    )
-    {
-        dictionaryAdapter.This.ExtendedProperties.Remove(property.PropertyName);
-        return false;
-    }
-
-    #endregion
 }

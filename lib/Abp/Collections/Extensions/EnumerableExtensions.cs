@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Abp.Collections.Extensions
-{
-    /// <summary>
+{    
+    /// <summary> 
     /// Extension methods for <see cref="IEnumerable{T}"/>.
     /// </summary>
     public static class EnumerableExtensions
@@ -41,13 +41,11 @@ namespace Abp.Collections.Extensions
         /// <param name="condition">A boolean value</param>
         /// <param name="predicate">Predicate to filter the enumerable</param>
         /// <returns>Filtered or not filtered enumerable based on <paramref name="condition"/></returns>
-        public static IEnumerable<T> WhereIf<T>(
-            this IEnumerable<T> source,
-            bool condition,
-            Func<T, bool> predicate
-        )
+        public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> source, bool condition, Func<T, bool> predicate)
         {
-            return condition ? source.Where(predicate) : source;
+            return condition
+                ? source.Where(predicate)
+                : source;
         }
 
         /// <summary>
@@ -57,13 +55,11 @@ namespace Abp.Collections.Extensions
         /// <param name="condition">A boolean value</param>
         /// <param name="predicate">Predicate to filter the enumerable</param>
         /// <returns>Filtered or not filtered enumerable based on <paramref name="condition"/></returns>
-        public static IEnumerable<T> WhereIf<T>(
-            this IEnumerable<T> source,
-            bool condition,
-            Func<T, int, bool> predicate
-        )
+        public static IEnumerable<T> WhereIf<T>(this IEnumerable<T> source, bool condition, Func<T, int, bool> predicate)
         {
-            return condition ? source.Where(predicate) : source;
+            return condition
+                ? source.Where(predicate)
+                : source;
         }
     }
 }

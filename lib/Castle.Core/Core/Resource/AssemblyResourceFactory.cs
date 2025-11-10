@@ -12,29 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-
-public class AssemblyResourceFactory : IResourceFactory
+namespace Castle.Core.Resource
 {
-    public bool Accept(CustomUri uri)
-    {
-        return "assembly".Equals(uri.Scheme);
-    }
+    using System;
 
-    public IResource Create(CustomUri uri)
+    public class AssemblyResourceFactory : IResourceFactory
     {
-        return Create(uri, null);
-    }
-
-    public IResource Create(CustomUri uri, string basePath)
-    {
-        if (basePath == null)
+        public bool Accept(CustomUri uri)
         {
-            return new AssemblyResource(uri);
+            return "assembly".Equals(uri.Scheme);
         }
 
-        return new AssemblyResource(uri, basePath);
+        public IResource Create(CustomUri uri)
+        {
+            return Create(uri, null);
+        }
+
+        public IResource Create(CustomUri uri, string basePath)
+        {
+            if (basePath == null)
+            {
+                return new AssemblyResource(uri);
+            }
+
+            return new AssemblyResource(uri, basePath);
+        }
     }
 }

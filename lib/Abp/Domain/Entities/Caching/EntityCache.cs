@@ -7,38 +7,51 @@ using Abp.Runtime.Caching;
 
 namespace Abp.Domain.Entities.Caching
 {
-    public class EntityCache<TEntity, TCacheItem>
-        : EntityCache<TEntity, TCacheItem, int>,
-            IEntityCache<TCacheItem>
+    public class EntityCache<TEntity, TCacheItem> :
+        EntityCache<TEntity, TCacheItem, int>,
+        IEntityCache<TCacheItem>
         where TEntity : class, IEntity<int>
     {
         public EntityCache(
             ICacheManager cacheManager,
             IRepository<TEntity, int> repository,
             IUnitOfWorkManager unitOfWorkManager,
-            string cacheName = null
-        )
-            : base(cacheManager, repository, unitOfWorkManager, cacheName) { }
+            string cacheName = null)
+            : base(
+                cacheManager,
+                repository,
+                unitOfWorkManager,
+                cacheName)
+        {
+        }
     }
 
-    public class EntityCache<TEntity, TCacheItem, TPrimaryKey>
-        : EntityCacheBase<TEntity, TCacheItem, TPrimaryKey>,
-            IEventHandler<EntityChangedEventData<TEntity>>,
-            IEntityCache<TCacheItem, TPrimaryKey>
+    public class EntityCache<TEntity, TCacheItem, TPrimaryKey> :
+        EntityCacheBase<TEntity, TCacheItem, TPrimaryKey>,
+        IEventHandler<EntityChangedEventData<TEntity>>, 
+        IEntityCache<TCacheItem, TPrimaryKey>
         where TEntity : class, IEntity<TPrimaryKey>
     {
         public ITypedCache<TPrimaryKey, TCacheItem> InternalCache
         {
-            get { return CacheManager.GetCache<TPrimaryKey, TCacheItem>(CacheName); }
+            get
+            {
+                return CacheManager.GetCache<TPrimaryKey, TCacheItem>(CacheName);
+            }
         }
 
         public EntityCache(
-            ICacheManager cacheManager,
+            ICacheManager cacheManager, 
             IRepository<TEntity, TPrimaryKey> repository,
             IUnitOfWorkManager unitOfWorkManager,
-            string cacheName = null
-        )
-            : base(cacheManager, repository, unitOfWorkManager, cacheName) { }
+            string cacheName = null)
+            : base(
+                cacheManager,
+                repository,
+                unitOfWorkManager,
+                cacheName)
+        {
+        }
 
         public override TCacheItem Get(TPrimaryKey id)
         {

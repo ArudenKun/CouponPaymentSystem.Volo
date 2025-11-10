@@ -12,32 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-
-internal class MethodSignatureComparer : IEqualityComparer<MethodInfo>
+namespace Castle.DynamicProxy.Generators
 {
-    public static readonly MethodSignatureComparer Instance = new MethodSignatureComparer();
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
 
-    private static readonly Type preserveBaseOverridesAttribute = Type.GetType(
-        "System.Runtime.CompilerServices.PreserveBaseOverridesAttribute",
-        throwOnError: false
-    );
-
-    public bool EqualGenericParameters(MethodInfo x, MethodInfo y)
+    internal class MethodSignatureComparer : IEqualityComparer<MethodInfo>
     {
-        if (x.IsGenericMethod != y.IsGenericMethod)
+        public static readonly MethodSignatureComparer Instance = new MethodSignatureComparer();
+
+        private static readonly Type preserveBaseOverridesAttribute = Type.GetType(
+            "System.Runtime.CompilerServices.PreserveBaseOverridesAttribute",
+            throwOnError: false
+        );
+
+        public bool EqualGenericParameters(MethodInfo x, MethodInfo y)
         {
-            return false;
+            if (x.IsGenericMethod != y.IsGenericMethod)
+            {
+                return false;
+            }
+
+            if (x.IsGenericMethod)
+            {
+                var xArgs = x.GetGenericArguments();
+                var yArgs = y.GetGenericArguments();
+
+                if (xArgs.Length != yArgs.Length)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < xArgs.Length; ++i)
+                {
+                    if (xArgs[i].IsGenericParameter != yArgs[i].IsGenericParameter)
+                    {
+                        return false;
+                    }
+
+                    if (!xArgs[i].IsGenericParameter && !xArgs[i].Equals(yArgs[i]))
+                    {
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         }
 
-        if (x.IsGenericMethod)
+        public bool EqualParameters(MethodInfo x, MethodInfo y)
         {
-            var xArgs = x.GetGenericArguments();
-            var yArgs = y.GetGenericArguments();
+            var xArgs = x.GetParameters();
+            var yArgs = y.GetParameters();
 
             if (xArgs.Length != yArgs.Length)
             {
@@ -46,158 +73,132 @@ internal class MethodSignatureComparer : IEqualityComparer<MethodInfo>
 
             for (var i = 0; i < xArgs.Length; ++i)
             {
-                if (xArgs[i].IsGenericParameter != yArgs[i].IsGenericParameter)
-                {
-                    return false;
-                }
-
-                if (!xArgs[i].IsGenericParameter && !xArgs[i].Equals(yArgs[i]))
+                if (!EqualSignatureTypes(xArgs[i].ParameterType, yArgs[i].ParameterType))
                 {
                     return false;
                 }
             }
-        }
 
-        return true;
-    }
-
-    public bool EqualParameters(MethodInfo x, MethodInfo y)
-    {
-        var xArgs = x.GetParameters();
-        var yArgs = y.GetParameters();
-
-        if (xArgs.Length != yArgs.Length)
-        {
-            return false;
-        }
-
-        for (var i = 0; i < xArgs.Length; ++i)
-        {
-            if (!EqualSignatureTypes(xArgs[i].ParameterType, yArgs[i].ParameterType))
-            {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public bool EqualReturnTypes(MethodInfo x, MethodInfo y)
-    {
-        var xr = x.ReturnType;
-        var yr = y.ReturnType;
-
-        if (EqualSignatureTypes(xr, yr))
-        {
             return true;
         }
 
-        // This enables covariant method returns for .NET 5 and newer.
-        // No need to check for runtime support, since such methods are marked with a custom attribute;
-        // see https://github.com/dotnet/runtime/blob/main/docs/design/features/covariant-return-methods.md.
-        if (preserveBaseOverridesAttribute != null)
+        public bool EqualReturnTypes(MethodInfo x, MethodInfo y)
         {
-            return (
-                    x.IsDefined(preserveBaseOverridesAttribute, inherit: false)
-                    && yr.IsAssignableFrom(xr)
-                )
-                || (
-                    y.IsDefined(preserveBaseOverridesAttribute, inherit: false)
-                    && xr.IsAssignableFrom(yr)
-                );
-        }
+            var xr = x.ReturnType;
+            var yr = y.ReturnType;
 
-        return false;
-    }
+            if (EqualSignatureTypes(xr, yr))
+            {
+                return true;
+            }
 
-    private bool EqualSignatureTypes(Type x, Type y)
-    {
-        if (x.IsByRef != y.IsByRef)
-        {
-            return false;
-        }
-        else if (x.IsByRef)
-        {
-            // If `x` or `y` are by-ref generic types or type parameters (think `ref T` or `out T`),
-            // the tests below would report false, so we need to erase by-ref-ness first:
-            return EqualSignatureTypes(x.GetElementType(), y.GetElementType());
-        }
+            // This enables covariant method returns for .NET 5 and newer.
+            // No need to check for runtime support, since such methods are marked with a custom attribute;
+            // see https://github.com/dotnet/runtime/blob/main/docs/design/features/covariant-return-methods.md.
+            if (preserveBaseOverridesAttribute != null)
+            {
+                return (
+                        x.IsDefined(preserveBaseOverridesAttribute, inherit: false)
+                        && yr.IsAssignableFrom(xr)
+                    )
+                    || (
+                        y.IsDefined(preserveBaseOverridesAttribute, inherit: false)
+                        && xr.IsAssignableFrom(yr)
+                    );
+            }
 
-        if (x.IsGenericParameter != y.IsGenericParameter)
-        {
-            return false;
-        }
-        else if (x.IsGenericType != y.IsGenericType)
-        {
             return false;
         }
 
-        if (x.IsGenericParameter)
+        private bool EqualSignatureTypes(Type x, Type y)
         {
-            if (x.GenericParameterPosition != y.GenericParameterPosition)
+            if (x.IsByRef != y.IsByRef)
             {
                 return false;
             }
-        }
-        else if (x.IsGenericType)
-        {
-            var xGenericTypeDef = x.GetGenericTypeDefinition();
-            var yGenericTypeDef = y.GetGenericTypeDefinition();
+            else if (x.IsByRef)
+            {
+                // If `x` or `y` are by-ref generic types or type parameters (think `ref T` or `out T`),
+                // the tests below would report false, so we need to erase by-ref-ness first:
+                return EqualSignatureTypes(x.GetElementType(), y.GetElementType());
+            }
 
-            if (xGenericTypeDef != yGenericTypeDef)
+            if (x.IsGenericParameter != y.IsGenericParameter)
+            {
+                return false;
+            }
+            else if (x.IsGenericType != y.IsGenericType)
             {
                 return false;
             }
 
-            var xArgs = x.GetGenericArguments();
-            var yArgs = y.GetGenericArguments();
-
-            if (xArgs.Length != yArgs.Length)
+            if (x.IsGenericParameter)
             {
-                return false;
-            }
-
-            for (var i = 0; i < xArgs.Length; ++i)
-            {
-                if (!EqualSignatureTypes(xArgs[i], yArgs[i]))
+                if (x.GenericParameterPosition != y.GenericParameterPosition)
+                {
                     return false;
+                }
             }
-        }
-        else
-        {
-            if (!x.Equals(y))
+            else if (x.IsGenericType)
             {
-                return false;
-            }
-        }
-        return true;
-    }
+                var xGenericTypeDef = x.GetGenericTypeDefinition();
+                var yGenericTypeDef = y.GetGenericTypeDefinition();
 
-    public bool Equals(MethodInfo x, MethodInfo y)
-    {
-        if (x == null && y == null)
-        {
+                if (xGenericTypeDef != yGenericTypeDef)
+                {
+                    return false;
+                }
+
+                var xArgs = x.GetGenericArguments();
+                var yArgs = y.GetGenericArguments();
+
+                if (xArgs.Length != yArgs.Length)
+                {
+                    return false;
+                }
+
+                for (var i = 0; i < xArgs.Length; ++i)
+                {
+                    if (!EqualSignatureTypes(xArgs[i], yArgs[i]))
+                        return false;
+                }
+            }
+            else
+            {
+                if (!x.Equals(y))
+                {
+                    return false;
+                }
+            }
             return true;
         }
 
-        if (x == null || y == null)
+        public bool Equals(MethodInfo x, MethodInfo y)
         {
-            return false;
+            if (x == null && y == null)
+            {
+                return true;
+            }
+
+            if (x == null || y == null)
+            {
+                return false;
+            }
+
+            return EqualNames(x, y)
+                && EqualGenericParameters(x, y)
+                && EqualReturnTypes(x, y)
+                && EqualParameters(x, y);
         }
 
-        return EqualNames(x, y)
-            && EqualGenericParameters(x, y)
-            && EqualReturnTypes(x, y)
-            && EqualParameters(x, y);
-    }
+        public int GetHashCode(MethodInfo obj)
+        {
+            return obj.Name.GetHashCode() ^ obj.GetParameters().Length; // everything else would be too cumbersome
+        }
 
-    public int GetHashCode(MethodInfo obj)
-    {
-        return obj.Name.GetHashCode() ^ obj.GetParameters().Length; // everything else would be too cumbersome
-    }
-
-    private bool EqualNames(MethodInfo x, MethodInfo y)
-    {
-        return x.Name == y.Name;
+        private bool EqualNames(MethodInfo x, MethodInfo y)
+        {
+            return x.Name == y.Name;
+        }
     }
 }

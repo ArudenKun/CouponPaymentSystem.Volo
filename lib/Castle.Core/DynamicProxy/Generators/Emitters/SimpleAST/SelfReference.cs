@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
-
-[DebuggerDisplay("this")]
-internal class SelfReference : Reference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    public static readonly SelfReference Self = new SelfReference();
+    using System;
+    using System.Diagnostics;
+    using System.Reflection.Emit;
 
-    protected SelfReference()
-        : base(null) { }
-
-    public override void LoadAddressOfReference(ILGenerator gen)
+    [DebuggerDisplay("this")]
+    internal class SelfReference : Reference
     {
-        throw new NotSupportedException();
-    }
+        public static readonly SelfReference Self = new SelfReference();
 
-    public override void LoadReference(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldarg_0);
-    }
+        protected SelfReference()
+            : base(null) { }
 
-    public override void StoreReference(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldarg_0);
+        public override void LoadAddressOfReference(ILGenerator gen)
+        {
+            throw new NotSupportedException();
+        }
+
+        public override void LoadReference(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldarg_0);
+        }
+
+        public override void StoreReference(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldarg_0);
+        }
     }
 }

@@ -12,137 +12,138 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.XPath;
-
-public class XPathReadOnlyCursor : XPathNode, IXmlCursor
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private XPathNodeIterator iterator;
-    private readonly IXmlIncludedTypeMap includedTypes;
-    private readonly CursorFlags flags;
+    using System;
+    using System.Xml.XPath;
 
-    public XPathReadOnlyCursor(
-        IXmlNode parent,
-        CompiledXPath path,
-        IXmlIncludedTypeMap includedTypes,
-        IXmlNamespaceSource namespaces,
-        CursorFlags flags
-    )
-        : base(path, namespaces, parent)
+    public class XPathReadOnlyCursor : XPathNode, IXmlCursor
     {
-        if (parent == null)
-            throw Error.ArgumentNull(nameof(parent));
-        if (path == null)
-            throw Error.ArgumentNull(nameof(path));
-        if (includedTypes == null)
-            throw Error.ArgumentNull(nameof(includedTypes));
+        private XPathNodeIterator iterator;
+        private readonly IXmlIncludedTypeMap includedTypes;
+        private readonly CursorFlags flags;
 
-        this.includedTypes = includedTypes;
-        this.flags = flags;
-
-        Reset();
-    }
-
-    public void Reset()
-    {
-        var source = Parent.RequireRealizable<XPathNavigator>();
-        if (source.IsReal)
-            iterator = source.Value.Select(xpath.Path);
-    }
-
-    public bool MoveNext()
-    {
-        for (; ; )
+        public XPathReadOnlyCursor(
+            IXmlNode parent,
+            CompiledXPath path,
+            IXmlIncludedTypeMap includedTypes,
+            IXmlNamespaceSource namespaces,
+            CursorFlags flags
+        )
+            : base(path, namespaces, parent)
         {
-            var hasNext =
-                iterator != null
-                && iterator.MoveNext()
-                && (flags.AllowsMultipleItems() || !iterator.MoveNext());
+            if (parent == null)
+                throw Error.ArgumentNull(nameof(parent));
+            if (path == null)
+                throw Error.ArgumentNull(nameof(path));
+            if (includedTypes == null)
+                throw Error.ArgumentNull(nameof(includedTypes));
 
-            if (!hasNext)
-                return SetAtEnd();
-            if (SetAtNext())
-                return true;
+            this.includedTypes = includedTypes;
+            this.flags = flags;
+
+            Reset();
         }
-    }
 
-    private bool SetAtEnd()
-    {
-        node = null;
-        type = null;
-        return false;
-    }
+        public void Reset()
+        {
+            var source = Parent.RequireRealizable<XPathNavigator>();
+            if (source.IsReal)
+                iterator = source.Value.Select(xpath.Path);
+        }
 
-    private bool SetAtNext()
-    {
-        node = iterator.Current;
+        public bool MoveNext()
+        {
+            for (; ; )
+            {
+                var hasNext =
+                    iterator != null
+                    && iterator.MoveNext()
+                    && (flags.AllowsMultipleItems() || !iterator.MoveNext());
 
-        IXmlIncludedType includedType;
-        if (!includedTypes.TryGet(XsiType, out includedType))
+                if (!hasNext)
+                    return SetAtEnd();
+                if (SetAtNext())
+                    return true;
+            }
+        }
+
+        private bool SetAtEnd()
+        {
+            node = null;
+            type = null;
             return false;
+        }
 
-        type = includedType.ClrType;
-        return true;
-    }
+        private bool SetAtNext()
+        {
+            node = iterator.Current;
 
-    public void MoveTo(IXmlNode position)
-    {
-        var source = position.AsRealizable<XPathNavigator>();
-        if (source == null || !source.IsReal)
+            IXmlIncludedType includedType;
+            if (!includedTypes.TryGet(XsiType, out includedType))
+                return false;
+
+            type = includedType.ClrType;
+            return true;
+        }
+
+        public void MoveTo(IXmlNode position)
+        {
+            var source = position.AsRealizable<XPathNavigator>();
+            if (source == null || !source.IsReal)
+                throw Error.CursorCannotMoveToGivenNode();
+
+            var positionNode = source.Value;
+
+            Reset();
+
+            if (iterator != null)
+                while (iterator.MoveNext())
+                    if (iterator.Current.IsSamePosition(positionNode))
+                    {
+                        SetAtNext();
+                        return;
+                    }
+
             throw Error.CursorCannotMoveToGivenNode();
+        }
 
-        var positionNode = source.Value;
+        public void MoveToEnd()
+        {
+            if (iterator != null)
+                while (iterator.MoveNext())
+                    ;
+            SetAtEnd();
+        }
 
-        Reset();
+        public void MakeNext(Type type)
+        {
+            throw Error.CursorNotMutable();
+        }
 
-        if (iterator != null)
-            while (iterator.MoveNext())
-                if (iterator.Current.IsSamePosition(positionNode))
-                {
-                    SetAtNext();
-                    return;
-                }
+        public void Create(Type type)
+        {
+            throw Error.CursorNotMutable();
+        }
 
-        throw Error.CursorCannotMoveToGivenNode();
-    }
+        public void Coerce(Type type)
+        {
+            throw Error.CursorNotMutable();
+        }
 
-    public void MoveToEnd()
-    {
-        if (iterator != null)
-            while (iterator.MoveNext())
-                ;
-        SetAtEnd();
-    }
+        public void Remove()
+        {
+            throw Error.CursorNotMutable();
+        }
 
-    public void MakeNext(Type type)
-    {
-        throw Error.CursorNotMutable();
-    }
+        public void RemoveAllNext()
+        {
+            throw Error.CursorNotMutable();
+        }
 
-    public void Create(Type type)
-    {
-        throw Error.CursorNotMutable();
-    }
-
-    public void Coerce(Type type)
-    {
-        throw Error.CursorNotMutable();
-    }
-
-    public void Remove()
-    {
-        throw Error.CursorNotMutable();
-    }
-
-    public void RemoveAllNext()
-    {
-        throw Error.CursorNotMutable();
-    }
-
-    public override IXmlNode Save()
-    {
-        return new XPathNode(node.Clone(), type, Namespaces);
+        public override IXmlNode Save()
+        {
+            return new XPathNode(node.Clone(), type, Namespaces);
+        }
     }
 }

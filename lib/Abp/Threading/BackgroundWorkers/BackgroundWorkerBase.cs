@@ -5,8 +5,7 @@ using Abp.Configuration;
 using Abp.Domain.Uow;
 using Abp.Localization;
 using Abp.Localization.Sources;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Threading.BackgroundWorkers
 {
@@ -41,10 +40,7 @@ namespace Abp.Threading.BackgroundWorkers
         /// <summary>
         /// Gets current unit of work.
         /// </summary>
-        protected IActiveUnitOfWork CurrentUnitOfWork
-        {
-            get { return UnitOfWorkManager.Current; }
-        }
+        protected IActiveUnitOfWork CurrentUnitOfWork { get { return UnitOfWorkManager.Current; } }
 
         /// <summary>
         /// Reference to the localization manager.
@@ -67,19 +63,18 @@ namespace Abp.Threading.BackgroundWorkers
             {
                 if (LocalizationSourceName == null)
                 {
-                    throw new AbpException(
-                        "Must set LocalizationSourceName before, in order to get LocalizationSource"
-                    );
+                    throw new AbpException("Must set LocalizationSourceName before, in order to get LocalizationSource");
                 }
 
-                if (field == null || field.Name != LocalizationSourceName)
+                if (_localizationSource == null || _localizationSource.Name != LocalizationSourceName)
                 {
-                    field = LocalizationManager.GetSource(LocalizationSourceName);
+                    _localizationSource = LocalizationManager.GetSource(LocalizationSourceName);
                 }
 
-                return field;
+                return _localizationSource;
             }
         }
+        private ILocalizationSource _localizationSource;
 
         /// <summary>
         /// Reference to the logger to write logs.
@@ -98,19 +93,19 @@ namespace Abp.Threading.BackgroundWorkers
         public override void Start()
         {
             base.Start();
-            Logger.LogDebug("Start background worker: {Worker}", ToString());
+            Logger.Debug("Start background worker: " + ToString());
         }
 
         public override void Stop()
         {
             base.Stop();
-            Logger.LogDebug("Stop background worker: {Worker}", ToString());
+            Logger.Debug("Stop background worker: " + ToString());
         }
 
         public override void WaitToStop()
         {
             base.WaitToStop();
-            Logger.LogDebug("WaitToStop background worker: {Worker}", ToString());
+            Logger.Debug("WaitToStop background worker: " + ToString());
         }
 
         /// <summary>

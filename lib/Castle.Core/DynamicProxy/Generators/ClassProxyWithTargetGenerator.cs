@@ -12,76 +12,81 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Castle.DynamicProxy.Serialization;
-#if FEATURE_SERIALIZATION
-using System.Xml.Serialization;
-#endif
-
-internal sealed class ClassProxyWithTargetGenerator : BaseClassProxyGenerator
+namespace Castle.DynamicProxy.Generators
 {
-    private FieldReference targetField;
-
-    public ClassProxyWithTargetGenerator(
-        ModuleScope scope,
-        Type targetType,
-        Type[] interfaces,
-        ProxyGenerationOptions options
-    )
-        : base(scope, targetType, interfaces, options) { }
-
-    protected override FieldReference TargetField => targetField;
-
-    protected override CacheKey GetCacheKey()
-    {
-        return new CacheKey(targetType, targetType, interfaces, ProxyGenerationOptions);
-    }
-
-    protected override void CreateFields(ClassEmitter emitter)
-    {
-        base.CreateFields(emitter);
-        CreateTargetField(emitter);
-    }
-
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Serialization;
 #if FEATURE_SERIALIZATION
-    protected override SerializableContributor GetSerializableContributor()
-    {
-        return new ClassProxySerializableContributor(
-            targetType,
-            interfaces,
-            ProxyTypeConstants.ClassWithTarget
-        );
-    }
+    using System.Xml.Serialization;
 #endif
 
-    protected override CompositeTypeContributor GetProxyTargetContributor(INamingScope namingScope)
+
+
+    internal sealed class ClassProxyWithTargetGenerator : BaseClassProxyGenerator
     {
-        return new ClassProxyWithTargetTargetContributor(targetType, namingScope)
+        private FieldReference targetField;
+
+        public ClassProxyWithTargetGenerator(
+            ModuleScope scope,
+            Type targetType,
+            Type[] interfaces,
+            ProxyGenerationOptions options
+        )
+            : base(scope, targetType, interfaces, options) { }
+
+        protected override FieldReference TargetField => targetField;
+
+        protected override CacheKey GetCacheKey()
         {
-            Logger = Logger,
-        };
-    }
+            return new CacheKey(targetType, targetType, interfaces, ProxyGenerationOptions);
+        }
 
-    protected override ProxyTargetAccessorContributor GetProxyTargetAccessorContributor()
-    {
-        return new ProxyTargetAccessorContributor(
-            getTargetReference: () => targetField,
-            targetType
-        );
-    }
+        protected override void CreateFields(ClassEmitter emitter)
+        {
+            base.CreateFields(emitter);
+            CreateTargetField(emitter);
+        }
 
-    private void CreateTargetField(ClassEmitter emitter)
-    {
-        targetField = emitter.CreateField("__target", targetType);
 #if FEATURE_SERIALIZATION
-        emitter.DefineCustomAttributeFor<XmlIgnoreAttribute>(targetField);
+        protected override SerializableContributor GetSerializableContributor()
+        {
+            return new ClassProxySerializableContributor(
+                targetType,
+                interfaces,
+                ProxyTypeConstants.ClassWithTarget
+            );
+        }
 #endif
+
+        protected override CompositeTypeContributor GetProxyTargetContributor(
+            INamingScope namingScope
+        )
+        {
+            return new ClassProxyWithTargetTargetContributor(targetType, namingScope)
+            {
+                Logger = Logger,
+            };
+        }
+
+        protected override ProxyTargetAccessorContributor GetProxyTargetAccessorContributor()
+        {
+            return new ProxyTargetAccessorContributor(
+                getTargetReference: () => targetField,
+                targetType
+            );
+        }
+
+        private void CreateTargetField(ClassEmitter emitter)
+        {
+            targetField = emitter.CreateField("__target", targetType);
+#if FEATURE_SERIALIZATION
+            emitter.DefineCustomAttributeFor<XmlIgnoreAttribute>(targetField);
+#endif
+        }
     }
 }

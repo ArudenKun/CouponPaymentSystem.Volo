@@ -12,68 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Configuration.Xml;
-
-using System.Text;
-using System.Xml;
-
-public class XmlConfigurationDeserializer
+namespace Castle.Core.Configuration.Xml
 {
-    /// <summary>
-    ///   Deserializes the specified node into an abstract representation of configuration.
-    /// </summary>
-    /// <param name = "node">The node.</param>
-    public IConfiguration Deserialize(XmlNode node)
-    {
-        return GetDeserializedNode(node);
-    }
+    using System.Text;
+    using System.Xml;
 
-    /// <summary>
-    ///   If a config value is an empty string we return null, this is to keep
-    ///   backward compatibility with old code
-    /// </summary>
-    public static string GetConfigValue(string value)
+    public class XmlConfigurationDeserializer
     {
-        if (value == string.Empty)
+        /// <summary>
+        ///   Deserializes the specified node into an abstract representation of configuration.
+        /// </summary>
+        /// <param name = "node">The node.</param>
+        public IConfiguration Deserialize(XmlNode node)
         {
-            return null;
+            return GetDeserializedNode(node);
         }
-        return value;
-    }
 
-    public static IConfiguration GetDeserializedNode(XmlNode node)
-    {
-        var configChilds = new ConfigurationCollection();
-
-        var configValue = new StringBuilder();
-        if (node.HasChildNodes)
+        /// <summary>
+        ///   If a config value is an empty string we return null, this is to keep
+        ///   backward compatibility with old code
+        /// </summary>
+        public static string GetConfigValue(string value)
         {
-            foreach (XmlNode child in node.ChildNodes)
+            if (value == string.Empty)
             {
-                if (IsTextNode(child))
+                return null;
+            }
+            return value;
+        }
+
+        public static IConfiguration GetDeserializedNode(XmlNode node)
+        {
+            var configChilds = new ConfigurationCollection();
+
+            var configValue = new StringBuilder();
+            if (node.HasChildNodes)
+            {
+                foreach (XmlNode child in node.ChildNodes)
                 {
-                    configValue.Append(child.Value);
-                }
-                else if (child.NodeType == XmlNodeType.Element)
-                {
-                    configChilds.Add(GetDeserializedNode(child));
+                    if (IsTextNode(child))
+                    {
+                        configValue.Append(child.Value);
+                    }
+                    else if (child.NodeType == XmlNodeType.Element)
+                    {
+                        configChilds.Add(GetDeserializedNode(child));
+                    }
                 }
             }
+
+            var config = new MutableConfiguration(
+                node.Name,
+                GetConfigValue(configValue.ToString())
+            );
+            foreach (XmlAttribute attribute in node.Attributes)
+            {
+                config.Attributes.Add(attribute.Name, attribute.Value);
+            }
+
+            config.Children.AddRange(configChilds);
+
+            return config;
         }
 
-        var config = new MutableConfiguration(node.Name, GetConfigValue(configValue.ToString()));
-        foreach (XmlAttribute attribute in node.Attributes)
+        public static bool IsTextNode(XmlNode node)
         {
-            config.Attributes.Add(attribute.Name, attribute.Value);
+            return node.NodeType == XmlNodeType.Text || node.NodeType == XmlNodeType.CDATA;
         }
-
-        config.Children.AddRange(configChilds);
-
-        return config;
-    }
-
-    public static bool IsTextNode(XmlNode node)
-    {
-        return node.NodeType == XmlNodeType.Text || node.NodeType == XmlNodeType.CDATA;
     }
 }

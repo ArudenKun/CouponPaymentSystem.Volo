@@ -12,22 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core;
-
-using System;
-
-/// <summary>
-/// Defines that the implementation wants a
-/// <see cref="IServiceProvider"/> in order to
-/// access other components. The creator must be aware
-/// that the component might (or might not) implement
-/// the interface.
-/// </summary>
-/// <remarks>
-/// Used by Castle Project components to, for example,
-/// gather logging factories
-/// </remarks>
-public interface IServiceEnabledComponent
+namespace Castle.Core
 {
-    void Service(IServiceProvider provider);
+    using System;
+
+    /// <summary>
+    /// Defines that the implementation wants a
+    /// <see cref="IServiceProvider"/> in order to
+    /// access other components. The creator must be aware
+    /// that the component might (or might not) implement
+    /// the interface.
+    /// </summary>
+    /// <remarks>
+    /// Used by Castle Project components to, for example,
+    /// gather logging factories
+    /// </remarks>
+    public interface IServiceEnabledComponent
+    {
+        void Service(IServiceProvider provider);
+    }
 }

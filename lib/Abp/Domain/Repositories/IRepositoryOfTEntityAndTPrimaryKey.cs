@@ -13,8 +13,7 @@ namespace Abp.Domain.Repositories
     /// </summary>
     /// <typeparam name="TEntity">Main Entity type this repository works on</typeparam>
     /// <typeparam name="TPrimaryKey">Primary key type of the entity</typeparam>
-    public interface IRepository<TEntity, TPrimaryKey> : IRepository
-        where TEntity : class, IEntity<TPrimaryKey>
+    public interface IRepository<TEntity, TPrimaryKey> : IRepository where TEntity : class, IEntity<TPrimaryKey>
     {
         #region Select/Get/Query
 
@@ -44,42 +43,34 @@ namespace Abp.Domain.Repositories
 
         /// <summary>
         /// Used to get a IQueryable that is used to retrieve entities from entire table.
-        /// One or more
+        /// One or more 
         /// </summary>
         /// <param name="propertySelectors">A list of include expressions.</param>
         /// <returns>IQueryable to be used to select entities from database</returns>
-        IQueryable<TEntity> GetAllIncluding(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        );
+        IQueryable<TEntity> GetAllIncluding(params Expression<Func<TEntity, object>>[] propertySelectors);
 
         /// <summary>
         /// Used to get a IQueryable that is used to retrieve entities from entire table.
-        /// One or more
+        /// One or more 
         /// </summary>
         /// <param name="propertySelectors">A list of include expressions.</param>
         /// <returns>IQueryable to be used to select entities from database</returns>
-        Task<IQueryable<TEntity>> GetAllIncludingAsync(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        );
+        Task<IQueryable<TEntity>> GetAllIncludingAsync(params Expression<Func<TEntity, object>>[] propertySelectors);
 
         /// <summary>
         /// Used to get a IQueryable that is used to retrieve readonly entities from entire table.
         /// </summary>
         /// <param name="propertySelectors">A list of include expressions.</param>
         /// <returns>Readonly IQueryable to be used to select entities from database</returns>
-        IQueryable<TEntity> GetAllReadonlyIncluding(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        );
+        IQueryable<TEntity> GetAllReadonlyIncluding(params Expression<Func<TEntity, object>>[] propertySelectors);
 
         /// <summary>
         /// Used to get async IQueryable that is used to retrieve entities from entire table.
-        /// One or more
+        /// One or more 
         /// </summary>
         /// <param name="propertySelectors">A list of include expressions.</param>
         /// <returns>IQueryable to be used to select entities from database</returns>
-        Task<IQueryable<TEntity>> GetAllReadonlyIncludingAsync(
-            params Expression<Func<TEntity, object>>[] propertySelectors
-        );
+        Task<IQueryable<TEntity>> GetAllReadonlyIncludingAsync(params Expression<Func<TEntity, object>>[] propertySelectors);
 
         /// <summary>
         /// Used to get all entities.
@@ -255,7 +246,7 @@ namespace Abp.Domain.Repositories
         TEntity Update(TEntity entity);
 
         /// <summary>
-        /// Updates an existing entity.
+        /// Updates an existing entity. 
         /// </summary>
         /// <param name="entity">Entity</param>
         Task<TEntity> UpdateAsync(TEntity entity);

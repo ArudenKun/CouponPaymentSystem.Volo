@@ -25,7 +25,10 @@ namespace Abp.Notifications
         /// <summary>
         /// Needed for serialization.
         /// </summary>
-        private MessageNotificationData() { }
+        private MessageNotificationData()
+        {
+            
+        }
 
         public MessageNotificationData(string message)
         {

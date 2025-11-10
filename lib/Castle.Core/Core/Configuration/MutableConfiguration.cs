@@ -12,62 +12,63 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Configuration;
-
-using System;
+namespace Castle.Core.Configuration
+{
+    using System;
 
 #if FEATURE_SERIALIZATION
-[Serializable]
+    [Serializable]
 #endif
-public class MutableConfiguration : AbstractConfiguration
-{
-    /// <summary>
-    /// Initializes a new instance of the <see cref="MutableConfiguration"/> class.
-    /// </summary>
-    /// <param name="name">The name.</param>
-    public MutableConfiguration(string name)
-        : this(name, null) { }
-
-    public MutableConfiguration(string name, string value)
+    public class MutableConfiguration : AbstractConfiguration
     {
-        Name = name;
-        Value = value;
-    }
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MutableConfiguration"/> class.
+        /// </summary>
+        /// <param name="name">The name.</param>
+        public MutableConfiguration(string name)
+            : this(name, null) { }
 
-    /// <summary>
-    /// Gets the value of <see cref="IConfiguration"/>.
-    /// </summary>
-    /// <value>
-    /// The Value of the <see cref="IConfiguration"/>.
-    /// </value>
-    public new string Value
-    {
-        get { return base.Value; }
-        set { base.Value = value; }
-    }
+        public MutableConfiguration(string name, string value)
+        {
+            Name = name;
+            Value = value;
+        }
 
-    public static MutableConfiguration Create(string name)
-    {
-        return new MutableConfiguration(name);
-    }
+        /// <summary>
+        /// Gets the value of <see cref="IConfiguration"/>.
+        /// </summary>
+        /// <value>
+        /// The Value of the <see cref="IConfiguration"/>.
+        /// </value>
+        public new string Value
+        {
+            get { return base.Value; }
+            set { base.Value = value; }
+        }
 
-    public MutableConfiguration Attribute(string name, string value)
-    {
-        Attributes[name] = value;
-        return this;
-    }
+        public static MutableConfiguration Create(string name)
+        {
+            return new MutableConfiguration(name);
+        }
 
-    public MutableConfiguration CreateChild(string name)
-    {
-        MutableConfiguration child = new MutableConfiguration(name);
-        Children.Add(child);
-        return child;
-    }
+        public MutableConfiguration Attribute(string name, string value)
+        {
+            Attributes[name] = value;
+            return this;
+        }
 
-    public MutableConfiguration CreateChild(string name, string value)
-    {
-        MutableConfiguration child = new MutableConfiguration(name, value);
-        Children.Add(child);
-        return child;
+        public MutableConfiguration CreateChild(string name)
+        {
+            MutableConfiguration child = new MutableConfiguration(name);
+            Children.Add(child);
+            return child;
+        }
+
+        public MutableConfiguration CreateChild(string name, string value)
+        {
+            MutableConfiguration child = new MutableConfiguration(name, value);
+            Children.Add(child);
+            return child;
+        }
     }
 }

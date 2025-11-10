@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public class XmlIncludedType : IXmlIncludedType
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly XmlName xsiType;
-    private readonly Type clrType;
+    using System;
 
-    public XmlIncludedType(XmlName xsiType, Type clrType)
+    public class XmlIncludedType : IXmlIncludedType
     {
-        if (xsiType.LocalName == null)
-            throw Error.ArgumentNull("xsiType.LocalName");
-        if (clrType == null)
-            throw Error.ArgumentNull(nameof(clrType));
+        private readonly XmlName xsiType;
+        private readonly Type clrType;
 
-        this.xsiType = xsiType;
-        this.clrType = clrType;
-    }
+        public XmlIncludedType(XmlName xsiType, Type clrType)
+        {
+            if (xsiType.LocalName == null)
+                throw Error.ArgumentNull("xsiType.LocalName");
+            if (clrType == null)
+                throw Error.ArgumentNull(nameof(clrType));
 
-    public XmlIncludedType(string localName, string namespaceUri, Type clrType)
-        : this(new XmlName(localName, namespaceUri), clrType) { }
+            this.xsiType = xsiType;
+            this.clrType = clrType;
+        }
 
-    public XmlName XsiType
-    {
-        get { return xsiType; }
-    }
+        public XmlIncludedType(string localName, string namespaceUri, Type clrType)
+            : this(new XmlName(localName, namespaceUri), clrType) { }
 
-    public Type ClrType
-    {
-        get { return clrType; }
+        public XmlName XsiType
+        {
+            get { return xsiType; }
+        }
+
+        public Type ClrType
+        {
+            get { return clrType; }
+        }
     }
 }

@@ -12,38 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class ReturnStatement : IStatement
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly IExpression expression;
-    private readonly Reference reference;
+    using System.Reflection.Emit;
 
-    public ReturnStatement() { }
-
-    public ReturnStatement(Reference reference)
+    internal class ReturnStatement : IStatement
     {
-        this.reference = reference;
-    }
+        private readonly IExpression expression;
+        private readonly Reference reference;
 
-    public ReturnStatement(IExpression expression)
-    {
-        this.expression = expression;
-    }
+        public ReturnStatement() { }
 
-    public void Emit(ILGenerator gen)
-    {
-        if (reference != null)
+        public ReturnStatement(Reference reference)
         {
-            ArgumentsUtil.EmitLoadOwnerAndReference(reference, gen);
-        }
-        else if (expression != null)
-        {
-            expression.Emit(gen);
+            this.reference = reference;
         }
 
-        gen.Emit(OpCodes.Ret);
+        public ReturnStatement(IExpression expression)
+        {
+            this.expression = expression;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            if (reference != null)
+            {
+                ArgumentsUtil.EmitLoadOwnerAndReference(reference, gen);
+            }
+            else if (expression != null)
+            {
+                expression.Emit(gen);
+            }
+
+            gen.Emit(OpCodes.Ret);
+        }
     }
 }

@@ -9,8 +9,14 @@ namespace Abp.Utils.Etc
     {
         public static NullDisposable Instance { get; } = new NullDisposable();
 
-        private NullDisposable() { }
+        private NullDisposable()
+        {
+            
+        }
 
-        public void Dispose() { }
+        public void Dispose()
+        {
+
+        }
     }
 }

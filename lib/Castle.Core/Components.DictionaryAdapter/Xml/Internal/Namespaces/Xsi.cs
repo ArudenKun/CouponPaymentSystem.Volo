@@ -12,67 +12,68 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public static class Xsi
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static XmlName GetXsiType(this IXmlNode node)
-    {
-        var type = node.GetAttribute(Xsi.Type);
-        if (type == null)
-            return XmlName.Empty;
+    using System;
 
-        var xsiType = XmlName.ParseQName(type);
-        if (xsiType.NamespaceUri != null)
+    public static class Xsi
+    {
+        public static XmlName GetXsiType(this IXmlNode node)
         {
-            var namespaceUri = node.LookupNamespaceUri(xsiType.NamespaceUri);
-            xsiType = xsiType.WithNamespaceUri(namespaceUri);
-        }
-        return xsiType;
-    }
+            var type = node.GetAttribute(Xsi.Type);
+            if (type == null)
+                return XmlName.Empty;
 
-    public static void SetXsiType(this IXmlNode node, XmlName xsiType)
-    {
-        if (xsiType.NamespaceUri != null)
+            var xsiType = XmlName.ParseQName(type);
+            if (xsiType.NamespaceUri != null)
+            {
+                var namespaceUri = node.LookupNamespaceUri(xsiType.NamespaceUri);
+                xsiType = xsiType.WithNamespaceUri(namespaceUri);
+            }
+            return xsiType;
+        }
+
+        public static void SetXsiType(this IXmlNode node, XmlName xsiType)
         {
-            var prefix = node.Namespaces.GetAttributePrefix(node, xsiType.NamespaceUri);
-            xsiType = xsiType.WithNamespaceUri(prefix);
+            if (xsiType.NamespaceUri != null)
+            {
+                var prefix = node.Namespaces.GetAttributePrefix(node, xsiType.NamespaceUri);
+                xsiType = xsiType.WithNamespaceUri(prefix);
+            }
+            node.SetAttribute(Xsi.Type, xsiType.ToString());
         }
-        node.SetAttribute(Xsi.Type, xsiType.ToString());
-    }
 
-    public static bool IsXsiNil(this IXmlNode node)
-    {
-        return node.GetAttribute(Xsi.Nil) == NilValue;
-    }
-
-    public static void SetXsiNil(this IXmlNode node, bool nil)
-    {
-        string value;
-        if (nil)
+        public static bool IsXsiNil(this IXmlNode node)
         {
-            node.Clear();
-            value = NilValue;
+            return node.GetAttribute(Xsi.Nil) == NilValue;
         }
-        else
-            value = null;
-        node.SetAttribute(Xsi.Nil, value);
+
+        public static void SetXsiNil(this IXmlNode node, bool nil)
+        {
+            string value;
+            if (nil)
+            {
+                node.Clear();
+                value = NilValue;
+            }
+            else
+                value = null;
+            node.SetAttribute(Xsi.Nil, value);
+        }
+
+        public const string Prefix = "xsi",
+            NamespaceUri = "http://www.w3.org/2001/XMLSchema-instance",
+            NilValue = "true";
+
+        public static readonly XmlName Type = new XmlName("type", NamespaceUri),
+            Nil = new XmlName("nil", NamespaceUri);
+
+        internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
+            NamespaceUri,
+            Prefix
+        )
+        {
+            Root = true,
+        };
     }
-
-    public const string Prefix = "xsi",
-        NamespaceUri = "http://www.w3.org/2001/XMLSchema-instance",
-        NilValue = "true";
-
-    public static readonly XmlName Type = new XmlName("type", NamespaceUri),
-        Nil = new XmlName("nil", NamespaceUri);
-
-    internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
-        NamespaceUri,
-        Prefix
-    )
-    {
-        Root = true,
-    };
 }

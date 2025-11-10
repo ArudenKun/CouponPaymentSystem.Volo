@@ -41,6 +41,7 @@ namespace Abp.RealTime
         /// </summary>
         Task<IReadOnlyList<IOnlineClient>> GetAllAsync();
 
+
         /// <summary>
         /// Gets all online clients by user identifier.
         /// </summary>

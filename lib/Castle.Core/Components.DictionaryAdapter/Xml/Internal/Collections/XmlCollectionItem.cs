@@ -12,29 +12,30 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-internal struct XmlCollectionItem<T>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public readonly IXmlNode Node;
-    public readonly T Value;
-    public readonly bool HasValue;
-
-    public XmlCollectionItem(IXmlNode node)
-        : this(node, default(T), false) { }
-
-    public XmlCollectionItem(IXmlNode node, T value)
-        : this(node, value, true) { }
-
-    private XmlCollectionItem(IXmlNode node, T value, bool hasValue)
+    internal struct XmlCollectionItem<T>
     {
-        Node = node;
-        Value = value;
-        HasValue = hasValue;
-    }
+        public readonly IXmlNode Node;
+        public readonly T Value;
+        public readonly bool HasValue;
 
-    public XmlCollectionItem<T> WithValue(T value)
-    {
-        return new XmlCollectionItem<T>(Node, value);
+        public XmlCollectionItem(IXmlNode node)
+            : this(node, default(T), false) { }
+
+        public XmlCollectionItem(IXmlNode node, T value)
+            : this(node, value, true) { }
+
+        private XmlCollectionItem(IXmlNode node, T value, bool hasValue)
+        {
+            Node = node;
+            Value = value;
+            HasValue = hasValue;
+        }
+
+        public XmlCollectionItem<T> WithValue(T value)
+        {
+            return new XmlCollectionItem<T>(Node, value);
+        }
     }
 }

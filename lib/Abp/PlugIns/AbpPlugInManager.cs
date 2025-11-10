@@ -1,10 +1,13 @@
-﻿namespace Abp.PlugIns
+﻿using System;
+using System.Linq;
+
+namespace Abp.PlugIns
 {
     public class AbpPlugInManager : IAbpPlugInManager
     {
         public PlugInSourceList PlugInSources { get; }
 
-        private static readonly Lock SyncObj = new();
+        private static readonly object SyncObj = new object();
         private static bool _isRegisteredToAssemblyResolve;
 
         public AbpPlugInManager()
@@ -31,11 +34,9 @@
 
                 _isRegisteredToAssemblyResolve = true;
 
-                AppDomain.CurrentDomain.AssemblyResolve += (_, args) =>
+                AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
                 {
-                    return plugInSources
-                        .GetAllAssemblies()
-                        .FirstOrDefault(a => a.FullName == args.Name);
+                    return plugInSources.GetAllAssemblies().FirstOrDefault(a => a.FullName == args.Name);
                 };
             }
         }

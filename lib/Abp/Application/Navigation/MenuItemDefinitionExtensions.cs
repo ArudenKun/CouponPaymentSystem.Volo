@@ -13,10 +13,7 @@ namespace Abp.Application.Navigation
         /// </summary>
         /// <param name="menuItems">List of menu items</param>
         /// <param name="menuItemName">Name of the menu item to move</param>
-        public static void MoveMenuItemToTop(
-            this IList<MenuItemDefinition> menuItems,
-            string menuItemName
-        )
+        public static void MoveMenuItemToTop(this IList<MenuItemDefinition> menuItems, string menuItemName)
         {
             var menuItem = GetMenuItem(menuItems, menuItemName);
             menuItems.Remove(menuItem);
@@ -28,10 +25,7 @@ namespace Abp.Application.Navigation
         /// </summary>
         /// <param name="menuItems">List of menu items</param>
         /// <param name="menuItemName">Name of the menu item to move</param>
-        public static void MoveMenuItemToBottom(
-            this IList<MenuItemDefinition> menuItems,
-            string menuItemName
-        )
+        public static void MoveMenuItemToBottom(this IList<MenuItemDefinition> menuItems, string menuItemName)
         {
             var menuItem = GetMenuItem(menuItems, menuItemName);
             menuItems.Remove(menuItem);
@@ -44,11 +38,7 @@ namespace Abp.Application.Navigation
         /// <param name="menuItems">List of menu items</param>
         /// <param name="menuItemName">Name of the menu item to move</param>
         /// <param name="targetMenuItemName">Target menu item (to move before it)</param>
-        public static void MoveMenuItemBefore(
-            this IList<MenuItemDefinition> menuItems,
-            string menuItemName,
-            string targetMenuItemName
-        )
+        public static void MoveMenuItemBefore(this IList<MenuItemDefinition> menuItems, string menuItemName, string targetMenuItemName)
         {
             var menuItem = GetMenuItem(menuItems, menuItemName);
             var targetMenuItem = GetMenuItem(menuItems, targetMenuItemName);
@@ -62,11 +52,7 @@ namespace Abp.Application.Navigation
         /// <param name="menuItems">List of menu items</param>
         /// <param name="menuItemName">Name of the menu item to move</param>
         /// <param name="targetMenuItemName">Target menu item (to move after it)</param>
-        public static void MoveMenuItemAfter(
-            this IList<MenuItemDefinition> menuItems,
-            string menuItemName,
-            string targetMenuItemName
-        )
+        public static void MoveMenuItemAfter(this IList<MenuItemDefinition> menuItems, string menuItemName, string targetMenuItemName)
         {
             var menuItem = GetMenuItem(menuItems, menuItemName);
             var targetMenuItem = GetMenuItem(menuItems, targetMenuItemName);
@@ -74,10 +60,7 @@ namespace Abp.Application.Navigation
             menuItems.Insert(menuItems.IndexOf(targetMenuItem) + 1, menuItem);
         }
 
-        private static MenuItemDefinition GetMenuItem(
-            IEnumerable<MenuItemDefinition> menuItems,
-            string menuItemName
-        )
+        private static MenuItemDefinition GetMenuItem(IEnumerable<MenuItemDefinition> menuItems, string menuItemName)
         {
             var menuItem = menuItems.FirstOrDefault(i => i.Name == menuItemName);
             if (menuItem == null)

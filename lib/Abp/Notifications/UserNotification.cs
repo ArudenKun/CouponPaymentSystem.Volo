@@ -37,9 +37,9 @@ namespace Abp.Notifications
         /// </summary>
         public string TargetNotifiers { get; set; }
 
-        public List<string> TargetNotifiersList =>
-            TargetNotifiers.IsNullOrWhiteSpace()
-                ? new List<string>()
-                : TargetNotifiers.Split(NotificationInfo.NotificationTargetSeparator).ToList();
+        public List<string> TargetNotifiersList => TargetNotifiers.IsNullOrWhiteSpace()
+            ? new List<string>()
+            : TargetNotifiers.Split(NotificationInfo.NotificationTargetSeparator).ToList();
+
     }
 }

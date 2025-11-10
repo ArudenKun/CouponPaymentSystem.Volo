@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-internal class XmlNodeList<T> : ListProjection<T>, IXmlNodeSource
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public XmlNodeList(
-        IXmlNode parentNode,
-        IDictionaryAdapter parentObject,
-        IXmlCollectionAccessor accessor
-    )
-        : base(new XmlCollectionAdapter<T>(parentNode, parentObject, accessor)) { }
-
-    public IXmlNode Node
+    internal class XmlNodeList<T> : ListProjection<T>, IXmlNodeSource
     {
-        get { return ((IXmlNodeSource)Adapter).Node; }
+        public XmlNodeList(
+            IXmlNode parentNode,
+            IDictionaryAdapter parentObject,
+            IXmlCollectionAccessor accessor
+        )
+            : base(new XmlCollectionAdapter<T>(parentNode, parentObject, accessor)) { }
+
+        public IXmlNode Node
+        {
+            get { return ((IXmlNodeSource)Adapter).Node; }
+        }
     }
 }

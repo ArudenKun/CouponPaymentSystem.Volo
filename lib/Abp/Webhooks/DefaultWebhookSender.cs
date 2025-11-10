@@ -1,6 +1,9 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Abp.Domain.Services;
-using Microsoft.Extensions.Logging;
+using Abp.Domain.Uow;
 
 namespace Abp.Webhooks
 {
@@ -8,13 +11,12 @@ namespace Abp.Webhooks
     {
         private readonly IWebhooksConfiguration _webhooksConfiguration;
         private readonly IWebhookManager _webhookManager;
-
+        
         private const string FailedRequestDefaultContent = "Webhook Send Request Failed";
 
         public DefaultWebhookSender(
-            IWebhooksConfiguration webhooksConfiguration,
-            IWebhookManager webhookManager
-        )
+            IWebhooksConfiguration webhooksConfiguration, 
+            IWebhookManager webhookManager)
         {
             _webhooksConfiguration = webhooksConfiguration;
             _webhookManager = webhookManager;
@@ -32,9 +34,7 @@ namespace Abp.Webhooks
                 throw new ArgumentNullException(nameof(webhookSenderArgs.WebhookSubscriptionId));
             }
 
-            var webhookSendAttemptId = await _webhookManager.InsertAndGetIdWebhookSendAttemptAsync(
-                webhookSenderArgs
-            );
+            var webhookSendAttemptId = await _webhookManager.InsertAndGetIdWebhookSendAttemptAsync(webhookSenderArgs);
 
             var request = CreateWebhookRequestMessage(webhookSenderArgs);
 
@@ -66,23 +66,16 @@ namespace Abp.Webhooks
             }
             catch (Exception e)
             {
-                Logger.LogError(e, "An error occured while sending a webhook request");
+                Logger.Error("An error occured while sending a webhook request", e);
             }
             finally
             {
-                await _webhookManager.StoreResponseOnWebhookSendAttemptAsync(
-                    webhookSendAttemptId,
-                    webhookSenderArgs.TenantId,
-                    statusCode,
-                    content
-                );
+                await _webhookManager.StoreResponseOnWebhookSendAttemptAsync(webhookSendAttemptId, webhookSenderArgs.TenantId, statusCode, content);
             }
 
             if (!isSucceed)
             {
-                throw new Exception(
-                    $"Webhook sending attempt failed. WebhookSendAttempt id: {webhookSendAttemptId}"
-                );
+                throw new Exception($"Webhook sending attempt failed. WebhookSendAttempt id: {webhookSendAttemptId}");
             }
 
             return webhookSendAttemptId;
@@ -92,17 +85,12 @@ namespace Abp.Webhooks
         /// You can override this to change request message
         /// </summary>
         /// <returns></returns>
-        protected virtual HttpRequestMessage CreateWebhookRequestMessage(
-            WebhookSenderArgs webhookSenderArgs
-        )
+        protected virtual HttpRequestMessage CreateWebhookRequestMessage(WebhookSenderArgs webhookSenderArgs)
         {
             return new HttpRequestMessage(HttpMethod.Post, webhookSenderArgs.WebhookUri);
         }
 
-        protected virtual void AddAdditionalHeaders(
-            HttpRequestMessage request,
-            WebhookSenderArgs webhookSenderArgs
-        )
+        protected virtual void AddAdditionalHeaders(HttpRequestMessage request, WebhookSenderArgs webhookSenderArgs)
         {
             foreach (var header in webhookSenderArgs.Headers)
             {
@@ -116,27 +104,25 @@ namespace Abp.Webhooks
                     continue;
                 }
 
-                throw new Exception(
-                    $"Invalid Header. SubscriptionId:{webhookSenderArgs.WebhookSubscriptionId},Header: {header.Key}:{header.Value}"
-                );
+                throw new Exception($"Invalid Header. SubscriptionId:{webhookSenderArgs.WebhookSubscriptionId},Header: {header.Key}:{header.Value}");
             }
         }
 
-        protected virtual async Task<(
-            bool isSucceed,
-            HttpStatusCode statusCode,
-            string content
-        )> SendHttpRequest(HttpRequestMessage request)
+        protected virtual async Task<(bool isSucceed, HttpStatusCode statusCode, string content)> SendHttpRequest(HttpRequestMessage request)
         {
-            using var client = new HttpClient();
-            client.Timeout = _webhooksConfiguration.TimeoutDuration;
-            var response = await client.SendAsync(request);
+            using (var client = new HttpClient
+            {
+                Timeout = _webhooksConfiguration.TimeoutDuration
+            })
+            {
+                var response = await client.SendAsync(request);
 
-            var isSucceed = response.IsSuccessStatusCode;
-            var statusCode = response.StatusCode;
-            var content = await response.Content.ReadAsStringAsync();
+                var isSucceed = response.IsSuccessStatusCode;
+                var statusCode = response.StatusCode;
+                var content = await response.Content.ReadAsStringAsync();
 
-            return (isSucceed, statusCode, content);
+                return (isSucceed, statusCode, content);
+            }
         }
     }
 }

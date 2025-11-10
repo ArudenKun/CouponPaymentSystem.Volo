@@ -1,8 +1,10 @@
-﻿using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
 using Abp.Configuration.Startup;
 using Abp.Extensions;
 using Abp.Logging;
-using Microsoft.Extensions.Logging;
+using Castle.Core.Logging;
 
 namespace Abp.Localization
 {
@@ -13,8 +15,7 @@ namespace Abp.Localization
             string sourceName,
             string name,
             CultureInfo culture,
-            ILogger? logger = null
-        )
+            ILogger logger = null)
         {
             var exceptionMessage = $"Can not find '{name}' in localization source '{sourceName}'!";
 
@@ -25,14 +26,16 @@ namespace Abp.Localization
 
             if (configuration.LogWarnMessageIfNotFound)
             {
-                (logger ?? LogHelper.Logger).LogWarning(exceptionMessage);
+                (logger ?? LogHelper.Logger).Warn(exceptionMessage);
             }
 
             var notFoundText = configuration.HumanizeTextIfNotFound
                 ? name.ToSentenceCase(culture)
                 : name;
 
-            return configuration.WrapGivenTextIfNotFound ? $"[{notFoundText}]" : notFoundText;
+            return configuration.WrapGivenTextIfNotFound
+                ? $"[{notFoundText}]"
+                : notFoundText;
         }
 
         public static List<string> ReturnGivenNamesOrThrowException(
@@ -40,11 +43,9 @@ namespace Abp.Localization
             string sourceName,
             List<string> names,
             CultureInfo culture,
-            ILogger? logger = null
-        )
+            ILogger logger = null)
         {
-            var exceptionMessage =
-                $"Can not find '{string.Join(",", names)}' in localization source '{sourceName}' with culture '{culture.Name}'!";
+            var exceptionMessage = $"Can not find '{string.Join(",", names)}' in localization source '{sourceName}' with culture '{culture.Name}'!";
 
             if (!configuration.ReturnGivenTextIfNotFound)
             {
@@ -53,7 +54,7 @@ namespace Abp.Localization
 
             if (configuration.LogWarnMessageIfNotFound)
             {
-                (logger ?? LogHelper.Logger).LogWarning(exceptionMessage);
+                (logger ?? LogHelper.Logger).Warn(exceptionMessage);
             }
 
             var notFoundText = configuration.HumanizeTextIfNotFound

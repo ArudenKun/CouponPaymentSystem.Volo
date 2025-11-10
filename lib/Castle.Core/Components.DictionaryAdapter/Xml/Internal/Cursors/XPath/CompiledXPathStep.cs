@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
-public class CompiledXPathStep : CompiledXPathNode
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private XPathExpression path;
+    using System;
+    using System.Xml.XPath;
+    using System.Xml.Xsl;
 
-    internal CompiledXPathStep() { }
-
-    public XPathExpression Path
+    public class CompiledXPathStep : CompiledXPathNode
     {
-        get { return path; }
-        internal set { path = value; }
-    }
+        private XPathExpression path;
 
-    public CompiledXPathStep NextStep
-    {
-        get { return (CompiledXPathStep)NextNode; }
-    }
+        internal CompiledXPathStep() { }
 
-    internal override void SetContext(XsltContext context)
-    {
-        path.SetContext(context);
-        base.SetContext(context);
+        public XPathExpression Path
+        {
+            get { return path; }
+            internal set { path = value; }
+        }
+
+        public CompiledXPathStep NextStep
+        {
+            get { return (CompiledXPathStep)NextNode; }
+        }
+
+        internal override void SetContext(XsltContext context)
+        {
+            path.SetContext(context);
+            base.SetContext(context);
+        }
     }
 }

@@ -12,9 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
+namespace Castle.Components.DictionaryAdapter.Xml
+{
+    using System;
 
-using System;
-
-public delegate TAccessor XmlAccessorFactory<TAccessor>(string name, Type type, IXmlContext context)
-    where TAccessor : XmlAccessor;
+    public delegate TAccessor XmlAccessorFactory<TAccessor>(
+        string name,
+        Type type,
+        IXmlContext context
+    )
+        where TAccessor : XmlAccessor;
+}

@@ -23,9 +23,7 @@ namespace Abp.Domain.Uow
                 if (ShouldIntercept(iocManager, implementationType))
                 {
                     handler.ComponentModel.Interceptors.Add(
-                        new InterceptorReference(
-                            typeof(AbpAsyncDeterminationInterceptor<UnitOfWorkInterceptor>)
-                        )
+                        new InterceptorReference(typeof(AbpAsyncDeterminationInterceptor<UnitOfWorkInterceptor>))
                     );
                 }
             };
@@ -37,7 +35,7 @@ namespace Abp.Domain.Uow
             {
                 return true;
             }
-
+            
             if (!iocManager.IsRegistered<IUnitOfWorkDefaultOptions>())
             {
                 return false;

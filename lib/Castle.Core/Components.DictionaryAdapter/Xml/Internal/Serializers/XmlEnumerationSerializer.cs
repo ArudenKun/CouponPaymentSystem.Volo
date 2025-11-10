@@ -12,23 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public class XmlEnumerationSerializer : XmlStringSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static new readonly XmlEnumerationSerializer Instance = new XmlEnumerationSerializer();
+    using System;
 
-    protected XmlEnumerationSerializer() { }
-
-    public override XmlTypeKind Kind
+    public class XmlEnumerationSerializer : XmlStringSerializer
     {
-        get { return XmlTypeKind.Simple; }
-    }
+        public static new readonly XmlEnumerationSerializer Instance =
+            new XmlEnumerationSerializer();
 
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        return Enum.Parse(node.ClrType, node.Value, true);
+        protected XmlEnumerationSerializer() { }
+
+        public override XmlTypeKind Kind
+        {
+            get { return XmlTypeKind.Simple; }
+        }
+
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            return Enum.Parse(node.ClrType, node.Value, true);
+        }
     }
 }

@@ -26,17 +26,9 @@ namespace Abp.ObjectComparators
             _isNullable = IsNullableType(typeof(TBaseType));
         }
 
-        protected abstract bool Compare(
-            TBaseType baseObject,
-            TBaseType compareObject,
-            string compareType
-        );
+        protected abstract bool Compare(TBaseType baseObject, TBaseType compareObject, string compareType);
 
-        public sealed override bool Compare(
-            object baseObject,
-            object compareObject,
-            string compareType
-        )
+        public sealed override bool Compare(object baseObject, object compareObject, string compareType)
         {
             if (!_isNullable && (baseObject == null || compareObject == null))
             {
@@ -48,7 +40,7 @@ namespace Abp.ObjectComparators
 
             if (baseObject == null)
             {
-                baseObjTyped = default; //which is null
+                baseObjTyped = default;//which is null
             }
             else
             {
@@ -57,7 +49,7 @@ namespace Abp.ObjectComparators
 
             if (compareObject == null)
             {
-                compareObjTyped = default; //which is null
+                compareObjTyped = default;//which is null
             }
             else
             {
@@ -74,9 +66,7 @@ namespace Abp.ObjectComparators
 
         public sealed override bool CanCompare(Type baseObjectType, string compareType)
         {
-            return _isNullable == IsNullableType(baseObjectType)
-                && baseObjectType.IsAssignableFrom(typeof(TBaseType))
-                && CanCompare(compareType);
+            return _isNullable == IsNullableType(baseObjectType) && baseObjectType.IsAssignableFrom(typeof(TBaseType)) && CanCompare(compareType);
         }
 
         protected static bool IsNullableType(Type type)
@@ -90,8 +80,7 @@ namespace Abp.ObjectComparators
         }
     }
 
-    public abstract class ObjectComparatorBase<TBaseType, TEnumCompareTypes>
-        : ObjectComparatorBase<TBaseType>
+    public abstract class ObjectComparatorBase<TBaseType, TEnumCompareTypes> : ObjectComparatorBase<TBaseType>
         where TEnumCompareTypes : Enum
     {
         public override ImmutableList<string> CompareTypes { get; }
@@ -101,20 +90,11 @@ namespace Abp.ObjectComparators
             CompareTypes = Enum.GetNames(typeof(TEnumCompareTypes)).ToImmutableList();
         }
 
-        protected abstract bool Compare(
-            TBaseType baseObject,
-            TBaseType compareObject,
-            TEnumCompareTypes compareType
-        );
+        protected abstract bool Compare(TBaseType baseObject, TBaseType compareObject, TEnumCompareTypes compareType);
 
-        protected sealed override bool Compare(
-            TBaseType baseObject,
-            TBaseType compareObject,
-            string compareType
-        )
+        protected sealed override bool Compare(TBaseType baseObject, TBaseType compareObject, string compareType)
         {
-            var compareTypeEnum = (TEnumCompareTypes)
-                Enum.Parse(typeof(TEnumCompareTypes), compareType);
+            var compareTypeEnum = (TEnumCompareTypes)Enum.Parse(typeof(TEnumCompareTypes), compareType);
             return Compare(baseObject, compareObject, compareTypeEnum);
         }
     }

@@ -6,10 +6,7 @@ namespace Abp.Text.Formatting
 {
     internal class FormatStringTokenizer
     {
-        public List<FormatStringToken> Tokenize(
-            string format,
-            bool includeBracketsForDynamicValues = false
-        )
+        public List<FormatStringToken> Tokenize(string format, bool includeBracketsForDynamicValues = false)
         {
             var tokens = new List<FormatStringToken>();
 
@@ -24,23 +21,14 @@ namespace Abp.Text.Formatting
                     case '{':
                         if (inDynamicValue)
                         {
-                            throw new FormatException(
-                                "Incorrect syntax at char "
-                                    + i
-                                    + "! format string can not contain nested dynamic value expression!"
-                            );
+                            throw new FormatException("Incorrect syntax at char " + i + "! format string can not contain nested dynamic value expression!");
                         }
 
                         inDynamicValue = true;
 
                         if (currentText.Length > 0)
                         {
-                            tokens.Add(
-                                new FormatStringToken(
-                                    currentText.ToString(),
-                                    FormatStringTokenType.ConstantText
-                                )
-                            );
+                            tokens.Add(new FormatStringToken(currentText.ToString(), FormatStringTokenType.ConstantText));
                             currentText.Clear();
                         }
 
@@ -48,22 +36,14 @@ namespace Abp.Text.Formatting
                     case '}':
                         if (!inDynamicValue)
                         {
-                            throw new FormatException(
-                                "Incorrect syntax at char "
-                                    + i
-                                    + "! These is no opening brackets for the closing bracket }."
-                            );
+                            throw new FormatException("Incorrect syntax at char " + i + "! These is no opening brackets for the closing bracket }.");
                         }
 
                         inDynamicValue = false;
 
                         if (currentText.Length <= 0)
                         {
-                            throw new FormatException(
-                                "Incorrect syntax at char "
-                                    + i
-                                    + "! Brackets does not containt any chars."
-                            );
+                            throw new FormatException("Incorrect syntax at char " + i + "! Brackets does not containt any chars.");
                         }
 
                         var dynamicValue = currentText.ToString();
@@ -72,9 +52,7 @@ namespace Abp.Text.Formatting
                             dynamicValue = "{" + dynamicValue + "}";
                         }
 
-                        tokens.Add(
-                            new FormatStringToken(dynamicValue, FormatStringTokenType.DynamicValue)
-                        );
+                        tokens.Add(new FormatStringToken(dynamicValue, FormatStringTokenType.DynamicValue));
                         currentText.Clear();
 
                         break;
@@ -91,12 +69,7 @@ namespace Abp.Text.Formatting
 
             if (currentText.Length > 0)
             {
-                tokens.Add(
-                    new FormatStringToken(
-                        currentText.ToString(),
-                        FormatStringTokenType.ConstantText
-                    )
-                );
+                tokens.Add(new FormatStringToken(currentText.ToString(), FormatStringTokenType.ConstantText));
             }
 
             return tokens;

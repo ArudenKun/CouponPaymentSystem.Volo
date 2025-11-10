@@ -12,33 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Internal;
-
-using System;
-
-internal sealed class WeakKey : WeakReference
+namespace Castle.Core.Internal
 {
-    private readonly int hashCode;
+    using System;
 
-    public WeakKey(object target, int hashCode)
-        : base(target)
+    internal sealed class WeakKey : WeakReference
     {
-        this.hashCode = hashCode;
-    }
+        private readonly int hashCode;
 
-    public override object Target
-    {
-        get { return base.Target; }
-        set { throw new NotSupportedException("Dictionary keys are read-only."); }
-    }
+        public WeakKey(object target, int hashCode)
+            : base(target)
+        {
+            this.hashCode = hashCode;
+        }
 
-    public override int GetHashCode()
-    {
-        return hashCode;
-    }
+        public override object Target
+        {
+            get { return base.Target; }
+            set { throw new NotSupportedException("Dictionary keys are read-only."); }
+        }
 
-    public override bool Equals(object other)
-    {
-        return WeakKeyComparer<object>.Default.Equals(this, other);
+        public override int GetHashCode()
+        {
+            return hashCode;
+        }
+
+        public override bool Equals(object other)
+        {
+            return WeakKeyComparer<object>.Default.Equals(this, other);
+        }
     }
 }

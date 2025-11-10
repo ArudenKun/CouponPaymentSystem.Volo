@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Abp.Logging;
-using Microsoft.Extensions.Logging;
 
 namespace Abp.Runtime.Validation
 {
@@ -16,8 +15,8 @@ namespace Abp.Runtime.Validation
         /// <summary>
         /// Default log severity
         /// </summary>
-        public static LogLevel DefaultLogSeverity = LogLevel.Warning;
-
+        public static LogSeverity DefaultLogSeverity = LogSeverity.Warn;
+        
         /// <summary>
         /// Detailed list of validation errors for this exception.
         /// </summary>
@@ -27,7 +26,7 @@ namespace Abp.Runtime.Validation
         /// Exception severity.
         /// Default: Warn.
         /// </summary>
-        public LogLevel Severity { get; set; }
+        public LogSeverity Severity { get; set; }
 
         /// <summary>
         /// Constructor.

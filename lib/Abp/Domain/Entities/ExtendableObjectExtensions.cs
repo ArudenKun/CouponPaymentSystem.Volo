@@ -8,11 +8,7 @@ namespace Abp.Domain.Entities
 {
     public static class ExtendableObjectExtensions
     {
-        public static T GetData<T>(
-            [NotNull] this IExtendableObject extendableObject,
-            [NotNull] string name,
-            bool handleType = false
-        )
+        public static T GetData<T>([NotNull] this IExtendableObject extendableObject, [NotNull] string name, bool handleType = false)
         {
             return extendableObject.GetData<T>(
                 name,
@@ -22,11 +18,7 @@ namespace Abp.Domain.Entities
             );
         }
 
-        public static T GetData<T>(
-            [NotNull] this IExtendableObject extendableObject,
-            [NotNull] string name,
-            [CanBeNull] JsonSerializer jsonSerializer
-        )
+        public static T GetData<T>([NotNull] this IExtendableObject extendableObject, [NotNull] string name, [CanBeNull] JsonSerializer jsonSerializer)
         {
             Check.NotNull(extendableObject, nameof(extendableObject));
             Check.NotNull(name, nameof(name));
@@ -50,33 +42,22 @@ namespace Abp.Domain.Entities
             }
             else
             {
-                return (T)
-                    prop.ToObject(typeof(T), jsonSerializer ?? JsonSerializer.CreateDefault());
+                return (T)prop.ToObject(typeof(T), jsonSerializer ?? JsonSerializer.CreateDefault());
             }
         }
 
-        public static void SetData<T>(
-            [NotNull] this IExtendableObject extendableObject,
-            [NotNull] string name,
-            [CanBeNull] T value,
-            bool handleType = false
-        )
+        public static void SetData<T>([NotNull] this IExtendableObject extendableObject, [NotNull] string name, [CanBeNull] T value, bool handleType = false)
         {
             extendableObject.SetData(
                 name,
                 value,
                 handleType
-                    ? new JsonSerializer { TypeNameHandling = TypeNameHandling.All }
+                    ? new JsonSerializer {TypeNameHandling = TypeNameHandling.All}
                     : JsonSerializer.CreateDefault()
             );
         }
 
-        public static void SetData<T>(
-            [NotNull] this IExtendableObject extendableObject,
-            [NotNull] string name,
-            [CanBeNull] T value,
-            [CanBeNull] JsonSerializer jsonSerializer
-        )
+        public static void SetData<T>([NotNull] this IExtendableObject extendableObject, [NotNull] string name, [CanBeNull] T value, [CanBeNull] JsonSerializer jsonSerializer)
         {
             Check.NotNull(extendableObject, nameof(extendableObject));
             Check.NotNull(name, nameof(name));
@@ -123,10 +104,7 @@ namespace Abp.Domain.Entities
             extendableObject.ExtensionData = data;
         }
 
-        public static bool RemoveData(
-            [NotNull] this IExtendableObject extendableObject,
-            string name
-        )
+        public static bool RemoveData([NotNull] this IExtendableObject extendableObject, string name)
         {
             Check.NotNull(extendableObject, nameof(extendableObject));
 

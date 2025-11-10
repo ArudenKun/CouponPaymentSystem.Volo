@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Tokens;
-
-using System;
-using System.Reflection;
-
-internal static class DelegateMethods
+namespace Castle.DynamicProxy.Tokens
 {
-    public static readonly MethodInfo CreateDelegate = typeof(Delegate).GetMethod(
-        "CreateDelegate",
-        new[] { typeof(Type), typeof(object), typeof(MethodInfo) }
-    );
+    using System;
+    using System.Reflection;
+
+    internal static class DelegateMethods
+    {
+        public static readonly MethodInfo CreateDelegate = typeof(Delegate).GetMethod(
+            "CreateDelegate",
+            new[] { typeof(Type), typeof(object), typeof(MethodInfo) }
+        );
+    }
 }

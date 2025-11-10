@@ -1,14 +1,17 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace Abp.RealTime
 {
     /// <summary>
     /// Used to manage online clients those are connected to the application.
     /// </summary>
-    public interface IOnlineClientManager<T> : IOnlineClientManager { }
+    public interface IOnlineClientManager<T> : IOnlineClientManager
+    {
+
+    }
 
     public interface IOnlineClientManager
     {

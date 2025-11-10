@@ -20,12 +20,7 @@ namespace Abp.Authorization
         /// <param name="user">User</param>
         /// <param name="requiresAll">True, to require all given permissions are granted. False, to require one or more.</param>
         /// <param name="permissionNames">Name of the permissions</param>
-        public static async Task<bool> IsGrantedAsync(
-            this IPermissionChecker permissionChecker,
-            UserIdentifier user,
-            bool requiresAll,
-            params string[] permissionNames
-        )
+        public static async Task<bool> IsGrantedAsync(this IPermissionChecker permissionChecker, UserIdentifier user, bool requiresAll, params string[] permissionNames)
         {
             if (permissionNames.IsNullOrEmpty())
             {
@@ -65,12 +60,7 @@ namespace Abp.Authorization
         /// <param name="user">User</param>
         /// <param name="requiresAll">True, to require all given permissions are granted. False, to require one or more.</param>
         /// <param name="permissionNames">Name of the permissions</param>
-        public static bool IsGranted(
-            this IPermissionChecker permissionChecker,
-            UserIdentifier user,
-            bool requiresAll,
-            params string[] permissionNames
-        )
+        public static bool IsGranted(this IPermissionChecker permissionChecker, UserIdentifier user, bool requiresAll, params string[] permissionNames)
         {
             if (permissionNames.IsNullOrEmpty())
             {
@@ -102,18 +92,14 @@ namespace Abp.Authorization
                 return false;
             }
         }
-
+        
         /// <summary>
         /// Checks if current user is granted for given permission.
         /// </summary>
         /// <param name="permissionChecker">Permission checker</param>
         /// <param name="requiresAll">True, to require all given permissions are granted. False, to require one or more.</param>
         /// <param name="permissionNames">Name of the permissions</param>
-        public static async Task<bool> IsGrantedAsync(
-            this IPermissionChecker permissionChecker,
-            bool requiresAll,
-            params string[] permissionNames
-        )
+        public static async Task<bool> IsGrantedAsync(this IPermissionChecker permissionChecker, bool requiresAll, params string[] permissionNames)
         {
             if (permissionNames.IsNullOrEmpty())
             {
@@ -152,11 +138,7 @@ namespace Abp.Authorization
         /// <param name="permissionChecker">Permission checker</param>
         /// <param name="requiresAll">True, to require all given permissions are granted. False, to require one or more.</param>
         /// <param name="permissionNames">Name of the permissions</param>
-        public static bool IsGranted(
-            this IPermissionChecker permissionChecker,
-            bool requiresAll,
-            params string[] permissionNames
-        )
+        public static bool IsGranted(this IPermissionChecker permissionChecker, bool requiresAll, params string[] permissionNames)
         {
             if (permissionNames.IsNullOrEmpty())
             {
@@ -188,7 +170,7 @@ namespace Abp.Authorization
                 return false;
             }
         }
-
+        
         /// <summary>
         /// Authorizes current user for given permission or permissions,
         /// throws <see cref="AbpAuthorizationException"/> if not authorized.
@@ -197,10 +179,7 @@ namespace Abp.Authorization
         /// <param name="permissionChecker">Permission checker</param>
         /// <param name="permissionNames">Name of the permissions to authorize</param>
         /// <exception cref="AbpAuthorizationException">Throws authorization exception if</exception>
-        public static Task AuthorizeAsync(
-            this IPermissionChecker permissionChecker,
-            params string[] permissionNames
-        )
+        public static Task AuthorizeAsync(this IPermissionChecker permissionChecker, params string[] permissionNames)
         {
             return AuthorizeAsync(permissionChecker, false, permissionNames);
         }
@@ -213,10 +192,7 @@ namespace Abp.Authorization
         /// <param name="permissionChecker">Permission checker</param>
         /// <param name="permissionNames">Name of the permissions to authorize</param>
         /// <exception cref="AbpAuthorizationException">Throws authorization exception if</exception>
-        public static void Authorize(
-            this IPermissionChecker permissionChecker,
-            params string[] permissionNames
-        )
+        public static void Authorize(this IPermissionChecker permissionChecker, params string[] permissionNames)
         {
             Authorize(permissionChecker, false, permissionNames);
         }
@@ -232,21 +208,14 @@ namespace Abp.Authorization
         /// </param>
         /// <param name="permissionNames">Name of the permissions to authorize</param>
         /// <exception cref="AbpAuthorizationException">Throws authorization exception if</exception>
-        public static async Task AuthorizeAsync(
-            this IPermissionChecker permissionChecker,
-            bool requireAll,
-            params string[] permissionNames
-        )
+        public static async Task AuthorizeAsync(this IPermissionChecker permissionChecker, bool requireAll, params string[] permissionNames)
         {
             if (await IsGrantedAsync(permissionChecker, requireAll, permissionNames))
             {
                 return;
             }
 
-            var localizedPermissionNames = LocalizePermissionNames(
-                permissionChecker,
-                permissionNames
-            );
+            var localizedPermissionNames = LocalizePermissionNames(permissionChecker, permissionNames);
 
             if (requireAll)
             {
@@ -287,21 +256,14 @@ namespace Abp.Authorization
         /// </param>
         /// <param name="permissionNames">Name of the permissions to authorize</param>
         /// <exception cref="AbpAuthorizationException">Throws authorization exception if</exception>
-        public static void Authorize(
-            this IPermissionChecker permissionChecker,
-            bool requireAll,
-            params string[] permissionNames
-        )
+        public static void Authorize(this IPermissionChecker permissionChecker, bool requireAll, params string[] permissionNames)
         {
             if (IsGranted(permissionChecker, requireAll, permissionNames))
             {
                 return;
             }
 
-            var localizedPermissionNames = LocalizePermissionNames(
-                permissionChecker,
-                permissionNames
-            );
+            var localizedPermissionNames = LocalizePermissionNames(permissionChecker, permissionNames);
 
             if (requireAll)
             {
@@ -331,11 +293,7 @@ namespace Abp.Authorization
             }
         }
 
-        public static string L(
-            IPermissionChecker permissionChecker,
-            string name,
-            string defaultValue
-        )
+        public static string L(IPermissionChecker permissionChecker, string name, string defaultValue)
         {
             if (!(permissionChecker is IIocManagerAccessor))
             {
@@ -349,10 +307,7 @@ namespace Abp.Authorization
             }
         }
 
-        public static string[] LocalizePermissionNames(
-            IPermissionChecker permissionChecker,
-            string[] permissionNames
-        )
+        public static string[] LocalizePermissionNames(IPermissionChecker permissionChecker, string[] permissionNames)
         {
             if (!(permissionChecker is IIocManagerAccessor))
             {
@@ -364,17 +319,13 @@ namespace Abp.Authorization
             {
                 using (var permissionManager = iocManager.ResolveAsDisposable<IPermissionManager>())
                 {
-                    return permissionNames
-                        .Select(permissionName =>
-                        {
-                            var permission = permissionManager.Object.GetPermissionOrNull(
-                                permissionName
-                            );
-                            return permission?.DisplayName == null
-                                ? permissionName
-                                : permission.DisplayName.Localize(localizationContext.Object);
-                        })
-                        .ToArray();
+                    return permissionNames.Select(permissionName =>
+                    {
+                        var permission = permissionManager.Object.GetPermissionOrNull(permissionName);
+                        return permission?.DisplayName == null
+                            ? permissionName
+                            : permission.DisplayName.Localize(localizationContext.Object);
+                    }).ToArray();
                 }
             }
         }

@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections;
-
-public interface IDictionaryCreateStrategy
+namespace Castle.Components.DictionaryAdapter
 {
-    object Create(IDictionaryAdapter adapter, Type type, IDictionary dictionary);
+    using System;
+    using System.Collections;
+
+    public interface IDictionaryCreateStrategy
+    {
+        object Create(IDictionaryAdapter adapter, Type type, IDictionary dictionary);
+    }
 }

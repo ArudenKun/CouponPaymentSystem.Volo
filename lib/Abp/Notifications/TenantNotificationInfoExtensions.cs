@@ -13,9 +13,7 @@ namespace Abp.Notifications
         /// <summary>
         /// Converts <see cref="NotificationInfo"/> to <see cref="TenantNotification"/>.
         /// </summary>
-        public static TenantNotification ToTenantNotification(
-            this TenantNotificationInfo tenantNotificationInfo
-        )
+        public static TenantNotification ToTenantNotification(this TenantNotificationInfo tenantNotificationInfo)
         {
             var entityType = tenantNotificationInfo.EntityTypeAssemblyQualifiedName.IsNullOrEmpty()
                 ? null
@@ -26,21 +24,11 @@ namespace Abp.Notifications
                 Id = tenantNotificationInfo.Id,
                 TenantId = tenantNotificationInfo.TenantId,
                 NotificationName = tenantNotificationInfo.NotificationName,
-                Data = tenantNotificationInfo.Data.IsNullOrEmpty()
-                    ? null
-                    : JsonConvert.DeserializeObject(
-                        tenantNotificationInfo.Data,
-                        Type.GetType(tenantNotificationInfo.DataTypeName)
-                    ) as NotificationData,
+                Data = tenantNotificationInfo.Data.IsNullOrEmpty() ? null : JsonConvert.DeserializeObject(tenantNotificationInfo.Data, Type.GetType(tenantNotificationInfo.DataTypeName)) as NotificationData,
                 EntityTypeName = tenantNotificationInfo.EntityTypeName,
-                EntityId = tenantNotificationInfo.EntityId.IsNullOrEmpty()
-                    ? null
-                    : JsonConvert.DeserializeObject(
-                        tenantNotificationInfo.EntityId,
-                        EntityHelper.GetPrimaryKeyType(entityType)
-                    ),
+                EntityId = tenantNotificationInfo.EntityId.IsNullOrEmpty() ? null : JsonConvert.DeserializeObject(tenantNotificationInfo.EntityId, EntityHelper.GetPrimaryKeyType(entityType)),
                 Severity = tenantNotificationInfo.Severity,
-                CreationTime = tenantNotificationInfo.CreationTime,
+                CreationTime = tenantNotificationInfo.CreationTime
             };
         }
     }

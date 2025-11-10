@@ -55,14 +55,14 @@ namespace Abp.Webhooks
         Task DeleteAsync(Guid id);
 
         /// <summary>
-        /// Deletes subscription if exists
+        /// Deletes subscription if exists 
         /// </summary>
         /// <param name="id"><see cref="WebhookSubscriptionInfo"/> primary key</param>
         /// <returns></returns>
         void Delete(Guid id);
 
         /// <summary>
-        /// Returns all subscriptions of given tenant including deactivated
+        /// Returns all subscriptions of given tenant including deactivated 
         /// </summary>
         /// <param name="tenantId">
         /// Target tenant id.
@@ -70,7 +70,7 @@ namespace Abp.Webhooks
         Task<List<WebhookSubscriptionInfo>> GetAllSubscriptionsAsync(int? tenantId);
 
         /// <summary>
-        /// Returns all subscriptions of given tenant including deactivated
+        /// Returns all subscriptions of given tenant including deactivated 
         /// </summary>
         /// <param name="tenantId">
         /// Target tenant id.
@@ -85,10 +85,7 @@ namespace Abp.Webhooks
         /// </param>
         /// <param name="webhookName"><see cref="WebhookDefinition.Name"/></param>
         /// <returns></returns>
-        Task<List<WebhookSubscriptionInfo>> GetAllSubscriptionsAsync(
-            int? tenantId,
-            string webhookName
-        );
+        Task<List<WebhookSubscriptionInfo>> GetAllSubscriptionsAsync(int? tenantId, string webhookName);
 
         /// <summary>
         /// Returns webhook subscriptions which subscribe to given webhook on tenant(s)
@@ -99,9 +96,9 @@ namespace Abp.Webhooks
         /// <param name="webhookName"><see cref="WebhookDefinition.Name"/></param>
         /// <returns></returns>
         List<WebhookSubscriptionInfo> GetAllSubscriptions(int? tenantId, string webhookName);
-
+        
         /// <summary>
-        /// Returns all subscriptions of given tenant including deactivated
+        /// Returns all subscriptions of given tenant including deactivated 
         /// </summary>
         /// <param name="tenantIds">
         /// Target tenant id(s).
@@ -109,7 +106,7 @@ namespace Abp.Webhooks
         Task<List<WebhookSubscriptionInfo>> GetAllSubscriptionsOfTenantsAsync(int?[] tenantIds);
 
         /// <summary>
-        /// Returns all subscriptions of given tenant including deactivated
+        /// Returns all subscriptions of given tenant including deactivated 
         /// </summary>
         /// <param name="tenantIds">
         /// Target tenant id(s).
@@ -124,10 +121,7 @@ namespace Abp.Webhooks
         /// </param>
         /// <param name="webhookName"><see cref="WebhookDefinition.Name"/></param>
         /// <returns></returns>
-        Task<List<WebhookSubscriptionInfo>> GetAllSubscriptionsOfTenantsAsync(
-            int?[] tenantIds,
-            string webhookName
-        );
+        Task<List<WebhookSubscriptionInfo>> GetAllSubscriptionsOfTenantsAsync(int?[] tenantIds, string webhookName);
 
         /// <summary>
         /// Returns webhook subscriptions which subscribe to given webhook on tenant(s)
@@ -137,10 +131,8 @@ namespace Abp.Webhooks
         /// </param>
         /// <param name="webhookName"><see cref="WebhookDefinition.Name"/></param>
         /// <returns></returns>
-        List<WebhookSubscriptionInfo> GetAllSubscriptionsOfTenants(
-            int?[] tenantIds,
-            string webhookName
-        );
+        List<WebhookSubscriptionInfo> GetAllSubscriptionsOfTenants(int?[] tenantIds, string webhookName);
+        
 
         /// <summary>
         /// Checks if tenant subscribed for a webhook

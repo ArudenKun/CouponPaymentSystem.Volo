@@ -12,6 +12,9 @@ namespace Abp.Events.Bus.Exceptions
         /// </summary>
         /// <param name="exception">Exception object</param>
         public AbpHandledExceptionData(Exception exception)
-            : base(exception) { }
+            : base(exception)
+        {
+
+        }
     }
 }

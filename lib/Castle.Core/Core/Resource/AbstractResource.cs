@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-using System.IO;
-using System.Text;
-
-public abstract class AbstractResource : IResource
+namespace Castle.Core.Resource
 {
-    protected static readonly string DefaultBasePath = AppDomain.CurrentDomain.BaseDirectory;
+    using System;
+    using System.IO;
+    using System.Text;
 
-    public virtual string FileBasePath
+    public abstract class AbstractResource : IResource
     {
-        get { return DefaultBasePath; }
+        protected static readonly string DefaultBasePath = AppDomain.CurrentDomain.BaseDirectory;
+
+        public virtual string FileBasePath
+        {
+            get { return DefaultBasePath; }
+        }
+
+        public abstract TextReader GetStreamReader();
+
+        public abstract TextReader GetStreamReader(Encoding encoding);
+
+        public abstract IResource CreateRelative(string relativePath);
+
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing) { }
     }
-
-    public abstract TextReader GetStreamReader();
-
-    public abstract TextReader GetStreamReader(Encoding encoding);
-
-    public abstract IResource CreateRelative(string relativePath);
-
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
-
-    protected virtual void Dispose(bool disposing) { }
 }

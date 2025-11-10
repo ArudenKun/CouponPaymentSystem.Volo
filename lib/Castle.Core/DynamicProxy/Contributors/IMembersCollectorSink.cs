@@ -12,13 +12,14 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using Castle.DynamicProxy.Generators;
-
-internal interface IMembersCollectorSink
+namespace Castle.DynamicProxy.Contributors
 {
-    void Add(MetaEvent @event);
-    void Add(MetaMethod method);
-    void Add(MetaProperty property);
+    using Castle.DynamicProxy.Generators;
+
+    internal interface IMembersCollectorSink
+    {
+        void Add(MetaEvent @event);
+        void Add(MetaMethod method);
+        void Add(MetaProperty property);
+    }
 }

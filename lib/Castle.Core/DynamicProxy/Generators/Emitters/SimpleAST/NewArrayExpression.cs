@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection.Emit;
-
-internal class NewArrayExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly Type arrayType;
-    private readonly int size;
+    using System;
+    using System.Reflection.Emit;
 
-    public NewArrayExpression(int size, Type arrayType)
+    internal class NewArrayExpression : IExpression
     {
-        this.size = size;
-        this.arrayType = arrayType;
-    }
+        private readonly Type arrayType;
+        private readonly int size;
 
-    public void Emit(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldc_I4, size);
-        gen.Emit(OpCodes.Newarr, arrayType);
+        public NewArrayExpression(int size, Type arrayType)
+        {
+            this.size = size;
+            this.arrayType = arrayType;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldc_I4, size);
+            gen.Emit(OpCodes.Newarr, arrayType);
+        }
     }
 }

@@ -12,22 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections;
-
-/// <summary>
-/// Defines the contract for building typed dictionary keys.
-/// </summary>
-public interface IDictionaryKeyBuilder : IDictionaryBehavior
+namespace Castle.Components.DictionaryAdapter
 {
+    using System;
+    using System.Collections;
+
     /// <summary>
-    /// Builds the specified key.
+    /// Defines the contract for building typed dictionary keys.
     /// </summary>
-    /// <param name="dictionaryAdapter">The dictionary adapter.</param>
-    /// <param name="key">The current key.</param>
-    /// <param name="property">The property.</param>
-    /// <returns>The updated key</returns>
-    string GetKey(IDictionaryAdapter dictionaryAdapter, string key, PropertyDescriptor property);
+    public interface IDictionaryKeyBuilder : IDictionaryBehavior
+    {
+        /// <summary>
+        /// Builds the specified key.
+        /// </summary>
+        /// <param name="dictionaryAdapter">The dictionary adapter.</param>
+        /// <param name="key">The current key.</param>
+        /// <param name="property">The property.</param>
+        /// <returns>The updated key</returns>
+        string GetKey(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            PropertyDescriptor property
+        );
+    }
 }

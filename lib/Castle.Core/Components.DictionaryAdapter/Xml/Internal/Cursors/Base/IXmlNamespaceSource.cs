@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public interface IXmlNamespaceSource
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    string GetElementPrefix(IXmlNode node, string namespaceUri);
-    string GetAttributePrefix(IXmlNode node, string namespaceUri);
+    public interface IXmlNamespaceSource
+    {
+        string GetElementPrefix(IXmlNode node, string namespaceUri);
+        string GetAttributePrefix(IXmlNode node, string namespaceUri);
+    }
 }

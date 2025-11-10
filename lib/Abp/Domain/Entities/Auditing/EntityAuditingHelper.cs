@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using Abp.Timing;
+using System.Collections.Generic;
 using System.Linq;
 using Abp.Configuration.Startup;
 using Abp.Domain.Uow;
-using Abp.Extensions;
 using Abp.MultiTenancy;
-using Abp.Timing;
+using Abp.Extensions;
 
 namespace Abp.Domain.Entities.Auditing
 {
@@ -15,8 +15,7 @@ namespace Abp.Domain.Entities.Auditing
             object entityAsObj,
             int? tenantId,
             long? userId,
-            IReadOnlyList<AuditFieldConfiguration> auditFields
-        )
+            IReadOnlyList<AuditFieldConfiguration> auditFields)
         {
             var entityWithCreationTime = entityAsObj as IHasCreationTime;
             if (entityWithCreationTime == null)
@@ -51,10 +50,8 @@ namespace Abp.Domain.Entities.Auditing
 
             if (multiTenancyConfig?.IsEnabled == true)
             {
-                if (
-                    MultiTenancyHelper.IsMultiTenantEntity(entity)
-                    && !MultiTenancyHelper.IsTenantEntity(entity, tenantId)
-                )
+                if (MultiTenancyHelper.IsMultiTenantEntity(entity) &&
+                    !MultiTenancyHelper.IsTenantEntity(entity, tenantId))
                 {
                     //A tenant entity is created by host or a different tenant
                     return;
@@ -67,9 +64,7 @@ namespace Abp.Domain.Entities.Auditing
                 }
             }
 
-            var creationUserIdFilter = auditFields?.FirstOrDefault(e =>
-                e.FieldName == AbpAuditFields.CreatorUserId
-            );
+            var creationUserIdFilter = auditFields?.FirstOrDefault(e => e.FieldName == AbpAuditFields.CreatorUserId);
             if (creationUserIdFilter != null && !creationUserIdFilter.IsSavingEnabled)
             {
                 return;
@@ -84,18 +79,12 @@ namespace Abp.Domain.Entities.Auditing
             object entityAsObj,
             int? tenantId,
             long? userId,
-            IReadOnlyList<AuditFieldConfiguration> auditFields
-        )
+            IReadOnlyList<AuditFieldConfiguration> auditFields)
         {
             if (entityAsObj is IHasModificationTime)
             {
-                var lastModificationTimeFilter = auditFields?.FirstOrDefault(e =>
-                    e.FieldName == AbpAuditFields.LastModificationTime
-                );
-                if (
-                    lastModificationTimeFilter == null
-                    || lastModificationTimeFilter.IsSavingEnabled
-                )
+                var lastModificationTimeFilter = auditFields?.FirstOrDefault(e => e.FieldName == AbpAuditFields.LastModificationTime);
+                if (lastModificationTimeFilter == null || lastModificationTimeFilter.IsSavingEnabled)
                 {
                     entityAsObj.As<IHasModificationTime>().LastModificationTime = Clock.Now;
                 }
@@ -107,9 +96,7 @@ namespace Abp.Domain.Entities.Auditing
                 return;
             }
 
-            var lastModifierUserIdFilter = auditFields?.FirstOrDefault(e =>
-                e.FieldName == AbpAuditFields.LastModifierUserId
-            );
+            var lastModifierUserIdFilter = auditFields?.FirstOrDefault(e => e.FieldName == AbpAuditFields.LastModifierUserId);
             if (lastModifierUserIdFilter != null && !lastModifierUserIdFilter.IsSavingEnabled)
             {
                 return;
@@ -119,10 +106,8 @@ namespace Abp.Domain.Entities.Auditing
 
             if (multiTenancyConfig?.IsEnabled == true)
             {
-                if (
-                    MultiTenancyHelper.IsMultiTenantEntity(entity)
-                    && !MultiTenancyHelper.IsTenantEntity(entity, tenantId)
-                )
+                if (MultiTenancyHelper.IsMultiTenantEntity(entity) &&
+                    !MultiTenancyHelper.IsTenantEntity(entity, tenantId))
                 {
                     //A tenant entity is modified by host or a different tenant
                     entity.LastModifierUserId = null;
@@ -146,8 +131,7 @@ namespace Abp.Domain.Entities.Auditing
             object entityAsObj,
             int? tenantId,
             long? userId,
-            IReadOnlyList<AuditFieldConfiguration> auditFields
-        )
+            IReadOnlyList<AuditFieldConfiguration> auditFields)
         {
             if (entityAsObj is IHasDeletionTime)
             {
@@ -155,9 +139,7 @@ namespace Abp.Domain.Entities.Auditing
 
                 if (entity.DeletionTime == null)
                 {
-                    var deletionTimeFilter = auditFields?.FirstOrDefault(e =>
-                        e.FieldName == AbpAuditFields.DeletionTime
-                    );
+                    var deletionTimeFilter = auditFields?.FirstOrDefault(e => e.FieldName == AbpAuditFields.DeletionTime);
                     if (deletionTimeFilter == null || deletionTimeFilter.IsSavingEnabled)
                     {
                         entityAsObj.As<IHasDeletionTime>().DeletionTime = Clock.Now;
@@ -180,9 +162,7 @@ namespace Abp.Domain.Entities.Auditing
                     return;
                 }
 
-                var deleterUserIdFilter = auditFields?.FirstOrDefault(e =>
-                    e.FieldName == AbpAuditFields.DeleterUserId
-                );
+                var deleterUserIdFilter = auditFields?.FirstOrDefault(e => e.FieldName == AbpAuditFields.DeleterUserId);
                 if (deleterUserIdFilter != null && !deleterUserIdFilter.IsSavingEnabled)
                 {
                     return;
@@ -192,16 +172,8 @@ namespace Abp.Domain.Entities.Auditing
                 if (entity is IMayHaveTenant || entity is IMustHaveTenant)
                 {
                     //Sets LastModifierUserId only if current user is in same tenant/host with the given entity
-                    if (
-                        (
-                            entity is IMayHaveTenant
-                            && entity.As<IMayHaveTenant>().TenantId == tenantId
-                        )
-                        || (
-                            entity is IMustHaveTenant
-                            && entity.As<IMustHaveTenant>().TenantId == tenantId
-                        )
-                    )
+                    if ((entity is IMayHaveTenant && entity.As<IMayHaveTenant>().TenantId == tenantId) ||
+                        (entity is IMustHaveTenant && entity.As<IMustHaveTenant>().TenantId == tenantId))
                     {
                         entity.DeleterUserId = userId;
                     }

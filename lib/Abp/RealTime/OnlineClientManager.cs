@@ -1,9 +1,9 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using Abp.Dependency;
 using Abp.Extensions;
 using JetBrains.Annotations;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Abp.RealTime
 {
@@ -38,7 +38,7 @@ namespace Abp.RealTime
             {
                 UserConnected.InvokeSafely(this, new OnlineUserEventArgs(user, client));
             }
-
+            
             await Store.AddAsync(client);
             ClientConnected.InvokeSafely(this, new OnlineClientEventArgs(client));
         }
@@ -51,7 +51,7 @@ namespace Abp.RealTime
             {
                 return false;
             }
-
+            
             if (UserDisconnected != null)
             {
                 var user = client.ToUserIdentifierOrNull();
@@ -83,10 +83,9 @@ namespace Abp.RealTime
             return Store.GetAllAsync();
         }
 
+
         [NotNull]
-        public virtual async Task<IReadOnlyList<IOnlineClient>> GetAllByUserIdAsync(
-            [NotNull] IUserIdentifier user
-        )
+        public virtual async Task<IReadOnlyList<IOnlineClient>> GetAllByUserIdAsync([NotNull] IUserIdentifier user)
         {
             Check.NotNull(user, nameof(user));
 
@@ -95,5 +94,6 @@ namespace Abp.RealTime
 
             return clients;
         }
+
     }
 }

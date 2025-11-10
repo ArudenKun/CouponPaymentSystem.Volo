@@ -7,12 +7,9 @@ using Abp.Runtime.Session;
 namespace Abp.Application.Services
 {
     /// <summary>
-    /// This class can be used as a base class for application services.
+    /// This class can be used as a base class for application services. 
     /// </summary>
-    public abstract class ApplicationService
-        : AbpServiceBase,
-            IApplicationService,
-            IAvoidDuplicateCrossCuttingConcerns
+    public abstract class ApplicationService : AbpServiceBase, IApplicationService, IAvoidDuplicateCrossCuttingConcerns
     {
         public static string[] CommonPostfixes = { "AppService", "ApplicationService" };
 
@@ -20,7 +17,7 @@ namespace Abp.Application.Services
         /// Gets current session information.
         /// </summary>
         public IAbpSession AbpSession { get; set; }
-
+        
         /// <summary>
         /// Reference to the permission manager.
         /// </summary>

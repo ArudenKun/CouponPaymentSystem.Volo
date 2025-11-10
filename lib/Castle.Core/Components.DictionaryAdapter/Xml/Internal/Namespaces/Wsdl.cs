@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-// Namespace for Guid type
-public static class Wsdl
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public const string Prefix = "wsdl",
-        NamespaceUri = "http://microsoft.com/wsdl/types/";
-
-    internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
-        NamespaceUri,
-        Prefix
-    )
+    // Namespace for Guid type
+    public static class Wsdl
     {
-        Root = true,
-    };
+        public const string Prefix = "wsdl",
+            NamespaceUri = "http://microsoft.com/wsdl/types/";
+
+        internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
+            NamespaceUri,
+            Prefix
+        )
+        {
+            Root = true,
+        };
+    }
 }

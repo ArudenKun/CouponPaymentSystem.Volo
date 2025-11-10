@@ -12,14 +12,15 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-public interface IDictionaryReferenceManager
+namespace Castle.Components.DictionaryAdapter
 {
-    bool IsReferenceProperty(IDictionaryAdapter dictionaryAdapter, string propertyName);
+    using System;
 
-    bool TryGetReference(object keyObject, out object inGraphObject);
-    void AddReference(object keyObject, object relatedObject, bool isInGraph);
+    public interface IDictionaryReferenceManager
+    {
+        bool IsReferenceProperty(IDictionaryAdapter dictionaryAdapter, string propertyName);
+
+        bool TryGetReference(object keyObject, out object inGraphObject);
+        void AddReference(object keyObject, object relatedObject, bool isInGraph);
+    }
 }

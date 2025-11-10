@@ -1,3 +1,4 @@
+using System.Linq;
 using Abp.Dependency;
 
 namespace Abp.ObjectMapping
@@ -7,27 +8,21 @@ namespace Abp.ObjectMapping
         /// <summary>
         /// Singleton instance.
         /// </summary>
-        public static NullObjectMapper Instance { get; } = new();
+        public static NullObjectMapper Instance { get; } = new NullObjectMapper();
 
-        public TDestination Map<TSource, TDestination>(TSource source)
+        public TDestination Map<TDestination>(object source)
         {
-            throw new AbpException(
-                "Abp.ObjectMapping.IObjectMapper should be implemented in order to map objects."
-            );
+            throw new AbpException("Abp.ObjectMapping.IObjectMapper should be implemented in order to map objects.");
         }
 
-        public void Map<TSource, TDestination>(TSource source, TDestination destination)
+        public TDestination Map<TSource, TDestination>(TSource source, TDestination destination)
         {
-            throw new AbpException(
-                "Abp.ObjectMapping.IObjectMapper should be implemented in order to map objects."
-            );
+            throw new AbpException("Abp.ObjectMapping.IObjectMapper should be implemented in order to map objects.");
         }
 
-        public IQueryable<TDestination> ProjectTo<TSource, TDestination>(IQueryable<TSource> source)
+        public IQueryable<TDestination> ProjectTo<TDestination>(IQueryable source)
         {
-            throw new AbpException(
-                "Abp.ObjectMapping.IObjectMapper should be implemented in order to map objects."
-            );
+            throw new AbpException("Abp.ObjectMapping.IObjectMapper should be implemented in order to map objects.");
         }
     }
 }

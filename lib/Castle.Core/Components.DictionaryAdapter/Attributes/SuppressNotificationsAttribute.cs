@@ -12,20 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Suppress property change notifications.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class SuppressNotificationsAttribute
-    : DictionaryBehaviorAttribute,
-        IPropertyDescriptorInitializer
+namespace Castle.Components.DictionaryAdapter
 {
-    public void Initialize(PropertyDescriptor propertyDescriptor, object[] behaviors)
+    using System;
+
+    /// <summary>
+    /// Suppress property change notifications.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class SuppressNotificationsAttribute
+        : DictionaryBehaviorAttribute,
+            IPropertyDescriptorInitializer
     {
-        propertyDescriptor.SuppressNotifications = true;
+        public void Initialize(PropertyDescriptor propertyDescriptor, object[] behaviors)
+        {
+            propertyDescriptor.SuppressNotifications = true;
+        }
     }
 }

@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-using System.IO;
-using System.Text;
-
-/// <summary>
-/// Adapts a static string content as an <see cref="IResource"/>
-/// </summary>
-public class StaticContentResource : AbstractResource
+namespace Castle.Core.Resource
 {
-    private readonly string contents;
+    using System;
+    using System.IO;
+    using System.Text;
 
-    public StaticContentResource(string contents)
+    /// <summary>
+    /// Adapts a static string content as an <see cref="IResource"/>
+    /// </summary>
+    public class StaticContentResource : AbstractResource
     {
-        this.contents = contents;
-    }
+        private readonly string contents;
 
-    public override TextReader GetStreamReader()
-    {
-        return new StringReader(contents);
-    }
+        public StaticContentResource(string contents)
+        {
+            this.contents = contents;
+        }
 
-    public override TextReader GetStreamReader(Encoding encoding)
-    {
-        throw new NotImplementedException();
-    }
+        public override TextReader GetStreamReader()
+        {
+            return new StringReader(contents);
+        }
 
-    public override IResource CreateRelative(string relativePath)
-    {
-        throw new NotImplementedException();
+        public override TextReader GetStreamReader(Encoding encoding)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override IResource CreateRelative(string relativePath)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

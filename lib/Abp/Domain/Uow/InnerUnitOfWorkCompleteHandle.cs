@@ -12,8 +12,7 @@ namespace Abp.Domain.Uow
     /// </summary>
     internal class InnerUnitOfWorkCompleteHandle : IUnitOfWorkCompleteHandle
     {
-        public const string DidNotCallCompleteMethodExceptionMessage =
-            "Did not call Complete method of a unit of work.";
+        public const string DidNotCallCompleteMethodExceptionMessage = "Did not call Complete method of a unit of work.";
 
         private volatile bool _isCompleteCalled;
         private volatile bool _isDisposed;

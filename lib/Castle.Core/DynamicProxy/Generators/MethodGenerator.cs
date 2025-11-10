@@ -12,49 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System.Reflection;
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Generators.Emitters;
-
-internal abstract class MethodGenerator : IGenerator<MethodEmitter>
+namespace Castle.DynamicProxy.Generators
 {
-    private readonly MetaMethod method;
-    private readonly OverrideMethodDelegate overrideMethod;
+    using System.Reflection;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Generators.Emitters;
 
-    protected MethodGenerator(MetaMethod method, OverrideMethodDelegate overrideMethod)
+    internal abstract class MethodGenerator : IGenerator<MethodEmitter>
     {
-        this.method = method;
-        this.overrideMethod = overrideMethod;
-    }
+        private readonly MetaMethod method;
+        private readonly OverrideMethodDelegate overrideMethod;
 
-    protected MethodInfo MethodOnTarget
-    {
-        get { return method.MethodOnTarget; }
-    }
-
-    protected MethodInfo MethodToOverride
-    {
-        get { return method.Method; }
-    }
-
-    protected abstract MethodEmitter BuildProxiedMethodBody(
-        MethodEmitter emitter,
-        ClassEmitter @class,
-        INamingScope namingScope
-    );
-
-    public MethodEmitter Generate(ClassEmitter @class, INamingScope namingScope)
-    {
-        var methodEmitter = overrideMethod(method.Name, method.Attributes, MethodToOverride);
-        var proxiedMethod = BuildProxiedMethodBody(methodEmitter, @class, namingScope);
-
-        if (MethodToOverride.DeclaringType.IsInterface)
+        protected MethodGenerator(MetaMethod method, OverrideMethodDelegate overrideMethod)
         {
-            @class.TypeBuilder.DefineMethodOverride(proxiedMethod.MethodBuilder, MethodToOverride);
+            this.method = method;
+            this.overrideMethod = overrideMethod;
         }
 
-        return proxiedMethod;
+        protected MethodInfo MethodOnTarget
+        {
+            get { return method.MethodOnTarget; }
+        }
+
+        protected MethodInfo MethodToOverride
+        {
+            get { return method.Method; }
+        }
+
+        protected abstract MethodEmitter BuildProxiedMethodBody(
+            MethodEmitter emitter,
+            ClassEmitter @class,
+            INamingScope namingScope
+        );
+
+        public MethodEmitter Generate(ClassEmitter @class, INamingScope namingScope)
+        {
+            var methodEmitter = overrideMethod(method.Name, method.Attributes, MethodToOverride);
+            var proxiedMethod = BuildProxiedMethodBody(methodEmitter, @class, namingScope);
+
+            if (MethodToOverride.DeclaringType.IsInterface)
+            {
+                @class.TypeBuilder.DefineMethodOverride(
+                    proxiedMethod.MethodBuilder,
+                    MethodToOverride
+                );
+            }
+
+            return proxiedMethod;
+        }
     }
 }

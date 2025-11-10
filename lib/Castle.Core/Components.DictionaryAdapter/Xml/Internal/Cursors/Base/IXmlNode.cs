@@ -12,52 +12,53 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml;
-
-public interface IXmlNode : IXmlKnownType, IRealizableSource, IVirtual
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    bool IsElement { get; }
-    bool IsAttribute { get; }
-    bool IsNil { get; set; }
-    string Value { get; set; } // Equivalent to InnerText
-    string Xml { get; } // Equivalent to OuterXml
+    using System;
+    using System.Xml;
 
-    IXmlNode Parent { get; }
-    IXmlNamespaceSource Namespaces { get; }
+    public interface IXmlNode : IXmlKnownType, IRealizableSource, IVirtual
+    {
+        bool IsElement { get; }
+        bool IsAttribute { get; }
+        bool IsNil { get; set; }
+        string Value { get; set; } // Equivalent to InnerText
+        string Xml { get; } // Equivalent to OuterXml
 
-    string GetAttribute(XmlName name);
-    void SetAttribute(XmlName name, string value);
+        IXmlNode Parent { get; }
+        IXmlNamespaceSource Namespaces { get; }
 
-    string LookupPrefix(string namespaceUri);
-    string LookupNamespaceUri(string prefix);
-    void DefineNamespace(string prefix, string namespaceUri, bool root);
+        string GetAttribute(XmlName name);
+        void SetAttribute(XmlName name, string value);
 
-    object UnderlyingObject { get; }
-    bool UnderlyingPositionEquals(IXmlNode node);
+        string LookupPrefix(string namespaceUri);
+        string LookupNamespaceUri(string prefix);
+        void DefineNamespace(string prefix, string namespaceUri, bool root);
 
-    IXmlNode Save();
-    IXmlCursor SelectSelf(Type clrType);
-    IXmlCursor SelectChildren(
-        IXmlKnownTypeMap knownTypes,
-        IXmlNamespaceSource namespaces,
-        CursorFlags flags
-    );
-    IXmlIterator SelectSubtree();
+        object UnderlyingObject { get; }
+        bool UnderlyingPositionEquals(IXmlNode node);
 
-    CompiledXPath Path { get; }
-    IXmlCursor Select(
-        CompiledXPath path,
-        IXmlIncludedTypeMap includedTypes,
-        IXmlNamespaceSource namespaces,
-        CursorFlags flags
-    );
-    object Evaluate(CompiledXPath path);
+        IXmlNode Save();
+        IXmlCursor SelectSelf(Type clrType);
+        IXmlCursor SelectChildren(
+            IXmlKnownTypeMap knownTypes,
+            IXmlNamespaceSource namespaces,
+            CursorFlags flags
+        );
+        IXmlIterator SelectSubtree();
 
-    void Clear();
-    XmlReader ReadSubtree();
-    XmlWriter WriteAttributes();
-    XmlWriter WriteChildren();
+        CompiledXPath Path { get; }
+        IXmlCursor Select(
+            CompiledXPath path,
+            IXmlIncludedTypeMap includedTypes,
+            IXmlNamespaceSource namespaces,
+            CursorFlags flags
+        );
+        object Evaluate(CompiledXPath path);
+
+        void Clear();
+        XmlReader ReadSubtree();
+        XmlWriter WriteAttributes();
+        XmlWriter WriteChildren();
+    }
 }

@@ -9,7 +9,6 @@ using Abp.Json;
 using Abp.Threading.BackgroundWorkers;
 using Abp.Threading.Timers;
 using Abp.Timing;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 
 namespace Abp.BackgroundJobs
@@ -17,10 +16,7 @@ namespace Abp.BackgroundJobs
     /// <summary>
     /// Default implementation of <see cref="IBackgroundJobManager"/>.
     /// </summary>
-    public class BackgroundJobManager
-        : AsyncPeriodicBackgroundWorkerBase,
-            IBackgroundJobManager,
-            ISingletonDependency
+    public class BackgroundJobManager : AsyncPeriodicBackgroundWorkerBase, IBackgroundJobManager, ISingletonDependency
     {
         public IEventBus EventBus { get; set; }
 
@@ -46,8 +42,7 @@ namespace Abp.BackgroundJobs
             IIocResolver iocResolver,
             IBackgroundJobStore store,
             IBackgroundJobConfiguration backgroundJobConfiguration,
-            AbpAsyncTimer timer
-        )
+            AbpAsyncTimer timer)
             : base(timer)
         {
             _store = store;
@@ -59,11 +54,8 @@ namespace Abp.BackgroundJobs
             Timer.Period = JobPollPeriod;
         }
 
-        public virtual async Task<string> EnqueueAsync<TJob, TArgs>(
-            TArgs args,
-            BackgroundJobPriority priority = BackgroundJobPriority.Normal,
-            TimeSpan? delay = null
-        )
+        public virtual async Task<string> EnqueueAsync<TJob, TArgs>(TArgs args,
+            BackgroundJobPriority priority = BackgroundJobPriority.Normal, TimeSpan? delay = null)
             where TJob : IBackgroundJobBase<TArgs>
         {
             string jobInfoId;
@@ -74,7 +66,7 @@ namespace Abp.BackgroundJobs
                 {
                     JobType = typeof(TJob).AssemblyQualifiedName,
                     JobArgs = args.ToJsonString(),
-                    Priority = priority,
+                    Priority = priority
                 };
 
                 if (delay.HasValue)
@@ -92,11 +84,8 @@ namespace Abp.BackgroundJobs
             return jobInfoId;
         }
 
-        public virtual string Enqueue<TJob, TArgs>(
-            TArgs args,
-            BackgroundJobPriority priority = BackgroundJobPriority.Normal,
-            TimeSpan? delay = null
-        )
+        public virtual string Enqueue<TJob, TArgs>(TArgs args,
+            BackgroundJobPriority priority = BackgroundJobPriority.Normal, TimeSpan? delay = null)
             where TJob : IBackgroundJobBase<TArgs>
         {
             string jobInfoId;
@@ -107,7 +96,7 @@ namespace Abp.BackgroundJobs
                 {
                     JobType = typeof(TJob).AssemblyQualifiedName,
                     JobArgs = args.ToJsonString(),
-                    Priority = priority,
+                    Priority = priority
                 };
 
                 if (delay.HasValue)
@@ -130,10 +119,7 @@ namespace Abp.BackgroundJobs
         {
             if (long.TryParse(jobId, out long finalJobId) == false)
             {
-                throw new ArgumentException(
-                    $"The jobId '{jobId}' should be a number.",
-                    nameof(jobId)
-                );
+                throw new ArgumentException($"The jobId '{jobId}' should be a number.", nameof(jobId));
             }
 
             var jobInfo = await _store.GetAsync(finalJobId);
@@ -146,10 +132,7 @@ namespace Abp.BackgroundJobs
         {
             if (long.TryParse(jobId, out long finalJobId) == false)
             {
-                throw new ArgumentException(
-                    $"The jobId '{jobId}' should be a number.",
-                    nameof(jobId)
-                );
+                throw new ArgumentException($"The jobId '{jobId}' should be a number.", nameof(jobId));
             }
 
             var jobInfo = _store.Get(finalJobId);
@@ -160,9 +143,7 @@ namespace Abp.BackgroundJobs
 
         protected override async Task DoWorkAsync()
         {
-            var waitingJobs = await _store.GetWaitingJobsAsync(
-                _backgroundJobConfiguration.MaxWaitingJobToProcessPerPeriod
-            );
+            var waitingJobs = await _store.GetWaitingJobsAsync(_backgroundJobConfiguration.MaxWaitingJobToProcessPerPeriod);
 
             foreach (var job in waitingJobs)
             {
@@ -182,43 +163,35 @@ namespace Abp.BackgroundJobs
                 {
                     try
                     {
-                        var jobExecuteMethod =
-                            job.Object.GetType()
-                                .GetTypeInfo()
-                                .GetMethod(nameof(IBackgroundJob<object>.Execute))
-                            ?? job.Object.GetType()
-                                .GetTypeInfo()
-                                .GetMethod(nameof(IAsyncBackgroundJob<object>.ExecuteAsync));
+                        var jobExecuteMethod = job.Object.GetType().GetTypeInfo()
+                                                   .GetMethod(nameof(IBackgroundJob<object>.Execute)) ??
+                                               job.Object.GetType().GetTypeInfo()
+                                                   .GetMethod(nameof(IAsyncBackgroundJob<object>.ExecuteAsync));
 
                         if (jobExecuteMethod == null)
                         {
                             throw new AbpException(
-                                $"Given job type does not implement {typeof(IBackgroundJob<>).Name} or {typeof(IAsyncBackgroundJob<>).Name}. "
-                                    + "The job type was: "
-                                    + job.Object.GetType()
-                            );
+                                $"Given job type does not implement {typeof(IBackgroundJob<>).Name} or {typeof(IAsyncBackgroundJob<>).Name}. " +
+                                "The job type was: " + job.Object.GetType());
                         }
 
                         var argsType = jobExecuteMethod.GetParameters()[0].ParameterType;
                         var argsObj = JsonConvert.DeserializeObject(jobInfo.JobArgs, argsType);
 
-                        if (
-                            jobExecuteMethod.Name
-                            == nameof(IAsyncBackgroundJob<object>.ExecuteAsync)
-                        )
+                        if (jobExecuteMethod.Name == nameof(IAsyncBackgroundJob<object>.ExecuteAsync))
                         {
-                            await ((Task)jobExecuteMethod.Invoke(job.Object, new[] { argsObj }));
+                            await ((Task) jobExecuteMethod.Invoke(job.Object, new[] {argsObj}));
                         }
                         else
                         {
-                            jobExecuteMethod.Invoke(job.Object, new[] { argsObj });
+                            jobExecuteMethod.Invoke(job.Object, new[] {argsObj});
                         }
 
                         await _store.DeleteAsync(jobInfo);
                     }
                     catch (Exception ex)
                     {
-                        Logger.LogWarning(ex, "Failed to process job");
+                        Logger.Warn(ex.Message, ex);
 
                         var nextTryTime = jobInfo.CalculateNextTryTime();
                         if (nextTryTime.HasValue)
@@ -241,7 +214,7 @@ namespace Abp.BackgroundJobs
                                 )
                                 {
                                     BackgroundJob = jobInfo,
-                                    JobObject = job.Object,
+                                    JobObject = job.Object
                                 }
                             )
                         );
@@ -250,7 +223,7 @@ namespace Abp.BackgroundJobs
             }
             catch (Exception ex)
             {
-                Logger.LogWarning(ex, "Unhandled exception in background job");
+                Logger.Warn(ex.ToString(), ex);
 
                 jobInfo.IsAbandoned = true;
 
@@ -266,7 +239,7 @@ namespace Abp.BackgroundJobs
             }
             catch (Exception updateEx)
             {
-                Logger.LogWarning(updateEx, "Failed to update BackgroundJobInfo");
+                Logger.Warn(updateEx.ToString(), updateEx);
             }
         }
     }

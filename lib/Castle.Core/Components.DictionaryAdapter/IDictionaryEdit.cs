@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.ComponentModel;
-
-/// <summary>
-/// Contract for editing the Dictionary adapter.
-/// </summary>
-public interface IDictionaryEdit : IEditableObject, IRevertibleChangeTracking
+namespace Castle.Components.DictionaryAdapter
 {
-    bool CanEdit { get; }
+    using System;
+    using System.ComponentModel;
 
-    bool IsEditing { get; }
+    /// <summary>
+    /// Contract for editing the Dictionary adapter.
+    /// </summary>
+    public interface IDictionaryEdit : IEditableObject, IRevertibleChangeTracking
+    {
+        bool CanEdit { get; }
 
-    bool SupportsMultiLevelEdit { get; set; }
+        bool IsEditing { get; }
 
-    IDisposable SuppressEditingBlock();
+        bool SupportsMultiLevelEdit { get; set; }
 
-    void SuppressEditing();
+        IDisposable SuppressEditingBlock();
 
-    void ResumeEditing();
+        void SuppressEditing();
+
+        void ResumeEditing();
+    }
 }

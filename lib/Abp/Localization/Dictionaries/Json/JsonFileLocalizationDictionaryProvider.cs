@@ -21,24 +21,15 @@ namespace Abp.Localization.Dictionaries.Json
 
         protected override void InitializeDictionaries()
         {
-            var fileNames = Directory.GetFiles(
-                _directoryPath,
-                "*.json",
-                SearchOption.TopDirectoryOnly
-            );
+            var fileNames = Directory.GetFiles(_directoryPath, "*.json", SearchOption.TopDirectoryOnly);
 
             foreach (var fileName in fileNames)
             {
-                InitializeDictionary(
-                    CreateJsonLocalizationDictionary(fileName),
-                    isDefault: fileName.EndsWith(SourceName + ".json")
-                );
+                InitializeDictionary(CreateJsonLocalizationDictionary(fileName), isDefault: fileName.EndsWith(SourceName + ".json"));
             }
         }
 
-        protected virtual JsonLocalizationDictionary CreateJsonLocalizationDictionary(
-            string fileName
-        )
+        protected virtual JsonLocalizationDictionary CreateJsonLocalizationDictionary(string fileName)
         {
             return JsonLocalizationDictionary.BuildFromFile(fileName);
         }

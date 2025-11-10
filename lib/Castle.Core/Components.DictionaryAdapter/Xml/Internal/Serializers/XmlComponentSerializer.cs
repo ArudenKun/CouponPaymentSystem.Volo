@@ -12,66 +12,76 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections;
-
-public class XmlComponentSerializer : XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlComponentSerializer Instance = new XmlComponentSerializer();
+    using System;
+    using System.Collections;
 
-    protected XmlComponentSerializer() { }
-
-    public override XmlTypeKind Kind
+    public class XmlComponentSerializer : XmlTypeSerializer
     {
-        get { return XmlTypeKind.Complex; }
-    }
+        public static readonly XmlComponentSerializer Instance = new XmlComponentSerializer();
 
-    public override bool CanGetStub
-    {
-        get { return true; }
-    }
+        protected XmlComponentSerializer() { }
 
-    public override object GetStub(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        // TODO: Refactor
-        var adapter = new XmlAdapter(node, XmlAdapter.For(parent).References);
-        return parent.CreateChildAdapter(accessor.ClrType, adapter);
-    }
+        public override XmlTypeKind Kind
+        {
+            get { return XmlTypeKind.Complex; }
+        }
 
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        var adapter = new XmlAdapter(node.Save(), XmlAdapter.For(parent).References);
-        return parent.CreateChildAdapter(node.ClrType, adapter);
-    }
+        public override bool CanGetStub
+        {
+            get { return true; }
+        }
 
-    public override void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    )
-    {
-        // Require a dictionary adapter
-        var source = value as IDictionaryAdapter;
-        if (source == null)
-            throw Error.NotDictionaryAdapter(nameof(value));
+        public override object GetStub(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            // TODO: Refactor
+            var adapter = new XmlAdapter(node, XmlAdapter.For(parent).References);
+            return parent.CreateChildAdapter(accessor.ClrType, adapter);
+        }
 
-        // Detect assignment of own value
-        var sourceAdapter = XmlAdapter.For(source, false);
-        if (sourceAdapter != null && node.PositionEquals(sourceAdapter.Node))
-            return;
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            var adapter = new XmlAdapter(node.Save(), XmlAdapter.For(parent).References);
+            return parent.CreateChildAdapter(node.ClrType, adapter);
+        }
 
-        // Create a fresh component
-        var targetAdapter = new XmlAdapter(node.Save(), XmlAdapter.For(parent).References);
-        if (sourceAdapter != null)
-            targetAdapter.References.UnionWith(sourceAdapter.References);
-        var component = (IDictionaryAdapter)parent.CreateChildAdapter(node.ClrType, targetAdapter);
+        public override void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        )
+        {
+            // Require a dictionary adapter
+            var source = value as IDictionaryAdapter;
+            if (source == null)
+                throw Error.NotDictionaryAdapter(nameof(value));
 
-        // Copy value onto fresh component
-        source.CopyTo(component);
-        value = component;
+            // Detect assignment of own value
+            var sourceAdapter = XmlAdapter.For(source, false);
+            if (sourceAdapter != null && node.PositionEquals(sourceAdapter.Node))
+                return;
+
+            // Create a fresh component
+            var targetAdapter = new XmlAdapter(node.Save(), XmlAdapter.For(parent).References);
+            if (sourceAdapter != null)
+                targetAdapter.References.UnionWith(sourceAdapter.References);
+            var component = (IDictionaryAdapter)
+                parent.CreateChildAdapter(node.ClrType, targetAdapter);
+
+            // Copy value onto fresh component
+            source.CopyTo(component);
+            value = component;
+        }
     }
 }

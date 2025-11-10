@@ -12,10 +12,7 @@ namespace Abp.Specifications
         /// <param name="specification">The specification</param>
         /// <param name="other">The specification instance with which the current specification is combined.</param>
         /// <returns>The combined specification instance.</returns>
-        public static ISpecification<T> And<T>(
-            [NotNull] this ISpecification<T> specification,
-            [NotNull] ISpecification<T> other
-        )
+        public static ISpecification<T> And<T>([NotNull] this ISpecification<T> specification, [NotNull] ISpecification<T> other)
         {
             Check.NotNull(specification, nameof(specification));
             Check.NotNull(other, nameof(other));
@@ -32,10 +29,7 @@ namespace Abp.Specifications
         /// <param name="other">The specification instance with which the current specification
         /// is combined.</param>
         /// <returns>The combined specification instance.</returns>
-        public static ISpecification<T> Or<T>(
-            [NotNull] this ISpecification<T> specification,
-            [NotNull] ISpecification<T> other
-        )
+        public static ISpecification<T> Or<T>([NotNull] this ISpecification<T> specification, [NotNull] ISpecification<T> other)
         {
             Check.NotNull(specification, nameof(specification));
             Check.NotNull(other, nameof(other));
@@ -52,10 +46,7 @@ namespace Abp.Specifications
         /// <param name="other">The specification instance with which the current specification
         /// is combined.</param>
         /// <returns>The combined specification instance.</returns>
-        public static ISpecification<T> AndNot<T>(
-            [NotNull] this ISpecification<T> specification,
-            [NotNull] ISpecification<T> other
-        )
+        public static ISpecification<T> AndNot<T>([NotNull] this ISpecification<T> specification, [NotNull] ISpecification<T> other)
         {
             Check.NotNull(specification, nameof(specification));
             Check.NotNull(other, nameof(other));

@@ -12,40 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Substitutes part of key with another string.
-/// </summary>
-[AttributeUsage(
-    AttributeTargets.Interface | AttributeTargets.Property,
-    AllowMultiple = true,
-    Inherited = true
-)]
-public class KeySubstitutionAttribute : DictionaryBehaviorAttribute, IDictionaryKeyBuilder
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly string oldValue;
-    private readonly string newValue;
+    using System;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="KeySubstitutionAttribute"/> class.
+    /// Substitutes part of key with another string.
     /// </summary>
-    /// <param name="oldValue">The old value.</param>
-    /// <param name="newValue">The new value.</param>
-    public KeySubstitutionAttribute(string oldValue, string newValue)
+    [AttributeUsage(
+        AttributeTargets.Interface | AttributeTargets.Property,
+        AllowMultiple = true,
+        Inherited = true
+    )]
+    public class KeySubstitutionAttribute : DictionaryBehaviorAttribute, IDictionaryKeyBuilder
     {
-        this.oldValue = oldValue;
-        this.newValue = newValue;
-    }
+        private readonly string oldValue;
+        private readonly string newValue;
 
-    string IDictionaryKeyBuilder.GetKey(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        PropertyDescriptor property
-    )
-    {
-        return key.Replace(oldValue, newValue);
+        /// <summary>
+        /// Initializes a new instance of the <see cref="KeySubstitutionAttribute"/> class.
+        /// </summary>
+        /// <param name="oldValue">The old value.</param>
+        /// <param name="newValue">The new value.</param>
+        public KeySubstitutionAttribute(string oldValue, string newValue)
+        {
+            this.oldValue = oldValue;
+            this.newValue = newValue;
+        }
+
+        string IDictionaryKeyBuilder.GetKey(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            PropertyDescriptor property
+        )
+        {
+            return key.Replace(oldValue, newValue);
+        }
     }
 }

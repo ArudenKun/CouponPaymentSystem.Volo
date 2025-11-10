@@ -6,11 +6,7 @@ namespace Abp.Json.SystemTextJson
 {
     public class AbpStringToGuidConverter : JsonConverter<Guid>
     {
-        public override Guid Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override Guid Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
             {
@@ -36,11 +32,7 @@ namespace Abp.Json.SystemTextJson
 
     public class AbpNullableStringToGuidConverter : JsonConverter<Guid?>
     {
-        public override Guid? Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override Guid? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (reader.TokenType == JsonTokenType.String)
             {
@@ -63,11 +55,7 @@ namespace Abp.Json.SystemTextJson
             return null;
         }
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            Guid? value,
-            JsonSerializerOptions options
-        )
+        public override void Write(Utf8JsonWriter writer, Guid? value, JsonSerializerOptions options)
         {
             if (value == null)
             {
@@ -79,4 +67,5 @@ namespace Abp.Json.SystemTextJson
             }
         }
     }
+
 }

@@ -12,176 +12,177 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Reflection;
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Castle.DynamicProxy.Internal;
-
-internal class MixinContributor : CompositeTypeContributor
+namespace Castle.DynamicProxy.Contributors
 {
-    private readonly bool canChangeTarget;
-    private readonly IList<Type> empty = new List<Type>();
-    private readonly IDictionary<Type, FieldReference> fields = new SortedDictionary<
-        Type,
-        FieldReference
-    >(new FieldReferenceComparer());
-    private readonly GetTargetExpressionDelegate getTargetExpression;
+    using System;
+    using System.Collections.Generic;
+    using System.Diagnostics;
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Internal;
 
-    public MixinContributor(INamingScope namingScope, bool canChangeTarget)
-        : base(namingScope)
+    internal class MixinContributor : CompositeTypeContributor
     {
-        this.canChangeTarget = canChangeTarget;
-        getTargetExpression = BuildGetTargetExpression();
-    }
+        private readonly bool canChangeTarget;
+        private readonly IList<Type> empty = new List<Type>();
+        private readonly IDictionary<Type, FieldReference> fields = new SortedDictionary<
+            Type,
+            FieldReference
+        >(new FieldReferenceComparer());
+        private readonly GetTargetExpressionDelegate getTargetExpression;
 
-    public IEnumerable<FieldReference> Fields
-    {
-        get { return fields.Values; }
-    }
-
-    public void AddEmptyInterface(Type @interface)
-    {
-        Debug.Assert(
-            @interface != null,
-            "@interface == null",
-            "Shouldn't be adding empty interfaces..."
-        );
-        Debug.Assert(
-            @interface.IsInterface,
-            "@interface.IsInterface",
-            "Should be adding interfaces only..."
-        );
-        Debug.Assert(
-            !interfaces.Contains(@interface),
-            "!interfaces.Contains(@interface)",
-            "Shouldn't be adding same interface twice..."
-        );
-        Debug.Assert(
-            !empty.Contains(@interface),
-            "!empty.Contains(@interface)",
-            "Shouldn't be adding same interface twice..."
-        );
-        empty.Add(@interface);
-    }
-
-    public override void Generate(ClassEmitter @class)
-    {
-        foreach (var @interface in interfaces)
+        public MixinContributor(INamingScope namingScope, bool canChangeTarget)
+            : base(namingScope)
         {
-            fields[@interface] = BuildTargetField(@class, @interface);
+            this.canChangeTarget = canChangeTarget;
+            getTargetExpression = BuildGetTargetExpression();
         }
 
-        foreach (var emptyInterface in empty)
+        public IEnumerable<FieldReference> Fields
         {
-            fields[emptyInterface] = BuildTargetField(@class, emptyInterface);
+            get { return fields.Values; }
         }
 
-        base.Generate(@class);
-    }
-
-    protected override IEnumerable<MembersCollector> GetCollectors()
-    {
-        foreach (var @interface in interfaces)
+        public void AddEmptyInterface(Type @interface)
         {
-            MembersCollector item;
-            if (@interface.IsInterface)
+            Debug.Assert(
+                @interface != null,
+                "@interface == null",
+                "Shouldn't be adding empty interfaces..."
+            );
+            Debug.Assert(
+                @interface.IsInterface,
+                "@interface.IsInterface",
+                "Should be adding interfaces only..."
+            );
+            Debug.Assert(
+                !interfaces.Contains(@interface),
+                "!interfaces.Contains(@interface)",
+                "Shouldn't be adding same interface twice..."
+            );
+            Debug.Assert(
+                !empty.Contains(@interface),
+                "!empty.Contains(@interface)",
+                "Shouldn't be adding same interface twice..."
+            );
+            empty.Add(@interface);
+        }
+
+        public override void Generate(ClassEmitter @class)
+        {
+            foreach (var @interface in interfaces)
             {
-                item = new InterfaceMembersCollector(@interface);
+                fields[@interface] = BuildTargetField(@class, @interface);
+            }
+
+            foreach (var emptyInterface in empty)
+            {
+                fields[emptyInterface] = BuildTargetField(@class, emptyInterface);
+            }
+
+            base.Generate(@class);
+        }
+
+        protected override IEnumerable<MembersCollector> GetCollectors()
+        {
+            foreach (var @interface in interfaces)
+            {
+                MembersCollector item;
+                if (@interface.IsInterface)
+                {
+                    item = new InterfaceMembersCollector(@interface);
+                }
+                else
+                {
+                    Debug.Assert(@interface.IsDelegateType());
+                    item = new DelegateTypeMembersCollector(@interface);
+                }
+                yield return item;
+            }
+        }
+
+        protected override MethodGenerator GetMethodGenerator(
+            MetaMethod method,
+            ClassEmitter @class,
+            OverrideMethodDelegate overrideMethod
+        )
+        {
+            if (!method.Proxyable)
+            {
+                return new ForwardingMethodGenerator(
+                    method,
+                    overrideMethod,
+                    (c, i) => fields[i.DeclaringType]
+                );
+            }
+
+            var invocation = GetInvocationType(method, @class);
+            return new MethodWithInvocationGenerator(
+                method,
+                @class.GetField("__interceptors"),
+                invocation,
+                getTargetExpression,
+                overrideMethod,
+                null
+            );
+        }
+
+        private GetTargetExpressionDelegate BuildGetTargetExpression()
+        {
+            if (!canChangeTarget)
+            {
+                return (c, m) => fields[m.DeclaringType];
+            }
+
+            return (c, m) =>
+                new NullCoalescingOperatorExpression(
+                    new AsTypeReference(c.GetField("__target"), m.DeclaringType),
+                    fields[m.DeclaringType]
+                );
+        }
+
+        private FieldReference BuildTargetField(ClassEmitter @class, Type type)
+        {
+            var name = "__mixin_" + type.FullName.Replace(".", "_");
+            return @class.CreateField(namingScope.GetUniqueName(name), type);
+        }
+
+        private Type GetInvocationType(MetaMethod method, ClassEmitter emitter)
+        {
+            var scope = emitter.ModuleScope;
+            Type[] invocationInterfaces;
+            if (canChangeTarget)
+            {
+                invocationInterfaces = new[] { typeof(IInvocation), typeof(IChangeProxyTarget) };
             }
             else
             {
-                Debug.Assert(@interface.IsDelegateType());
-                item = new DelegateTypeMembersCollector(@interface);
+                invocationInterfaces = new[] { typeof(IInvocation) };
             }
-            yield return item;
-        }
-    }
+            var key = new CacheKey(
+                method.Method,
+                CompositionInvocationTypeGenerator.BaseType,
+                invocationInterfaces,
+                null
+            );
 
-    protected override MethodGenerator GetMethodGenerator(
-        MetaMethod method,
-        ClassEmitter @class,
-        OverrideMethodDelegate overrideMethod
-    )
-    {
-        if (!method.Proxyable)
-        {
-            return new ForwardingMethodGenerator(
-                method,
-                overrideMethod,
-                (c, i) => fields[i.DeclaringType]
+            // no locking required as we're already within a lock
+
+            return scope.TypeCache.GetOrAddWithoutTakingLock(
+                key,
+                _ =>
+                    new CompositionInvocationTypeGenerator(
+                        method.Method.DeclaringType,
+                        method,
+                        method.Method,
+                        canChangeTarget,
+                        null
+                    )
+                        .Generate(emitter, namingScope)
+                        .BuildType()
             );
         }
-
-        var invocation = GetInvocationType(method, @class);
-        return new MethodWithInvocationGenerator(
-            method,
-            @class.GetField("__interceptors"),
-            invocation,
-            getTargetExpression,
-            overrideMethod,
-            null
-        );
-    }
-
-    private GetTargetExpressionDelegate BuildGetTargetExpression()
-    {
-        if (!canChangeTarget)
-        {
-            return (c, m) => fields[m.DeclaringType];
-        }
-
-        return (c, m) =>
-            new NullCoalescingOperatorExpression(
-                new AsTypeReference(c.GetField("__target"), m.DeclaringType),
-                fields[m.DeclaringType]
-            );
-    }
-
-    private FieldReference BuildTargetField(ClassEmitter @class, Type type)
-    {
-        var name = "__mixin_" + type.FullName.Replace(".", "_");
-        return @class.CreateField(namingScope.GetUniqueName(name), type);
-    }
-
-    private Type GetInvocationType(MetaMethod method, ClassEmitter emitter)
-    {
-        var scope = emitter.ModuleScope;
-        Type[] invocationInterfaces;
-        if (canChangeTarget)
-        {
-            invocationInterfaces = new[] { typeof(IInvocation), typeof(IChangeProxyTarget) };
-        }
-        else
-        {
-            invocationInterfaces = new[] { typeof(IInvocation) };
-        }
-        var key = new CacheKey(
-            method.Method,
-            CompositionInvocationTypeGenerator.BaseType,
-            invocationInterfaces,
-            null
-        );
-
-        // no locking required as we're already within a lock
-
-        return scope.TypeCache.GetOrAddWithoutTakingLock(
-            key,
-            _ =>
-                new CompositionInvocationTypeGenerator(
-                    method.Method.DeclaringType,
-                    method,
-                    method.Method,
-                    canChangeTarget,
-                    null
-                )
-                    .Generate(emitter, namingScope)
-                    .BuildType()
-        );
     }
 }

@@ -28,6 +28,9 @@ namespace Abp.Timing
             return dateTime;
         }
 
-        internal LocalClockProvider() { }
+        internal LocalClockProvider()
+        {
+
+        }
     }
 }

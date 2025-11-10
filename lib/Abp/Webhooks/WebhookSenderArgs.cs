@@ -7,10 +7,10 @@ namespace Abp.Webhooks
     {
         public int? TenantId { get; set; }
 
-        //Webhook information
+        //Webhook information 
 
         /// <summary>
-        /// <see cref="WebhookEvent"/> foreign id
+        /// <see cref="WebhookEvent"/> foreign id 
         /// </summary>
         public Guid WebhookEventId { get; set; }
 
@@ -27,7 +27,7 @@ namespace Abp.Webhooks
         //Subscription information
 
         /// <summary>
-        /// <see cref="WebhookSubscription"/> foreign id
+        /// <see cref="WebhookSubscription"/> foreign id 
         /// </summary>
         public Guid WebhookSubscriptionId { get; set; }
 

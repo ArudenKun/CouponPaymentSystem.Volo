@@ -28,9 +28,7 @@ namespace Abp.Runtime.Security
 
             var claimsIdentity = identity as ClaimsIdentity;
 
-            var userIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c =>
-                c.Type == AbpClaimTypes.UserId
-            );
+            var userIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c => c.Type == AbpClaimTypes.UserId);
             if (userIdOrNull == null || userIdOrNull.Value.IsNullOrWhiteSpace())
             {
                 return null;
@@ -45,9 +43,7 @@ namespace Abp.Runtime.Security
 
             var claimsIdentity = identity as ClaimsIdentity;
 
-            var tenantIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c =>
-                c.Type == AbpClaimTypes.TenantId
-            );
+            var tenantIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c => c.Type == AbpClaimTypes.TenantId);
             if (tenantIdOrNull == null || tenantIdOrNull.Value.IsNullOrWhiteSpace())
             {
                 return null;
@@ -62,9 +58,7 @@ namespace Abp.Runtime.Security
 
             var claimsIdentity = identity as ClaimsIdentity;
 
-            var userIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c =>
-                c.Type == AbpClaimTypes.ImpersonatorUserId
-            );
+            var userIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c => c.Type == AbpClaimTypes.ImpersonatorUserId);
             if (userIdOrNull == null || userIdOrNull.Value.IsNullOrWhiteSpace())
             {
                 return null;
@@ -79,9 +73,7 @@ namespace Abp.Runtime.Security
 
             var claimsIdentity = identity as ClaimsIdentity;
 
-            var tenantIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c =>
-                c.Type == AbpClaimTypes.ImpersonatorTenantId
-            );
+            var tenantIdOrNull = claimsIdentity?.Claims?.FirstOrDefault(c => c.Type == AbpClaimTypes.ImpersonatorTenantId);
             if (tenantIdOrNull == null || tenantIdOrNull.Value.IsNullOrWhiteSpace())
             {
                 return null;

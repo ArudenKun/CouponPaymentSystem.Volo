@@ -132,7 +132,10 @@ namespace Abp.Threading.Timers
                     Elapsed(this, new EventArgs());
                 }
             }
-            catch { }
+            catch
+            {
+
+            }
             finally
             {
                 lock (_taskTimer)

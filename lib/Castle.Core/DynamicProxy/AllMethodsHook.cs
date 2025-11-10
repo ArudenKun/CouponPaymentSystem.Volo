@@ -14,40 +14,41 @@
 
 #nullable enable
 
-namespace Castle.DynamicProxy;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection;
+namespace Castle.DynamicProxy
+{
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
 
 #if FEATURE_SERIALIZATION
-[Serializable]
+    [Serializable]
 #endif
-public class AllMethodsHook : IProxyGenerationHook
-{
-    protected static readonly ICollection<Type> SkippedTypes = new[]
+    public class AllMethodsHook : IProxyGenerationHook
     {
-        typeof(object),
-        typeof(MarshalByRefObject),
-        typeof(ContextBoundObject),
-    };
+        protected static readonly ICollection<Type> SkippedTypes = new[]
+        {
+            typeof(object),
+            typeof(MarshalByRefObject),
+            typeof(ContextBoundObject),
+        };
 
-    public virtual bool ShouldInterceptMethod(Type type, MethodInfo methodInfo)
-    {
-        return SkippedTypes.Contains(methodInfo.DeclaringType!) == false;
-    }
+        public virtual bool ShouldInterceptMethod(Type type, MethodInfo methodInfo)
+        {
+            return SkippedTypes.Contains(methodInfo.DeclaringType!) == false;
+        }
 
-    public virtual void NonProxyableMemberNotification(Type type, MemberInfo memberInfo) { }
+        public virtual void NonProxyableMemberNotification(Type type, MemberInfo memberInfo) { }
 
-    public virtual void MethodsInspected() { }
+        public virtual void MethodsInspected() { }
 
-    public override bool Equals(object? obj)
-    {
-        return obj != null && obj.GetType() == GetType();
-    }
+        public override bool Equals(object? obj)
+        {
+            return obj != null && obj.GetType() == GetType();
+        }
 
-    public override int GetHashCode()
-    {
-        return GetType().GetHashCode();
+        public override int GetHashCode()
+        {
+            return GetType().GetHashCode();
+        }
     }
 }

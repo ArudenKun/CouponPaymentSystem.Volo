@@ -21,8 +21,7 @@ namespace Abp.Application.Navigation
         public UserNavigationManager(
             INavigationManager navigationManager,
             ILocalizationContext localizationContext,
-            IIocResolver iocResolver
-        )
+            IIocResolver iocResolver)
         {
             _navigationManager = navigationManager;
             _localizationContext = localizationContext;
@@ -55,11 +54,7 @@ namespace Abp.Application.Navigation
             return userMenus;
         }
 
-        private async Task<int> FillUserMenuItems(
-            UserIdentifier user,
-            IList<MenuItemDefinition> menuItemDefinitions,
-            IList<UserMenuItem> userMenuItems
-        )
+        private async Task<int> FillUserMenuItems(UserIdentifier user, IList<MenuItemDefinition> menuItemDefinitions, IList<UserMenuItem> userMenuItems)
         {
             //TODO: Can be optimized by re-using FeatureDependencyContext.
 
@@ -72,7 +67,7 @@ namespace Abp.Application.Navigation
 
                 var featureDependencyContext = scope.Resolve<FeatureDependencyContext>();
                 featureDependencyContext.TenantId = user == null ? null : user.TenantId;
-
+                
                 foreach (var menuItemDefinition in menuItemDefinitions)
                 {
                     if (menuItemDefinition.RequiresAuthentication && user == null)
@@ -80,48 +75,21 @@ namespace Abp.Application.Navigation
                         continue;
                     }
 
-                    if (
-                        menuItemDefinition.PermissionDependency != null
-                        && (
-                            user == null
-                            || !(
-                                await menuItemDefinition.PermissionDependency.IsSatisfiedAsync(
-                                    permissionDependencyContext
-                                )
-                            )
-                        )
-                    )
+                    if (menuItemDefinition.PermissionDependency != null &&
+                        (user == null || !(await menuItemDefinition.PermissionDependency.IsSatisfiedAsync(permissionDependencyContext))))
                     {
                         continue;
                     }
 
-                    if (
-                        menuItemDefinition.FeatureDependency != null
-                        && (
-                            AbpSession.MultiTenancySide == MultiTenancySides.Tenant
-                            || (user != null && user.TenantId != null)
-                        )
-                        && !(
-                            await menuItemDefinition.FeatureDependency.IsSatisfiedAsync(
-                                featureDependencyContext
-                            )
-                        )
-                    )
+                    if (menuItemDefinition.FeatureDependency != null &&
+                        (AbpSession.MultiTenancySide == MultiTenancySides.Tenant || (user != null && user.TenantId != null)) &&
+                        !(await menuItemDefinition.FeatureDependency.IsSatisfiedAsync(featureDependencyContext)))
                     {
                         continue;
                     }
 
                     var userMenuItem = new UserMenuItem(menuItemDefinition, _localizationContext);
-                    if (
-                        menuItemDefinition.IsLeaf
-                        || (
-                            await FillUserMenuItems(
-                                user,
-                                menuItemDefinition.Items,
-                                userMenuItem.Items
-                            )
-                        ) > 0
-                    )
+                    if (menuItemDefinition.IsLeaf || (await FillUserMenuItems(user, menuItemDefinition.Items, userMenuItem.Items)) > 0)
                     {
                         userMenuItems.Add(userMenuItem);
                         ++addedMenuItemCount;

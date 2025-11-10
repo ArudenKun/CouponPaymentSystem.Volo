@@ -17,10 +17,7 @@ namespace Abp.Domain.Uow
             FilterParameters = new Dictionary<string, object>();
         }
 
-        internal DataFilterConfiguration(
-            DataFilterConfiguration filterToClone,
-            bool? isEnabled = null
-        )
+        internal DataFilterConfiguration(DataFilterConfiguration filterToClone, bool? isEnabled = null)
             : this(filterToClone.FilterName, isEnabled ?? filterToClone.IsEnabled)
         {
             foreach (var filterParameter in filterToClone.FilterParameters)

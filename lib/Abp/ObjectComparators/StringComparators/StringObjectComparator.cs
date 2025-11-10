@@ -5,11 +5,7 @@ namespace Abp.ObjectComparators.StringComparators
 {
     public class StringObjectComparator : ObjectComparatorBase<string, StringCompareTypes>
     {
-        protected override bool Compare(
-            string baseObject,
-            string compareObject,
-            StringCompareTypes compareTypes
-        )
+        protected override bool Compare(string baseObject, string compareObject, StringCompareTypes compareTypes)
         {
             switch (compareTypes)
             {

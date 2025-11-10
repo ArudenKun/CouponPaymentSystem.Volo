@@ -12,141 +12,144 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Internal;
-
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Reflection;
-
-/// <summary>
-///   Helper class for retrieving attributes.
-/// </summary>
-public static class AttributesUtil
+namespace Castle.Core.Internal
 {
-    /// <summary>
-    /// Gets the attribute.
-    /// </summary>
-    /// <param name="type">The type.</param>
-    /// <returns>The type attribute.</returns>
-    public static T GetAttribute<T>(this Type type)
-        where T : Attribute
-    {
-        return GetAttributes<T>(type).FirstOrDefault();
-    }
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel;
+    using System.Linq;
+    using System.Reflection;
 
     /// <summary>
-    /// Gets the attributes. Does not consider inherited attributes!
+    ///   Helper class for retrieving attributes.
     /// </summary>
-    /// <param name="type">The type.</param>
-    /// <returns>The type attributes.</returns>
-    public static IEnumerable<T> GetAttributes<T>(this Type type)
-        where T : Attribute
+    public static class AttributesUtil
     {
-        foreach (T a in type.GetCustomAttributes(typeof(T), false))
+        /// <summary>
+        /// Gets the attribute.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The type attribute.</returns>
+        public static T GetAttribute<T>(this Type type)
+            where T : Attribute
         {
-            yield return a;
+            return GetAttributes<T>(type).FirstOrDefault();
         }
-    }
 
-    /// <summary>
-    /// Gets the attribute.
-    /// </summary>
-    /// <param name="member">The member.</param>
-    /// <returns>The member attribute.</returns>
-    public static T GetAttribute<T>(this MemberInfo member)
-        where T : Attribute
-    {
-        return GetAttributes<T>(member).FirstOrDefault();
-    }
-
-    /// <summary>
-    /// Gets the attributes. Does not consider inherited attributes!
-    /// </summary>
-    /// <param name="member">The member.</param>
-    /// <returns>The member attributes.</returns>
-    public static IEnumerable<T> GetAttributes<T>(this MemberInfo member)
-        where T : Attribute
-    {
-        foreach (T a in member.GetCustomAttributes(typeof(T), false))
+        /// <summary>
+        /// Gets the attributes. Does not consider inherited attributes!
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns>The type attributes.</returns>
+        public static IEnumerable<T> GetAttributes<T>(this Type type)
+            where T : Attribute
         {
-            yield return a;
-        }
-    }
-
-    /// <summary>
-    ///   Gets the type attribute.
-    /// </summary>
-    /// <param name = "type">The type.</param>
-    /// <returns>The type attribute.</returns>
-    public static T GetTypeAttribute<T>(this Type type)
-        where T : Attribute
-    {
-        var attribute = GetAttribute<T>(type);
-
-        if (attribute == null)
-        {
-            foreach (var baseInterface in type.GetInterfaces())
+            foreach (T a in type.GetCustomAttributes(typeof(T), false))
             {
-                attribute = GetTypeAttribute<T>(baseInterface);
-                if (attribute != null)
-                {
-                    break;
-                }
+                yield return a;
             }
         }
 
-        return attribute;
-    }
-
-    /// <summary>
-    ///   Gets the type attributes.
-    /// </summary>
-    /// <param name = "type">The type.</param>
-    /// <returns>The type attributes.</returns>
-    public static T[] GetTypeAttributes<T>(Type type)
-        where T : Attribute
-    {
-        var attributes = GetAttributes<T>(type).ToArray();
-
-        if (attributes.Length == 0)
+        /// <summary>
+        /// Gets the attribute.
+        /// </summary>
+        /// <param name="member">The member.</param>
+        /// <returns>The member attribute.</returns>
+        public static T GetAttribute<T>(this MemberInfo member)
+            where T : Attribute
         {
-            foreach (var baseInterface in type.GetInterfaces())
+            return GetAttributes<T>(member).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Gets the attributes. Does not consider inherited attributes!
+        /// </summary>
+        /// <param name="member">The member.</param>
+        /// <returns>The member attributes.</returns>
+        public static IEnumerable<T> GetAttributes<T>(this MemberInfo member)
+            where T : Attribute
+        {
+            foreach (T a in member.GetCustomAttributes(typeof(T), false))
             {
-                attributes = GetTypeAttributes<T>(baseInterface);
-                if (attributes.Length > 0)
-                {
-                    break;
-                }
+                yield return a;
             }
         }
 
-        return attributes;
-    }
-
-    public static AttributeUsageAttribute GetAttributeUsage(this Type attributeType)
-    {
-        var attributes = attributeType.GetCustomAttributes<AttributeUsageAttribute>(true).ToArray();
-        return attributes.Length != 0 ? attributes[0] : DefaultAttributeUsage;
-    }
-
-    private static readonly AttributeUsageAttribute DefaultAttributeUsage =
-        new AttributeUsageAttribute(AttributeTargets.All);
-
-    /// <summary>
-    /// Gets the type converter.
-    /// </summary>
-    /// <param name="member">The member.</param>
-    public static Type GetTypeConverter(MemberInfo member)
-    {
-        var attrib = GetAttribute<TypeConverterAttribute>(member);
-
-        if (attrib != null)
+        /// <summary>
+        ///   Gets the type attribute.
+        /// </summary>
+        /// <param name = "type">The type.</param>
+        /// <returns>The type attribute.</returns>
+        public static T GetTypeAttribute<T>(this Type type)
+            where T : Attribute
         {
-            return Type.GetType(attrib.ConverterTypeName);
+            var attribute = GetAttribute<T>(type);
+
+            if (attribute == null)
+            {
+                foreach (var baseInterface in type.GetInterfaces())
+                {
+                    attribute = GetTypeAttribute<T>(baseInterface);
+                    if (attribute != null)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return attribute;
         }
 
-        return null;
+        /// <summary>
+        ///   Gets the type attributes.
+        /// </summary>
+        /// <param name = "type">The type.</param>
+        /// <returns>The type attributes.</returns>
+        public static T[] GetTypeAttributes<T>(Type type)
+            where T : Attribute
+        {
+            var attributes = GetAttributes<T>(type).ToArray();
+
+            if (attributes.Length == 0)
+            {
+                foreach (var baseInterface in type.GetInterfaces())
+                {
+                    attributes = GetTypeAttributes<T>(baseInterface);
+                    if (attributes.Length > 0)
+                    {
+                        break;
+                    }
+                }
+            }
+
+            return attributes;
+        }
+
+        public static AttributeUsageAttribute GetAttributeUsage(this Type attributeType)
+        {
+            var attributes = attributeType
+                .GetCustomAttributes<AttributeUsageAttribute>(true)
+                .ToArray();
+            return attributes.Length != 0 ? attributes[0] : DefaultAttributeUsage;
+        }
+
+        private static readonly AttributeUsageAttribute DefaultAttributeUsage =
+            new AttributeUsageAttribute(AttributeTargets.All);
+
+        /// <summary>
+        /// Gets the type converter.
+        /// </summary>
+        /// <param name="member">The member.</param>
+        public static Type GetTypeConverter(MemberInfo member)
+        {
+            var attrib = GetAttribute<TypeConverterAttribute>(member);
+
+            if (attrib != null)
+            {
+                return Type.GetType(attrib.ConverterTypeName);
+            }
+
+            return null;
+        }
     }
 }

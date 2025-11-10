@@ -9,133 +9,128 @@ using Abp.Timing;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Abp.EntityHistory
+namespace Abp.EntityHistory;
+
+public abstract class EntityHistoryHelperBase
 {
-    public abstract class EntityHistoryHelperBase
+    public ILogger Logger { get; set; }
+    public IAbpSession AbpSession { get; set; }
+    public IClientInfoProvider ClientInfoProvider { get; set; }
+    public IEntityChangeSetReasonProvider EntityChangeSetReasonProvider { get; set; }
+    public IEntityHistoryStore EntityHistoryStore { get; set; }
+
+    protected readonly IEntityHistoryConfiguration EntityHistoryConfiguration;
+    protected readonly IUnitOfWorkManager UnitOfWorkManager;
+
+    protected bool IsEntityHistoryEnabled =>
+        EntityHistoryConfiguration.IsEnabled
+        && (AbpSession.UserId.HasValue || EntityHistoryConfiguration.IsEnabledForAnonymousUsers);
+
+    protected EntityHistoryHelperBase(
+        IEntityHistoryConfiguration entityHistoryConfiguration,
+        IUnitOfWorkManager unitOfWorkManager
+    )
     {
-        public ILogger Logger { get; set; }
-        public IAbpSession AbpSession { get; set; }
-        public IClientInfoProvider ClientInfoProvider { get; set; }
-        public IEntityChangeSetReasonProvider EntityChangeSetReasonProvider { get; set; }
-        public IEntityHistoryStore EntityHistoryStore { get; set; }
+        EntityHistoryConfiguration = entityHistoryConfiguration;
+        UnitOfWorkManager = unitOfWorkManager;
 
-        protected readonly IEntityHistoryConfiguration EntityHistoryConfiguration;
-        protected readonly IUnitOfWorkManager UnitOfWorkManager;
+        AbpSession = NullAbpSession.Instance;
+        Logger = NullLogger.Instance;
+        ClientInfoProvider = NullClientInfoProvider.Instance;
+        EntityChangeSetReasonProvider = NullEntityChangeSetReasonProvider.Instance;
+        EntityHistoryStore = NullEntityHistoryStore.Instance;
+    }
 
-        protected bool IsEntityHistoryEnabled =>
-            EntityHistoryConfiguration.IsEnabled
-            && (
-                AbpSession.UserId.HasValue || EntityHistoryConfiguration.IsEnabledForAnonymousUsers
-            );
+    protected virtual DateTime GetChangeTime(EntityChangeType entityChangeType, object entity)
+    {
+        switch (entityChangeType)
+        {
+            case EntityChangeType.Created:
+                return (entity as IHasCreationTime)?.CreationTime ?? Clock.Now;
+            case EntityChangeType.Deleted:
+                return (entity as IHasDeletionTime)?.DeletionTime ?? Clock.Now;
+            case EntityChangeType.Updated:
+                return (entity as IHasModificationTime)?.LastModificationTime ?? Clock.Now;
+            default:
+                Logger.ErrorFormat(
+                    "Unexpected {0} - {1}",
+                    nameof(entityChangeType),
+                    entityChangeType
+                );
+                return Clock.Now;
+        }
+    }
 
-        protected EntityHistoryHelperBase(
-            IEntityHistoryConfiguration entityHistoryConfiguration,
-            IUnitOfWorkManager unitOfWorkManager
+    protected virtual bool IsTypeOfEntity(Type entityType)
+    {
+        return EntityHelper.IsEntity(entityType) && entityType.IsPublic;
+    }
+
+    protected virtual bool? IsTypeOfAuditedEntity(Type entityType)
+    {
+        var entityTypeInfo = entityType.GetTypeInfo();
+        if (entityTypeInfo.IsDefined(typeof(DisableAuditingAttribute), true))
+        {
+            return false;
+        }
+
+        if (entityTypeInfo.IsDefined(typeof(AuditedAttribute), true))
+        {
+            return true;
+        }
+
+        return null;
+    }
+
+    protected virtual bool? IsTypeOfTrackedEntity(Type entityType)
+    {
+        if (
+            EntityHistoryConfiguration.IgnoredTypes.Any(type =>
+                type.GetTypeInfo().IsAssignableFrom(entityType)
+            )
         )
         {
-            EntityHistoryConfiguration = entityHistoryConfiguration;
-            UnitOfWorkManager = unitOfWorkManager;
-
-            AbpSession = NullAbpSession.Instance;
-            Logger = NullLogger.Instance;
-            ClientInfoProvider = NullClientInfoProvider.Instance;
-            EntityChangeSetReasonProvider = NullEntityChangeSetReasonProvider.Instance;
-            EntityHistoryStore = NullEntityHistoryStore.Instance;
+            return false;
         }
 
-        protected virtual DateTime GetChangeTime(EntityChangeType entityChangeType, object entity)
+        if (EntityHistoryConfiguration.Selectors.Any(selector => selector.Predicate(entityType)))
         {
-            switch (entityChangeType)
-            {
-                case EntityChangeType.Created:
-                    return (entity as IHasCreationTime)?.CreationTime ?? Clock.Now;
-                case EntityChangeType.Deleted:
-                    return (entity as IHasDeletionTime)?.DeletionTime ?? Clock.Now;
-                case EntityChangeType.Updated:
-                    return (entity as IHasModificationTime)?.LastModificationTime ?? Clock.Now;
-                default:
-                    Logger.LogError(
-                        "Unexpected {0} - {1}",
-                        nameof(entityChangeType),
-                        entityChangeType
-                    );
-                    return Clock.Now;
-            }
+            return true;
         }
 
-        protected virtual bool IsTypeOfEntity(Type entityType)
+        return null;
+    }
+
+    protected virtual bool? IsAuditedPropertyInfo(Type entityType, PropertyInfo propertyInfo)
+    {
+        if (propertyInfo.IsDefined(typeof(DisableAuditingAttribute), true))
         {
-            return EntityHelper.IsEntity(entityType) && entityType.IsPublic;
+            return false;
         }
 
-        protected virtual bool? IsTypeOfAuditedEntity(Type entityType)
+        if (propertyInfo.IsDefined(typeof(AuditedAttribute), true))
         {
-            var entityTypeInfo = entityType.GetTypeInfo();
-            if (entityTypeInfo.IsDefined(typeof(DisableAuditingAttribute), true))
-            {
-                return false;
-            }
-
-            if (entityTypeInfo.IsDefined(typeof(AuditedAttribute), true))
-            {
-                return true;
-            }
-
-            return null;
+            return true;
         }
 
-        protected virtual bool? IsTypeOfTrackedEntity(Type entityType)
+        var isTrackedEntity = IsTypeOfTrackedEntity(entityType);
+        var isAuditedEntity = IsTypeOfAuditedEntity(entityType);
+
+        return (isTrackedEntity ?? false) || (isAuditedEntity ?? false);
+    }
+
+    protected virtual bool? IsAuditedPropertyInfo(PropertyInfo propertyInfo)
+    {
+        if (propertyInfo.IsDefined(typeof(DisableAuditingAttribute), true))
         {
-            if (
-                EntityHistoryConfiguration.IgnoredTypes.Any(type =>
-                    type.GetTypeInfo().IsAssignableFrom(entityType)
-                )
-            )
-            {
-                return false;
-            }
-
-            if (
-                EntityHistoryConfiguration.Selectors.Any(selector => selector.Predicate(entityType))
-            )
-            {
-                return true;
-            }
-
-            return null;
+            return false;
         }
 
-        protected virtual bool? IsAuditedPropertyInfo(Type entityType, PropertyInfo propertyInfo)
+        if (propertyInfo.IsDefined(typeof(AuditedAttribute), true))
         {
-            if (propertyInfo.IsDefined(typeof(DisableAuditingAttribute), true))
-            {
-                return false;
-            }
-
-            if (propertyInfo.IsDefined(typeof(AuditedAttribute), true))
-            {
-                return true;
-            }
-
-            var isTrackedEntity = IsTypeOfTrackedEntity(entityType);
-            var isAuditedEntity = IsTypeOfAuditedEntity(entityType);
-
-            return (isTrackedEntity ?? false) || (isAuditedEntity ?? false);
+            return true;
         }
 
-        protected virtual bool? IsAuditedPropertyInfo(PropertyInfo propertyInfo)
-        {
-            if (propertyInfo.IsDefined(typeof(DisableAuditingAttribute), true))
-            {
-                return false;
-            }
-
-            if (propertyInfo.IsDefined(typeof(AuditedAttribute), true))
-            {
-                return true;
-            }
-
-            return null;
-        }
+        return null;
     }
 }

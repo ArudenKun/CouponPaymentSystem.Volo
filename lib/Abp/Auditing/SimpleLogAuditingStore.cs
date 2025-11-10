@@ -1,49 +1,48 @@
 ﻿using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Abp.Auditing
+namespace Abp.Auditing;
+
+/// <summary>
+/// Implements <see cref="IAuditingStore"/> to simply write audits to logs.
+/// </summary>
+public class SimpleLogAuditingStore : IAuditingStore
 {
     /// <summary>
-    /// Implements <see cref="IAuditingStore"/> to simply write audits to logs.
+    /// Singleton instance.
     /// </summary>
-    public class SimpleLogAuditingStore : IAuditingStore
+    public static SimpleLogAuditingStore Instance { get; } = new();
+
+    public ILogger<SimpleLogAuditingStore> Logger { get; set; }
+
+    public SimpleLogAuditingStore()
     {
-        /// <summary>
-        /// Singleton instance.
-        /// </summary>
-        public static SimpleLogAuditingStore Instance { get; } = new SimpleLogAuditingStore();
+        Logger = NullLogger<SimpleLogAuditingStore>.Instance;
+    }
 
-        public ILogger Logger { get; set; }
-
-        public SimpleLogAuditingStore()
+    public Task SaveAsync(AuditInfo auditInfo)
+    {
+        if (auditInfo.Exception == null)
         {
-            Logger = NullLogger.Instance;
+            Logger.LogInformation(auditInfo.ToString());
+        }
+        else
+        {
+            Logger.LogWarning(auditInfo.ToString());
         }
 
-        public Task SaveAsync(AuditInfo auditInfo)
-        {
-            if (auditInfo.Exception == null)
-            {
-                Logger.LogInformation(auditInfo.ToString());
-            }
-            else
-            {
-                Logger.LogWarning(auditInfo.ToString());
-            }
+        return Task.FromResult(0);
+    }
 
-            return Task.FromResult(0);
+    public void Save(AuditInfo auditInfo)
+    {
+        if (auditInfo.Exception == null)
+        {
+            Logger.LogInformation(auditInfo.ToString());
         }
-
-        public void Save(AuditInfo auditInfo)
+        else
         {
-            if (auditInfo.Exception == null)
-            {
-                Logger.LogInformation(auditInfo.ToString());
-            }
-            else
-            {
-                Logger.LogWarning(auditInfo.ToString());
-            }
+            Logger.LogWarning(auditInfo.ToString());
         }
     }
 }

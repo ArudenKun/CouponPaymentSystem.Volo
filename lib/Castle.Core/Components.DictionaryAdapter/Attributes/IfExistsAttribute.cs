@@ -12,12 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
+namespace Castle.Components.DictionaryAdapter
+{
+    using System;
 
-using System;
-
-/// <summary>
-/// Suppresses any on-demand behaviors.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
-public class IfExistsAttribute : Attribute { }
+    /// <summary>
+    /// Suppresses any on-demand behaviors.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = false)]
+    public class IfExistsAttribute : Attribute { }
+}

@@ -14,7 +14,10 @@ namespace Abp.Notifications
         /// </summary>
         public LocalizableString Message
         {
-            get { return _message ?? (this[nameof(Message)] as LocalizableString); }
+            get
+            {
+                return _message ?? (this[nameof(Message)] as LocalizableString);
+            }
             set
             {
                 this[nameof(Message)] = value;
@@ -27,7 +30,10 @@ namespace Abp.Notifications
         /// <summary>
         /// Needed for serialization.
         /// </summary>
-        private LocalizableMessageNotificationData() { }
+        private LocalizableMessageNotificationData()
+        {
+
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LocalizableMessageNotificationData"/> class.

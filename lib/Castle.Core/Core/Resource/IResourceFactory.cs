@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-
-/// <summary>
-/// Depicts the contract for resource factories.
-/// </summary>
-public interface IResourceFactory
+namespace Castle.Core.Resource
 {
-    /// <summary>
-    /// Used to check whether the resource factory
-    /// is able to deal with the given resource
-    /// identifier.
-    /// </summary>
-    /// <remarks>
-    /// Implementors should return <c>true</c>
-    /// only if the given identifier is supported
-    /// by the resource factory
-    /// </remarks>
-    bool Accept(CustomUri uri);
+    using System;
 
     /// <summary>
-    /// Creates an <see cref="IResource"/> instance
-    /// for the given resource identifier
+    /// Depicts the contract for resource factories.
     /// </summary>
-    IResource Create(CustomUri uri);
+    public interface IResourceFactory
+    {
+        /// <summary>
+        /// Used to check whether the resource factory
+        /// is able to deal with the given resource
+        /// identifier.
+        /// </summary>
+        /// <remarks>
+        /// Implementors should return <c>true</c>
+        /// only if the given identifier is supported
+        /// by the resource factory
+        /// </remarks>
+        bool Accept(CustomUri uri);
 
-    /// <summary>
-    /// Creates an <see cref="IResource"/> instance
-    /// for the given resource identifier
-    /// </summary>
-    IResource Create(CustomUri uri, string basePath);
+        /// <summary>
+        /// Creates an <see cref="IResource"/> instance
+        /// for the given resource identifier
+        /// </summary>
+        IResource Create(CustomUri uri);
+
+        /// <summary>
+        /// Creates an <see cref="IResource"/> instance
+        /// for the given resource identifier
+        /// </summary>
+        IResource Create(CustomUri uri, string basePath);
+    }
 }

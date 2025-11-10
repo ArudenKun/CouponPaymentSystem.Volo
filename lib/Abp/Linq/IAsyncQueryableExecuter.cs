@@ -11,24 +11,12 @@ namespace Abp.Linq
     /// </summary>
     public interface IAsyncQueryableExecuter
     {
-        Task<int> CountAsync<T>(
-            IQueryable<T> queryable,
-            CancellationToken cancellationToken = default
-        );
+        Task<int> CountAsync<T>(IQueryable<T> queryable, CancellationToken cancellationToken = default);
 
-        Task<List<T>> ToListAsync<T>(
-            IQueryable<T> queryable,
-            CancellationToken cancellationToken = default
-        );
+        Task<List<T>> ToListAsync<T>(IQueryable<T> queryable, CancellationToken cancellationToken = default);
 
-        Task<T> FirstOrDefaultAsync<T>(
-            IQueryable<T> queryable,
-            CancellationToken cancellationToken = default
-        );
+        Task<T> FirstOrDefaultAsync<T>(IQueryable<T> queryable, CancellationToken cancellationToken = default);
 
-        Task<bool> AnyAsync<T>(
-            IQueryable<T> queryable,
-            CancellationToken cancellationToken = default
-        );
+        Task<bool> AnyAsync<T>(IQueryable<T> queryable, CancellationToken cancellationToken = default);
     }
 }

@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-public interface IDictionaryEqualityHashCodeStrategy
+namespace Castle.Components.DictionaryAdapter
 {
-    bool Equals(IDictionaryAdapter adapter1, IDictionaryAdapter adapter2);
+    public interface IDictionaryEqualityHashCodeStrategy
+    {
+        bool Equals(IDictionaryAdapter adapter1, IDictionaryAdapter adapter2);
 
-    bool GetHashCode(IDictionaryAdapter adapter, out int hashCode);
+        bool GetHashCode(IDictionaryAdapter adapter, out int hashCode);
+    }
 }

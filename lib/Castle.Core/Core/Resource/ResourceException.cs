@@ -12,22 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-using System.Runtime.Serialization;
-
-[Serializable]
-public class ResourceException : Exception
+namespace Castle.Core.Resource
 {
-    public ResourceException() { }
+    using System;
+    using System.Runtime.Serialization;
 
-    public ResourceException(string message)
-        : base(message) { }
+    [Serializable]
+    public class ResourceException : Exception
+    {
+        public ResourceException() { }
 
-    public ResourceException(string message, Exception innerException)
-        : base(message, innerException) { }
+        public ResourceException(string message)
+            : base(message) { }
 
-    protected ResourceException(SerializationInfo info, StreamingContext context)
-        : base(info, context) { }
+        public ResourceException(string message, Exception innerException)
+            : base(message, innerException) { }
+
+        protected ResourceException(SerializationInfo info, StreamingContext context)
+            : base(info, context) { }
+    }
 }

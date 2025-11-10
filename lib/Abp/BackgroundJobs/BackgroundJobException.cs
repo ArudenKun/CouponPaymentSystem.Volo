@@ -16,13 +16,19 @@ namespace Abp.BackgroundJobs
         /// <summary>
         /// Creates a new <see cref="BackgroundJobException"/> object.
         /// </summary>
-        public BackgroundJobException() { }
+        public BackgroundJobException()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="BackgroundJobException"/> object.
         /// </summary>
         public BackgroundJobException(SerializationInfo serializationInfo, StreamingContext context)
-            : base(serializationInfo, context) { }
+            : base(serializationInfo, context)
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="BackgroundJobException"/> object.
@@ -30,6 +36,9 @@ namespace Abp.BackgroundJobs
         /// <param name="message">Exception message</param>
         /// <param name="innerException">Inner exception</param>
         public BackgroundJobException(string message, Exception innerException)
-            : base(message, innerException) { }
+            : base(message, innerException)
+        {
+
+        }
     }
 }

@@ -19,7 +19,10 @@ namespace Abp.Runtime.Validation
             set { this["MaxValue"] = value; }
         }
 
-        public NumericValueValidator() { }
+        public NumericValueValidator()
+        {
+
+        }
 
         public NumericValueValidator(int minValue = int.MinValue, int maxValue = int.MaxValue)
         {

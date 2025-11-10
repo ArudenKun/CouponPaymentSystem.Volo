@@ -5,12 +5,12 @@ namespace Abp.Events.Bus.Factories.Internals
 {
     /// <summary>
     /// This <see cref="IEventHandlerFactory"/> implementation is used to handle events
-    /// by a transient instance object.
+    /// by a transient instance object. 
     /// </summary>
     /// <remarks>
     /// This class always creates a new transient instance of handler.
     /// </remarks>
-    internal class TransientEventHandlerFactory<THandler> : IEventHandlerFactory
+    internal class TransientEventHandlerFactory<THandler> : IEventHandlerFactory 
         where THandler : IEventHandler, new()
     {
         /// <summary>

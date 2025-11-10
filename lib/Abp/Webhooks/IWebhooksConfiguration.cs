@@ -13,7 +13,7 @@ namespace Abp.Webhooks
         TimeSpan TimeoutDuration { get; set; }
 
         /// <summary>
-        ///  How many times <see cref="IWebhookPublisher"/> will try resend webhook until gets HttpStatusCode.OK
+        ///  How many times <see cref="IWebhookPublisher"/> will try resend webhook until gets HttpStatusCode.OK 
         /// </summary>
         int MaxSendAttemptCount { get; set; }
 

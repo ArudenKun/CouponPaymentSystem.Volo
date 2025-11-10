@@ -19,7 +19,7 @@ namespace Abp.Timing
         public DateTime EndTime { get; set; }
 
         /// <summary>
-        /// Gets the time span of the datetime range.
+        /// Gets the time span of the datetime range.  
         /// When set, EndTime is recalculated
         /// </summary>
         public TimeSpan TimeSpan
@@ -33,7 +33,10 @@ namespace Abp.Timing
         /// <summary>
         /// Creates a new <see cref="DateTimeRange"/> object.
         /// </summary>
-        public DateTimeRange() { }
+        public DateTimeRange()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="DateTimeRange"/> object from the given <paramref name="startTime"/> and <paramref name="endTime"/>.
@@ -99,10 +102,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new DateTimeRange(
-                    now.Date.AddDays(1),
-                    now.Date.AddDays(2).AddMilliseconds(-1)
-                );
+                return new DateTimeRange(now.Date.AddDays(1), now.Date.AddDays(2).AddMilliseconds(-1));
             }
         }
 
@@ -148,6 +148,7 @@ namespace Abp.Timing
             }
         }
 
+
         /// <summary>
         /// Gets a date range representing the last year.
         /// </summary>
@@ -156,10 +157,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new DateTimeRange(
-                    new DateTime(now.Year - 1, 1, 1),
-                    new DateTime(now.Year, 1, 1).AddMilliseconds(-1)
-                );
+                return new DateTimeRange(new DateTime(now.Year - 1, 1, 1), new DateTime(now.Year, 1, 1).AddMilliseconds(-1));
             }
         }
 
@@ -171,10 +169,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new DateTimeRange(
-                    new DateTime(now.Year, 1, 1),
-                    new DateTime(now.Year + 1, 1, 1).AddMilliseconds(-1)
-                );
+                return new DateTimeRange(new DateTime(now.Year, 1, 1), new DateTime(now.Year + 1, 1, 1).AddMilliseconds(-1));
             }
         }
 
@@ -186,12 +181,10 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new DateTimeRange(
-                    new DateTime(now.Year + 1, 1, 1),
-                    new DateTime(now.Year + 2, 1, 1).AddMilliseconds(-1)
-                );
+                return new DateTimeRange(new DateTime(now.Year + 1, 1, 1), new DateTime(now.Year + 2, 1, 1).AddMilliseconds(-1));
             }
         }
+
 
         /// <summary>
         /// Gets a date range representing the last 30 days (30x24 hours) including today.

@@ -13,7 +13,7 @@ namespace Abp.Text
     /// </summary>
     /// <example>
     /// Say that str is "My name is Neo." and format is "My name is {name}.".
-    /// Then Extract method gets "Neo" as "name".
+    /// Then Extract method gets "Neo" as "name".  
     /// </example>
     public class FormattedStringValueExtracter
     {
@@ -24,12 +24,7 @@ namespace Abp.Text
         /// <param name="format">Format of the string</param>
         /// <param name="ignoreCase">True, to search case-insensitive.</param>
         /// <param name="splitformatCharacter">format is splitted using this character when provided.</param>
-        public ExtractionResult Extract(
-            string str,
-            string format,
-            bool ignoreCase = false,
-            char? splitformatCharacter = null
-        )
+        public ExtractionResult Extract(string str, string format, bool ignoreCase = false, char? splitformatCharacter = null)
         {
             var stringComparison = ignoreCase
                 ? StringComparison.OrdinalIgnoreCase
@@ -68,14 +63,9 @@ namespace Abp.Text
                         var matchIndex = str.IndexOf(currentToken.Text, stringComparison);
                         if (matchIndex >= 0)
                         {
-                            Debug.Assert(
-                                previousToken != null,
-                                "previousToken can not be null since i > 0 here"
-                            );
+                            Debug.Assert(previousToken != null, "previousToken can not be null since i > 0 here");
 
-                            result.Matches.Add(
-                                new NameValue(previousToken.Text, str.Substring(0, matchIndex))
-                            );
+                            result.Matches.Add(new NameValue(previousToken.Text, str.Substring(0, matchIndex)));
                             result.IsMatch = true;
                             str = str.Substring(matchIndex + currentToken.Text.Length);
                         }
@@ -93,10 +83,7 @@ namespace Abp.Text
             return result;
         }
 
-        private List<FormatStringToken> TokenizeFormat(
-            string originalFormat,
-            char? splitformatCharacter = null
-        )
+        private List<FormatStringToken> TokenizeFormat(string originalFormat, char? splitformatCharacter = null)
         {
             if (splitformatCharacter == null)
             {
@@ -123,12 +110,7 @@ namespace Abp.Text
         /// <param name="values">Array of extracted values if matched</param>
         /// <param name="ignoreCase">True, to search case-insensitive</param>
         /// <returns>True, if matched.</returns>
-        public static bool IsMatch(
-            string str,
-            string format,
-            out string[] values,
-            bool ignoreCase = false
-        )
+        public static bool IsMatch(string str, string format, out string[] values, bool ignoreCase = false)
         {
             var result = new FormattedStringValueExtracter().Extract(str, format, ignoreCase);
             if (!result.IsMatch)

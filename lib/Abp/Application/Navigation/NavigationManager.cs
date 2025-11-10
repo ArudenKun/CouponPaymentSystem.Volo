@@ -23,15 +23,9 @@ namespace Abp.Application.Navigation
             _configuration = configuration;
 
             Menus = new Dictionary<string, MenuDefinition>
-            {
-                {
-                    "MainMenu",
-                    new MenuDefinition(
-                        "MainMenu",
-                        new LocalizableString("MainMenu", AbpConsts.LocalizationSourceName)
-                    )
-                },
-            };
+                    {
+                        {"MainMenu", new MenuDefinition("MainMenu", new LocalizableString("MainMenu", AbpConsts.LocalizationSourceName))}
+                    };
         }
 
         public void Initialize()
@@ -40,11 +34,7 @@ namespace Abp.Application.Navigation
 
             foreach (var providerType in _configuration.Providers)
             {
-                using (
-                    var provider = _iocResolver.ResolveAsDisposable<NavigationProvider>(
-                        providerType
-                    )
-                )
+                using (var provider = _iocResolver.ResolveAsDisposable<NavigationProvider>(providerType))
                 {
                     provider.Object.SetNavigation(context);
                 }

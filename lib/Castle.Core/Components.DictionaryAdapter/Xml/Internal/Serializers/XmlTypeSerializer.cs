@@ -12,41 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public abstract class XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    protected XmlTypeSerializer() { }
+    using System;
 
-    public abstract XmlTypeKind Kind { get; }
-
-    public virtual bool CanGetStub
+    public abstract class XmlTypeSerializer
     {
-        get { return false; }
-    }
+        protected XmlTypeSerializer() { }
 
-    public virtual object GetStub(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        throw Error.NotSupported();
-    }
+        public abstract XmlTypeKind Kind { get; }
 
-    public abstract object GetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor
-    );
-    public abstract void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    );
+        public virtual bool CanGetStub
+        {
+            get { return false; }
+        }
 
-    public static XmlTypeSerializer For(Type type)
-    {
-        return XmlTypeSerializerCache.Instance[type];
+        public virtual object GetStub(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
+        {
+            throw Error.NotSupported();
+        }
+
+        public abstract object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        );
+        public abstract void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        );
+
+        public static XmlTypeSerializer For(Type type)
+        {
+            return XmlTypeSerializerCache.Instance[type];
+        }
     }
 }

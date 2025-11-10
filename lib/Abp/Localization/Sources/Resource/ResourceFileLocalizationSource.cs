@@ -1,11 +1,12 @@
-using System.Collections;
-using System.Collections.Immutable;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Resources;
 using Abp.Configuration.Startup;
 using Abp.Dependency;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
+using System.Collections;
+using System.Collections.Immutable;
+using System.Linq;
 
 namespace Abp.Localization.Sources.Resource
 {
@@ -39,24 +40,18 @@ namespace Abp.Localization.Sources.Resource
         /// <summary>
         /// This method is called by ABP before first usage.
         /// </summary>
-        public virtual void Initialize(
-            ILocalizationConfiguration configuration,
-            IIocResolver iocResolver
-        )
+        public virtual void Initialize(ILocalizationConfiguration configuration, IIocResolver iocResolver)
         {
             _configuration = configuration;
 
             _logger = iocResolver.IsRegistered(typeof(ILoggerFactory))
-                ? iocResolver
-                    .Resolve<ILoggerFactory>()
-                    .CreateLogger(typeof(ResourceFileLocalizationSource))
+                ? iocResolver.Resolve<ILoggerFactory>().Create(typeof(ResourceFileLocalizationSource))
                 : NullLogger.Instance;
         }
 
-        public string? FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
+        public string FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
         {
-            var resource = ResourceManager
-                .GetResourceSet(culture, true, tryDefaults)
+            var resource = ResourceManager.GetResourceSet(culture, true, tryDefaults)
                 .Cast<DictionaryEntry>()
                 .FirstOrDefault(x => x.Value.ToString() == value);
 
@@ -85,13 +80,13 @@ namespace Abp.Localization.Sources.Resource
             return value;
         }
 
-        public string? GetStringOrNull(string name, bool tryDefaults = true)
+        public string GetStringOrNull(string name, bool tryDefaults = true)
         {
             //WARN: tryDefaults is not implemented!
             return ResourceManager.GetString(name);
         }
 
-        public string? GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
+        public string GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
         {
             //WARN: tryDefaults is not implemented!
             return ResourceManager.GetString(name, culture);
@@ -100,13 +95,11 @@ namespace Abp.Localization.Sources.Resource
         public List<string> GetStrings(List<string> names)
         {
             var values = GetStringsInternal(names, CultureInfo.CurrentUICulture);
-            var nullValues = values.Where(x => string.IsNullOrEmpty(x.Value)).ToList();
+            var nullValues = values.Where(x => x.Value == null).ToList();
             if (nullValues.Any())
             {
-                return ReturnGivenNamesOrThrowException(
-                    nullValues.Select(x => x.Name).ToList(),
-                    CultureInfo.CurrentUICulture
-                );
+                return ReturnGivenNamesOrThrowException(nullValues.Select(x => x.Name).ToList(),
+                    CultureInfo.CurrentUICulture);
             }
 
             return values.Select(x => x.Value).ToList();
@@ -115,13 +108,10 @@ namespace Abp.Localization.Sources.Resource
         public List<string> GetStrings(List<string> names, CultureInfo culture)
         {
             var values = GetStringsInternal(names, culture);
-            var nullValues = values.Where(x => string.IsNullOrEmpty(x.Value)).ToList();
+            var nullValues = values.Where(x => x.Value == null).ToList();
             if (nullValues.Any())
             {
-                return ReturnGivenNamesOrThrowException(
-                    nullValues.Select(x => x.Name).ToList(),
-                    culture
-                );
+                return ReturnGivenNamesOrThrowException(nullValues.Select(x => x.Name).ToList(), culture);
             }
 
             return values.Select(x => x.Value).ToList();
@@ -129,33 +119,18 @@ namespace Abp.Localization.Sources.Resource
 
         public List<string> GetStringsOrNull(List<string> names, bool tryDefaults = true)
         {
-            return GetStringsInternal(names, CultureInfo.CurrentUICulture, tryDefaults)
-                .Select(x => x.Value)
-                .ToList();
+            return GetStringsInternal(names, CultureInfo.CurrentUICulture, tryDefaults).Select(x => x.Value).ToList();
         }
 
-        public List<string> GetStringsOrNull(
-            List<string> names,
-            CultureInfo culture,
-            bool tryDefaults = true
-        )
+        public List<string> GetStringsOrNull(List<string> names, CultureInfo culture, bool tryDefaults = true)
         {
             return GetStringsInternal(names, culture, tryDefaults).Select(x => x.Value).ToList();
         }
 
-        private List<NameValue> GetStringsInternal(
-            List<string> names,
-            CultureInfo culture,
-            bool tryDefaults = true
-        )
+        private List<NameValue> GetStringsInternal(List<string> names, CultureInfo culture, bool tryDefaults = true)
         {
             //WARN: tryDefaults is not implemented!
-            return names
-                .Select(name => new NameValue(
-                    name,
-                    ResourceManager.GetString(name, culture) ?? string.Empty
-                ))
-                .ToList();
+            return names.Select(name => new NameValue(name, ResourceManager.GetString(name, culture))).ToList();
         }
 
         /// <summary>
@@ -169,19 +144,12 @@ namespace Abp.Localization.Sources.Resource
         /// <summary>
         /// Gets all strings in specified culture.
         /// </summary>
-        public virtual IReadOnlyList<LocalizedString> GetAllStrings(
-            CultureInfo culture,
-            bool includeDefaults = true
-        )
+        public virtual IReadOnlyList<LocalizedString> GetAllStrings(CultureInfo culture, bool includeDefaults = true)
         {
             return ResourceManager
                 .GetResourceSet(culture, true, includeDefaults)
                 .Cast<DictionaryEntry>()
-                .Select(entry => new LocalizedString(
-                    entry.Key.ToString(),
-                    entry.Value.ToString(),
-                    culture
-                ))
+                .Select(entry => new LocalizedString(entry.Key.ToString(), entry.Value.ToString(), culture))
                 .ToImmutableList();
         }
 
@@ -196,10 +164,7 @@ namespace Abp.Localization.Sources.Resource
             );
         }
 
-        protected virtual List<string> ReturnGivenNamesOrThrowException(
-            List<string> names,
-            CultureInfo culture
-        )
+        protected virtual List<string> ReturnGivenNamesOrThrowException(List<string> names, CultureInfo culture)
         {
             return LocalizationSourceHelper.ReturnGivenNamesOrThrowException(
                 _configuration,

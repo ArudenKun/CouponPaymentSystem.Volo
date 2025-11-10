@@ -44,10 +44,7 @@ namespace Abp.Application.Navigation
 
             if (displayName == null)
             {
-                throw new ArgumentNullException(
-                    "displayName",
-                    "Display name of the menu can not be null."
-                );
+                throw new ArgumentNullException("displayName", "Display name of the menu can not be null.");
             }
 
             Name = name;

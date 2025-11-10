@@ -1,8 +1,8 @@
-﻿using System.Collections.Concurrent;
+﻿using System;
+using System.Collections.Concurrent;
 using Abp.Collections.Extensions;
+using Castle.Core.Logging;
 using JetBrains.Annotations;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Abp.Runtime.Remoting
 {
@@ -10,8 +10,7 @@ namespace Abp.Runtime.Remoting
     {
         public ILogger Logger { get; set; }
 
-        private static readonly ConcurrentDictionary<string, ScopeItem> ScopeDictionary =
-            new ConcurrentDictionary<string, ScopeItem>();
+        private static readonly ConcurrentDictionary<string, ScopeItem> ScopeDictionary = new ConcurrentDictionary<string, ScopeItem>();
 
         private readonly IAmbientDataContext _dataContext;
 

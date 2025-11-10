@@ -12,58 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System.Collections.Generic;
-using System.Reflection;
-
-internal class MetaType
+namespace Castle.DynamicProxy.Generators
 {
-    private readonly MetaTypeElementCollection<MetaEvent> events =
-        new MetaTypeElementCollection<MetaEvent>();
-    private readonly MetaTypeElementCollection<MetaMethod> methods =
-        new MetaTypeElementCollection<MetaMethod>();
-    private readonly Dictionary<MethodInfo, MetaMethod> methodsIndex =
-        new Dictionary<MethodInfo, MetaMethod>();
-    private readonly MetaTypeElementCollection<MetaProperty> properties =
-        new MetaTypeElementCollection<MetaProperty>();
+    using System.Collections.Generic;
+    using System.Reflection;
 
-    public IEnumerable<MetaEvent> Events
+    internal class MetaType
     {
-        get { return events; }
-    }
+        private readonly MetaTypeElementCollection<MetaEvent> events =
+            new MetaTypeElementCollection<MetaEvent>();
+        private readonly MetaTypeElementCollection<MetaMethod> methods =
+            new MetaTypeElementCollection<MetaMethod>();
+        private readonly Dictionary<MethodInfo, MetaMethod> methodsIndex =
+            new Dictionary<MethodInfo, MetaMethod>();
+        private readonly MetaTypeElementCollection<MetaProperty> properties =
+            new MetaTypeElementCollection<MetaProperty>();
 
-    public IEnumerable<MetaMethod> Methods
-    {
-        get
+        public IEnumerable<MetaEvent> Events
         {
-            return methods; // NOTE: should be readonly
+            get { return events; }
         }
-    }
 
-    public IEnumerable<MetaProperty> Properties
-    {
-        get { return properties; }
-    }
+        public IEnumerable<MetaMethod> Methods
+        {
+            get
+            {
+                return methods; // NOTE: should be readonly
+            }
+        }
 
-    public void AddEvent(MetaEvent @event)
-    {
-        events.Add(@event);
-    }
+        public IEnumerable<MetaProperty> Properties
+        {
+            get { return properties; }
+        }
 
-    public void AddMethod(MetaMethod method)
-    {
-        methods.Add(method);
-        methodsIndex.Add(method.Method, method); // shouldn't get added twice
-    }
+        public void AddEvent(MetaEvent @event)
+        {
+            events.Add(@event);
+        }
 
-    public void AddProperty(MetaProperty property)
-    {
-        properties.Add(property);
-    }
+        public void AddMethod(MetaMethod method)
+        {
+            methods.Add(method);
+            methodsIndex.Add(method.Method, method); // shouldn't get added twice
+        }
 
-    public MetaMethod FindMethod(MethodInfo method)
-    {
-        return methodsIndex.TryGetValue(method, out var metaMethod) ? metaMethod : null;
+        public void AddProperty(MetaProperty property)
+        {
+            properties.Add(property);
+        }
+
+        public MetaMethod FindMethod(MethodInfo method)
+        {
+            return methodsIndex.TryGetValue(method, out var metaMethod) ? metaMethod : null;
+        }
     }
 }

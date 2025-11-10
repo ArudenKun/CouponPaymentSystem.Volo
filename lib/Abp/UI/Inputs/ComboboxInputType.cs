@@ -12,17 +12,17 @@ namespace Abp.UI.Inputs
     {
         public ILocalizableComboboxItemSource ItemSource { get; set; }
 
-        public ComboboxInputType() { }
+        public ComboboxInputType()
+        {
+
+        }
 
         public ComboboxInputType(ILocalizableComboboxItemSource itemSource)
         {
             ItemSource = itemSource;
         }
 
-        public ComboboxInputType(
-            ILocalizableComboboxItemSource itemSource,
-            IValueValidator validator
-        )
+        public ComboboxInputType(ILocalizableComboboxItemSource itemSource, IValueValidator validator)
             : base(validator)
         {
             ItemSource = itemSource;

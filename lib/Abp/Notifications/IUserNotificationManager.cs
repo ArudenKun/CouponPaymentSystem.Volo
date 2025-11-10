@@ -18,14 +18,7 @@ namespace Abp.Notifications
         /// <param name="maxResultCount">Maximum result count.</param>
         /// <param name="startDate">List notifications published after startDateTime</param>
         /// <param name="endDate">List notifications published before startDateTime</param>
-        Task<List<UserNotification>> GetUserNotificationsAsync(
-            UserIdentifier user,
-            UserNotificationState? state = null,
-            int skipCount = 0,
-            int maxResultCount = int.MaxValue,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        );
+        Task<List<UserNotification>> GetUserNotificationsAsync(UserIdentifier user, UserNotificationState? state = null, int skipCount = 0, int maxResultCount = int.MaxValue, DateTime? startDate = null, DateTime? endDate = null);
 
         /// <summary>
         /// Gets notifications for a user.
@@ -36,14 +29,7 @@ namespace Abp.Notifications
         /// <param name="maxResultCount">Maximum result count.</param>
         /// <param name="startDate">List notifications published after startDateTime</param>
         /// <param name="endDate">List notifications published before startDateTime</param>
-        List<UserNotification> GetUserNotifications(
-            UserIdentifier user,
-            UserNotificationState? state = null,
-            int skipCount = 0,
-            int maxResultCount = int.MaxValue,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        );
+        List<UserNotification> GetUserNotifications(UserIdentifier user, UserNotificationState? state = null, int skipCount = 0, int maxResultCount = int.MaxValue, DateTime? startDate = null, DateTime? endDate = null);
 
         /// <summary>
         /// Gets user notification count.
@@ -52,12 +38,7 @@ namespace Abp.Notifications
         /// <param name="state">State.</param>
         /// <param name="startDate">List notifications published after startDateTime</param>
         /// <param name="endDate">List notifications published before startDateTime</param>
-        Task<int> GetUserNotificationCountAsync(
-            UserIdentifier user,
-            UserNotificationState? state = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        );
+        Task<int> GetUserNotificationCountAsync(UserIdentifier user, UserNotificationState? state = null, DateTime? startDate = null, DateTime? endDate = null);
 
         /// <summary>
         /// Gets user notification count.
@@ -66,12 +47,7 @@ namespace Abp.Notifications
         /// <param name="state">State.</param>
         /// <param name="startDate">List notifications published after startDateTime</param>
         /// <param name="endDate">List notifications published before startDateTime</param>
-        int GetUserNotificationCount(
-            UserIdentifier user,
-            UserNotificationState? state = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        );
+        int GetUserNotificationCount(UserIdentifier user, UserNotificationState? state = null, DateTime? startDate = null, DateTime? endDate = null);
 
         /// <summary>
         /// Gets a user notification by given id.
@@ -93,11 +69,7 @@ namespace Abp.Notifications
         /// <param name="tenantId">Tenant Id.</param>
         /// <param name="userNotificationId">The user notification id.</param>
         /// <param name="state">New state.</param>
-        Task UpdateUserNotificationStateAsync(
-            int? tenantId,
-            Guid userNotificationId,
-            UserNotificationState state
-        );
+        Task UpdateUserNotificationStateAsync(int? tenantId, Guid userNotificationId, UserNotificationState state);
 
         /// <summary>
         /// Updates a user notification state.
@@ -105,11 +77,7 @@ namespace Abp.Notifications
         /// <param name="tenantId">Tenant Id.</param>
         /// <param name="userNotificationId">The user notification id.</param>
         /// <param name="state">New state.</param>
-        void UpdateUserNotificationState(
-            int? tenantId,
-            Guid userNotificationId,
-            UserNotificationState state
-        );
+        void UpdateUserNotificationState(int? tenantId, Guid userNotificationId, UserNotificationState state);
 
         /// <summary>
         /// Updates all notification states for a user.
@@ -146,12 +114,7 @@ namespace Abp.Notifications
         /// <param name="state">State</param>
         /// <param name="startDate">Delete notifications published after startDateTime</param>
         /// <param name="endDate">Delete notifications published before startDateTime</param>
-        Task DeleteAllUserNotificationsAsync(
-            UserIdentifier user,
-            UserNotificationState? state = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        );
+        Task DeleteAllUserNotificationsAsync(UserIdentifier user, UserNotificationState? state = null, DateTime? startDate = null, DateTime? endDate = null);
 
         /// <summary>
         /// Deletes all notifications of a user.
@@ -160,11 +123,6 @@ namespace Abp.Notifications
         /// <param name="state">State</param>
         /// <param name="startDate">Delete notifications published after startDateTime</param>
         /// <param name="endDate">Delete notifications published before startDateTime</param>
-        void DeleteAllUserNotifications(
-            UserIdentifier user,
-            UserNotificationState? state = null,
-            DateTime? startDate = null,
-            DateTime? endDate = null
-        );
+        void DeleteAllUserNotifications(UserIdentifier user, UserNotificationState? state = null, DateTime? startDate = null, DateTime? endDate = null);
     }
 }

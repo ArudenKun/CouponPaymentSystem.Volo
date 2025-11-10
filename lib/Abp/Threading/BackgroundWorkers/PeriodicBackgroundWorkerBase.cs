@@ -1,11 +1,10 @@
 using System;
 using Abp.Threading.Timers;
-using Microsoft.Extensions.Logging;
 
 namespace Abp.Threading.BackgroundWorkers
 {
     /// <summary>
-    /// Extends <see cref="BackgroundWorkerBase"/> to add a periodic running Timer.
+    /// Extends <see cref="BackgroundWorkerBase"/> to add a periodic running Timer. 
     /// </summary>
     public abstract class PeriodicBackgroundWorkerBase : BackgroundWorkerBase
     {
@@ -50,7 +49,7 @@ namespace Abp.Threading.BackgroundWorkers
             }
             catch (Exception ex)
             {
-                Logger.LogWarning(ex, "Worker failed to start");
+                Logger.Warn(ex.ToString(), ex);
             }
         }
 

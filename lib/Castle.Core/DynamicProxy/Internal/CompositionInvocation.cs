@@ -14,77 +14,78 @@
 
 #nullable enable
 
-namespace Castle.DynamicProxy.Internal;
-
-using System;
-using System.Reflection;
-
-public abstract class CompositionInvocation : AbstractInvocation
+namespace Castle.DynamicProxy.Internal
 {
-    protected object? target;
+    using System;
+    using System.Reflection;
 
-    protected CompositionInvocation(
-        object? target,
-        object proxy,
-        IInterceptor[] interceptors,
-        MethodInfo proxiedMethod,
-        object?[] arguments
-    )
-        : base(proxy, interceptors, proxiedMethod, arguments)
+    public abstract class CompositionInvocation : AbstractInvocation
     {
-        this.target = target;
-    }
+        protected object? target;
 
-    public override object? InvocationTarget
-    {
-        get { return target; }
-    }
-
-    public override MethodInfo? MethodInvocationTarget
-    {
-        get { return InvocationHelper.GetMethodOnObject(target, Method); }
-    }
-
-    public override Type? TargetType
-    {
-        get { return TypeUtil.GetTypeOrNull(target); }
-    }
-
-    protected void EnsureValidProxyTarget(object newTarget)
-    {
-        if (newTarget == null)
+        protected CompositionInvocation(
+            object? target,
+            object proxy,
+            IInterceptor[] interceptors,
+            MethodInfo proxiedMethod,
+            object?[] arguments
+        )
+            : base(proxy, interceptors, proxiedMethod, arguments)
         {
-            throw new ArgumentNullException(nameof(newTarget));
+            this.target = target;
         }
 
-        if (!ReferenceEquals(newTarget, proxyObject))
+        public override object? InvocationTarget
         {
-            return;
+            get { return target; }
         }
 
-        var message =
-            "This is a DynamicProxy2 error: target of proxy has been set to the proxy itself. "
-            + "This would result in recursively calling proxy methods over and over again until stack overflow, which may destabilize your program."
-            + "This usually signifies a bug in the calling code. Make sure no interceptor sets proxy as its own target.";
-        throw new InvalidOperationException(message);
-    }
-
-    protected void EnsureValidTarget()
-    {
-        if (target == null)
+        public override MethodInfo? MethodInvocationTarget
         {
-            ThrowOnNoTarget();
+            get { return InvocationHelper.GetMethodOnObject(target, Method); }
         }
 
-        if (!ReferenceEquals(target, proxyObject))
+        public override Type? TargetType
         {
-            return;
+            get { return TypeUtil.GetTypeOrNull(target); }
         }
 
-        var message =
-            "This is a DynamicProxy2 error: target of invocation has been set to the proxy itself. "
-            + "This may result in recursively calling the method over and over again until stack overflow, which may destabilize your program."
-            + "This usually signifies a bug in the calling code. Make sure no interceptor sets proxy as its invocation target.";
-        throw new InvalidOperationException(message);
+        protected void EnsureValidProxyTarget(object newTarget)
+        {
+            if (newTarget == null)
+            {
+                throw new ArgumentNullException(nameof(newTarget));
+            }
+
+            if (!ReferenceEquals(newTarget, proxyObject))
+            {
+                return;
+            }
+
+            var message =
+                "This is a DynamicProxy2 error: target of proxy has been set to the proxy itself. "
+                + "This would result in recursively calling proxy methods over and over again until stack overflow, which may destabilize your program."
+                + "This usually signifies a bug in the calling code. Make sure no interceptor sets proxy as its own target.";
+            throw new InvalidOperationException(message);
+        }
+
+        protected void EnsureValidTarget()
+        {
+            if (target == null)
+            {
+                ThrowOnNoTarget();
+            }
+
+            if (!ReferenceEquals(target, proxyObject))
+            {
+                return;
+            }
+
+            var message =
+                "This is a DynamicProxy2 error: target of invocation has been set to the proxy itself. "
+                + "This may result in recursively calling the method over and over again until stack overflow, which may destabilize your program."
+                + "This usually signifies a bug in the calling code. Make sure no interceptor sets proxy as its invocation target.";
+            throw new InvalidOperationException(message);
+        }
     }
 }

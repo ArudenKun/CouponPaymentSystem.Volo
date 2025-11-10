@@ -1,10 +1,12 @@
+using System;
+using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.Linq;
 using Abp.Configuration.Startup;
 using Abp.Dependency;
 using Abp.Localization.Dictionaries;
 using Abp.Localization.Sources;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Localization
 {
@@ -12,6 +14,7 @@ namespace Abp.Localization
     {
         public ILogger Logger { get; set; }
 
+        private readonly ILanguageManager _languageManager;
         private readonly ILocalizationConfiguration _configuration;
         private readonly IIocResolver _iocResolver;
         private readonly IDictionary<string, ILocalizationSource> _sources;
@@ -20,11 +23,12 @@ namespace Abp.Localization
         /// Constructor.
         /// </summary>
         public LocalizationManager(
-            ILocalizationConfiguration configuration,
-            IIocResolver iocResolver
-        )
+            ILanguageManager languageManager,
+            ILocalizationConfiguration configuration, 
+            IIocResolver iocResolver)
         {
             Logger = NullLogger.Instance;
+            _languageManager = languageManager;
             _configuration = configuration;
             _iocResolver = iocResolver;
             _sources = new Dictionary<string, ILocalizationSource>();
@@ -39,20 +43,16 @@ namespace Abp.Localization
         {
             if (!_configuration.IsEnabled)
             {
-                Logger.LogDebug("Localization disabled.");
+                Logger.Debug("Localization disabled.");
                 return;
             }
 
-            Logger.LogDebug("Initializing {0} localization sources.", _configuration.Sources.Count);
+            Logger.Debug(string.Format("Initializing {0} localization sources.", _configuration.Sources.Count));
             foreach (var source in _configuration.Sources)
             {
                 if (_sources.ContainsKey(source.Name))
                 {
-                    throw new AbpException(
-                        "There are more than one source with name: "
-                            + source.Name
-                            + "! Source name must be unique!"
-                    );
+                    throw new AbpException("There are more than one source with name: " + source.Name + "! Source name must be unique!");
                 }
 
                 _sources[source.Name] = source;
@@ -62,25 +62,18 @@ namespace Abp.Localization
                 if (source is IDictionaryBasedLocalizationSource)
                 {
                     var dictionaryBasedSource = source as IDictionaryBasedLocalizationSource;
-                    var extensions = _configuration
-                        .Sources.Extensions.Where(e => e.SourceName == source.Name)
-                        .ToList();
+                    var extensions = _configuration.Sources.Extensions.Where(e => e.SourceName == source.Name).ToList();
                     foreach (var extension in extensions)
                     {
                         extension.DictionaryProvider.Initialize(source.Name);
-                        foreach (
-                            var extensionDictionary in extension
-                                .DictionaryProvider
-                                .Dictionaries
-                                .Values
-                        )
+                        foreach (var extensionDictionary in extension.DictionaryProvider.Dictionaries.Values)
                         {
-                            dictionaryBasedSource?.Extend(extensionDictionary);
+                            dictionaryBasedSource.Extend(extensionDictionary);
                         }
                     }
                 }
 
-                Logger.LogDebug("Initialized localization source: {Name}", source.Name);
+                Logger.Debug("Initialized localization source: " + source.Name);
             }
         }
 

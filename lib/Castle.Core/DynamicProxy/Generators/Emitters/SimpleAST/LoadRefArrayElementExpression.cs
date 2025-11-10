@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class LoadRefArrayElementExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly Reference arrayReference;
-    private readonly LiteralIntExpression index;
+    using System.Reflection.Emit;
 
-    public LoadRefArrayElementExpression(int index, Reference arrayReference)
+    internal class LoadRefArrayElementExpression : IExpression
     {
-        this.index = new LiteralIntExpression(index);
-        this.arrayReference = arrayReference;
-    }
+        private readonly Reference arrayReference;
+        private readonly LiteralIntExpression index;
 
-    public void Emit(ILGenerator gen)
-    {
-        ArgumentsUtil.EmitLoadOwnerAndReference(arrayReference, gen);
-        index.Emit(gen);
-        gen.Emit(OpCodes.Ldelem_Ref);
+        public LoadRefArrayElementExpression(int index, Reference arrayReference)
+        {
+            this.index = new LiteralIntExpression(index);
+            this.arrayReference = arrayReference;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            ArgumentsUtil.EmitLoadOwnerAndReference(arrayReference, gen);
+            index.Emit(gen);
+            gen.Emit(OpCodes.Ldelem_Ref);
+        }
     }
 }

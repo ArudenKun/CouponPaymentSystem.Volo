@@ -12,45 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-internal class ForwardingMethodGenerator : MethodGenerator
+namespace Castle.DynamicProxy.Generators
 {
-    private readonly GetTargetReferenceDelegate getTargetReference;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
-    public ForwardingMethodGenerator(
-        MetaMethod method,
-        OverrideMethodDelegate overrideMethod,
-        GetTargetReferenceDelegate getTargetReference
-    )
-        : base(method, overrideMethod)
+    internal class ForwardingMethodGenerator : MethodGenerator
     {
-        this.getTargetReference = getTargetReference;
-    }
+        private readonly GetTargetReferenceDelegate getTargetReference;
 
-    protected override MethodEmitter BuildProxiedMethodBody(
-        MethodEmitter emitter,
-        ClassEmitter @class,
-        INamingScope namingScope
-    )
-    {
-        var targetReference = getTargetReference(@class, MethodToOverride);
-        var arguments = ArgumentsUtil.ConvertToArgumentReferenceExpression(
-            MethodToOverride.GetParameters()
-        );
+        public ForwardingMethodGenerator(
+            MetaMethod method,
+            OverrideMethodDelegate overrideMethod,
+            GetTargetReferenceDelegate getTargetReference
+        )
+            : base(method, overrideMethod)
+        {
+            this.getTargetReference = getTargetReference;
+        }
 
-        emitter.CodeBuilder.AddStatement(
-            new ReturnStatement(
-                new MethodInvocationExpression(targetReference, MethodToOverride, arguments)
-                {
-                    VirtualCall = true,
-                }
-            )
-        );
-        return emitter;
+        protected override MethodEmitter BuildProxiedMethodBody(
+            MethodEmitter emitter,
+            ClassEmitter @class,
+            INamingScope namingScope
+        )
+        {
+            var targetReference = getTargetReference(@class, MethodToOverride);
+            var arguments = ArgumentsUtil.ConvertToArgumentReferenceExpression(
+                MethodToOverride.GetParameters()
+            );
+
+            emitter.CodeBuilder.AddStatement(
+                new ReturnStatement(
+                    new MethodInvocationExpression(targetReference, MethodToOverride, arguments)
+                    {
+                        VirtualCall = true,
+                    }
+                )
+            );
+            return emitter;
+        }
     }
 }

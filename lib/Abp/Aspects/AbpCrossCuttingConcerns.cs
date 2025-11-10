@@ -16,25 +16,17 @@ namespace Abp.Aspects
         {
             if (concerns.IsNullOrEmpty())
             {
-                throw new ArgumentNullException(
-                    nameof(concerns),
-                    $"{nameof(concerns)} should be provided!"
-                );
+                throw new ArgumentNullException(nameof(concerns), $"{nameof(concerns)} should be provided!");
             }
 
-            (obj as IAvoidDuplicateCrossCuttingConcerns)?.AppliedCrossCuttingConcerns.AddRange(
-                concerns
-            );
+            (obj as IAvoidDuplicateCrossCuttingConcerns)?.AppliedCrossCuttingConcerns.AddRange(concerns);
         }
 
         public static void RemoveApplied(object obj, params string[] concerns)
         {
             if (concerns.IsNullOrEmpty())
             {
-                throw new ArgumentNullException(
-                    nameof(concerns),
-                    $"{nameof(concerns)} should be provided!"
-                );
+                throw new ArgumentNullException(nameof(concerns), $"{nameof(concerns)} should be provided!");
             }
 
             var crossCuttingEnabledObj = obj as IAvoidDuplicateCrossCuttingConcerns;
@@ -61,9 +53,7 @@ namespace Abp.Aspects
                 throw new ArgumentNullException(nameof(concern));
             }
 
-            return (
-                    obj as IAvoidDuplicateCrossCuttingConcerns
-                )?.AppliedCrossCuttingConcerns.Contains(concern) ?? false;
+            return (obj as IAvoidDuplicateCrossCuttingConcerns)?.AppliedCrossCuttingConcerns.Contains(concern) ?? false;
         }
 
         public static IDisposable Applying(object obj, params string[] concerns)

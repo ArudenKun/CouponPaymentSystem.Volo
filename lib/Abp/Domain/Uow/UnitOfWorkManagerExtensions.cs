@@ -8,8 +8,7 @@ namespace Abp.Domain.Uow
         public static void WithUnitOfWork(
             this IUnitOfWorkManager manager,
             Action action,
-            UnitOfWorkOptions options = null
-        )
+            UnitOfWorkOptions options = null)
         {
             using (var uow = manager.Begin(options ?? new UnitOfWorkOptions()))
             {
@@ -21,8 +20,7 @@ namespace Abp.Domain.Uow
         public static async Task WithUnitOfWorkAsync(
             this IUnitOfWorkManager manager,
             Func<Task> action,
-            UnitOfWorkOptions options = null
-        )
+            UnitOfWorkOptions options = null)
         {
             using (var uow = manager.Begin(options ?? new UnitOfWorkOptions()))
             {
@@ -34,8 +32,7 @@ namespace Abp.Domain.Uow
         public static TResult WithUnitOfWork<TResult>(
             this IUnitOfWorkManager manager,
             Func<TResult> action,
-            UnitOfWorkOptions options = null
-        )
+            UnitOfWorkOptions options = null)
         {
             TResult result;
 
@@ -51,8 +48,7 @@ namespace Abp.Domain.Uow
         public static async Task<TResult> WithUnitOfWorkAsync<TResult>(
             this IUnitOfWorkManager manager,
             Func<Task<TResult>> action,
-            UnitOfWorkOptions options = null
-        )
+            UnitOfWorkOptions options = null)
         {
             TResult result;
 

@@ -18,8 +18,8 @@ namespace Abp.Notifications
         /// <param name="entityIdentifier">The entity identifier if this notification is related to an entity</param>
         /// <param name="severity">Notification severity</param>
         /// <param name="userIds">
-        /// Target user id(s).
-        /// Used to send notification to specific user(s) (without checking the subscription).
+        /// Target user id(s). 
+        /// Used to send notification to specific user(s) (without checking the subscription). 
         /// If this is null/empty, the notification is sent to subscribed users.
         /// </param>
         /// <param name="excludedUserIds">
@@ -33,7 +33,7 @@ namespace Abp.Notifications
         /// This should not be set if <paramref name="userIds"/> is set.
         /// <see cref="NotificationPublisher.AllTenants"/> can be passed to indicate all tenants.
         /// But this can only work in a single database approach (all tenants are stored in host database).
-        /// If this is null, then it's automatically set to the current tenant on <see cref="IAbpSession.TenantId"/>.
+        /// If this is null, then it's automatically set to the current tenant on <see cref="IAbpSession.TenantId"/>. 
         /// </param>
         /// <param name="targetNotifiers">Which realtime notifiers should handle this notification. Given notifier must be added to the INotificationConfiguration.Notifiers</param>
         Task PublishAsync(
@@ -44,7 +44,6 @@ namespace Abp.Notifications
             UserIdentifier[] userIds = null,
             UserIdentifier[] excludedUserIds = null,
             int?[] tenantIds = null,
-            Type[] targetNotifiers = null
-        );
+            Type[] targetNotifiers = null);
     }
 }

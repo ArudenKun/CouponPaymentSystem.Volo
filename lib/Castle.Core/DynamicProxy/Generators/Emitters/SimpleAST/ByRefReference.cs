@@ -12,35 +12,36 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
-
-[DebuggerDisplay("&{localReference}")]
-internal class ByRefReference : TypeReference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly LocalReference localReference;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection.Emit;
 
-    public ByRefReference(LocalReference localReference)
-        : base(localReference.Type)
+    [DebuggerDisplay("&{localReference}")]
+    internal class ByRefReference : TypeReference
     {
-        this.localReference = localReference;
-    }
+        private readonly LocalReference localReference;
 
-    public override void LoadAddressOfReference(ILGenerator gen)
-    {
-        localReference.LoadAddressOfReference(gen);
-    }
+        public ByRefReference(LocalReference localReference)
+            : base(localReference.Type)
+        {
+            this.localReference = localReference;
+        }
 
-    public override void LoadReference(ILGenerator gen)
-    {
-        localReference.LoadAddressOfReference(gen);
-    }
+        public override void LoadAddressOfReference(ILGenerator gen)
+        {
+            localReference.LoadAddressOfReference(gen);
+        }
 
-    public override void StoreReference(ILGenerator gen)
-    {
-        throw new NotImplementedException();
+        public override void LoadReference(ILGenerator gen)
+        {
+            localReference.LoadAddressOfReference(gen);
+        }
+
+        public override void StoreReference(ILGenerator gen)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

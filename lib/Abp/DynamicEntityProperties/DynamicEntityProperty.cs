@@ -11,7 +11,7 @@ namespace Abp.DynamicEntityProperties
         /// Maximum length of the <see cref="EntityFullName"/> property.
         /// </summary>
         public const int MaxEntityFullName = 256;
-
+        
         [StringLength(MaxEntityFullName)]
         public string EntityFullName { get; set; }
 
@@ -19,8 +19,9 @@ namespace Abp.DynamicEntityProperties
         public int DynamicPropertyId { get; set; }
 
         public int? TenantId { get; set; }
-
+        
         [ForeignKey("DynamicPropertyId")]
         public virtual DynamicProperty DynamicProperty { get; set; }
+
     }
 }

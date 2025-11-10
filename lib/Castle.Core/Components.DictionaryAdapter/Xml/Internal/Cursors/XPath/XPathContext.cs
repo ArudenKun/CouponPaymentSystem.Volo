@@ -12,58 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
-internal class XPathContext : XsltContext
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly XsltContext context;
+    using System.Xml.XPath;
+    using System.Xml.Xsl;
 
-    public XPathContext(XsltContext xpathContext)
+    internal class XPathContext : XsltContext
     {
-        this.context = xpathContext;
-    }
+        private readonly XsltContext context;
 
-    public override string DefaultNamespace
-    {
-        // Must be empty, or XPath evaluation will break
-        get { return string.Empty; }
-    }
+        public XPathContext(XsltContext xpathContext)
+        {
+            this.context = xpathContext;
+        }
 
-    public override string LookupNamespace(string prefix)
-    {
-        // Must return empty uri for empty prefix, or XPath evaluation will break
-        return string.IsNullOrEmpty(prefix) ? string.Empty : context.LookupNamespace(prefix);
-    }
+        public override string DefaultNamespace
+        {
+            // Must be empty, or XPath evaluation will break
+            get { return string.Empty; }
+        }
 
-    public override bool Whitespace
-    {
-        get { return context.Whitespace; }
-    }
+        public override string LookupNamespace(string prefix)
+        {
+            // Must return empty uri for empty prefix, or XPath evaluation will break
+            return string.IsNullOrEmpty(prefix) ? string.Empty : context.LookupNamespace(prefix);
+        }
 
-    public override bool PreserveWhitespace(XPathNavigator node)
-    {
-        return context.PreserveWhitespace(node);
-    }
+        public override bool Whitespace
+        {
+            get { return context.Whitespace; }
+        }
 
-    public override int CompareDocument(string baseUri, string nextbaseUri)
-    {
-        return context.CompareDocument(baseUri, nextbaseUri);
-    }
+        public override bool PreserveWhitespace(XPathNavigator node)
+        {
+            return context.PreserveWhitespace(node);
+        }
 
-    public override IXsltContextFunction ResolveFunction(
-        string prefix,
-        string name,
-        XPathResultType[] argTypes
-    )
-    {
-        return context.ResolveFunction(prefix, name, argTypes);
-    }
+        public override int CompareDocument(string baseUri, string nextbaseUri)
+        {
+            return context.CompareDocument(baseUri, nextbaseUri);
+        }
 
-    public override IXsltContextVariable ResolveVariable(string prefix, string name)
-    {
-        return context.ResolveVariable(prefix, name);
+        public override IXsltContextFunction ResolveFunction(
+            string prefix,
+            string name,
+            XPathResultType[] argTypes
+        )
+        {
+            return context.ResolveFunction(prefix, name, argTypes);
+        }
+
+        public override IXsltContextVariable ResolveVariable(string prefix, string name)
+        {
+            return context.ResolveVariable(prefix, name);
+        }
     }
 }

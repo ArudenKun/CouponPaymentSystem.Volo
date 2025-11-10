@@ -21,6 +21,6 @@ namespace Abp.Application.Features
         /// <summary>
         /// This <see cref="Feature"/> can be enabled/disabled per tenant and edition.
         /// </summary>
-        All = 3,
+        All = 3
     }
 }

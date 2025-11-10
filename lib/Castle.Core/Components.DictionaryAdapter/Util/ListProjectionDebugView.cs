@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Diagnostics;
-
-internal sealed class ListProjectionDebugView<T>
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly ListProjection<T> projection;
+    using System;
+    using System.Diagnostics;
 
-    public ListProjectionDebugView(ListProjection<T> projection)
+    internal sealed class ListProjectionDebugView<T>
     {
-        if (projection == null)
-            throw new ArgumentNullException(nameof(projection));
+        private readonly ListProjection<T> projection;
 
-        this.projection = projection;
-    }
-
-    [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
-    public T[] Items
-    {
-        get
+        public ListProjectionDebugView(ListProjection<T> projection)
         {
-            T[] array = new T[projection.Count];
-            projection.CopyTo(array, 0);
-            return array;
-        }
-    }
+            if (projection == null)
+                throw new ArgumentNullException(nameof(projection));
 
-    public ICollectionAdapter<T> Adapter
-    {
-        get { return projection.Adapter; }
+            this.projection = projection;
+        }
+
+        [DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
+        public T[] Items
+        {
+            get
+            {
+                T[] array = new T[projection.Count];
+                projection.CopyTo(array, 0);
+                return array;
+            }
+        }
+
+        public ICollectionAdapter<T> Adapter
+        {
+            get { return projection.Adapter; }
+        }
     }
 }

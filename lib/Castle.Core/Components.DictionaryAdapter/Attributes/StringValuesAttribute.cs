@@ -12,54 +12,55 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Converts all properties to strings.
-/// </summary>
-[AttributeUsage(
-    AttributeTargets.Interface | AttributeTargets.Property,
-    AllowMultiple = false,
-    Inherited = true
-)]
-public class StringValuesAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
+namespace Castle.Components.DictionaryAdapter
 {
+    using System;
+
     /// <summary>
-    /// Gets or sets the format.
+    /// Converts all properties to strings.
     /// </summary>
-    /// <value>The format.</value>
-    public string Format { get; set; }
-
-    bool IDictionaryPropertySetter.SetPropertyValue(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        ref object value,
-        PropertyDescriptor property
-    )
+    [AttributeUsage(
+        AttributeTargets.Interface | AttributeTargets.Property,
+        AllowMultiple = false,
+        Inherited = true
+    )]
+    public class StringValuesAttribute : DictionaryBehaviorAttribute, IDictionaryPropertySetter
     {
-        if (value != null)
+        /// <summary>
+        /// Gets or sets the format.
+        /// </summary>
+        /// <value>The format.</value>
+        public string Format { get; set; }
+
+        bool IDictionaryPropertySetter.SetPropertyValue(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            ref object value,
+            PropertyDescriptor property
+        )
         {
-            value = GetPropertyAsString(property, value);
+            if (value != null)
+            {
+                value = GetPropertyAsString(property, value);
+            }
+            return true;
         }
-        return true;
-    }
 
-    private string GetPropertyAsString(PropertyDescriptor property, object value)
-    {
-        if (string.IsNullOrEmpty(Format) == false)
+        private string GetPropertyAsString(PropertyDescriptor property, object value)
         {
-            return string.Format(Format, value);
+            if (string.IsNullOrEmpty(Format) == false)
+            {
+                return string.Format(Format, value);
+            }
+
+            var converter = property.TypeConverter;
+
+            if (converter != null && converter.CanConvertTo(typeof(string)))
+            {
+                return (string)converter.ConvertTo(value, typeof(string));
+            }
+
+            return value.ToString();
         }
-
-        var converter = property.TypeConverter;
-
-        if (converter != null && converter.CanConvertTo(typeof(string)))
-        {
-            return (string)converter.ConvertTo(value, typeof(string));
-        }
-
-        return value.ToString();
     }
 }

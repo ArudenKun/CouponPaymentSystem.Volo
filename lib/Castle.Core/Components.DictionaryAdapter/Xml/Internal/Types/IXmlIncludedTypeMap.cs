@@ -12,26 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public interface IXmlIncludedTypeMap
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    IXmlIncludedType Default { get; }
+    using System;
 
-    bool TryGet(XmlName xsiType, out IXmlIncludedType includedType);
-    bool TryGet(Type clrType, out IXmlIncludedType includedType);
-}
-
-public static class XmlIncludedTypeMapExtensions
-{
-    public static IXmlIncludedType Require(this IXmlIncludedTypeMap includedTypes, Type clrType)
+    public interface IXmlIncludedTypeMap
     {
-        IXmlIncludedType includedType;
-        if (includedTypes.TryGet(clrType, out includedType))
-            return includedType;
+        IXmlIncludedType Default { get; }
 
-        throw Error.NotXmlKnownType(clrType);
+        bool TryGet(XmlName xsiType, out IXmlIncludedType includedType);
+        bool TryGet(Type clrType, out IXmlIncludedType includedType);
+    }
+
+    public static class XmlIncludedTypeMapExtensions
+    {
+        public static IXmlIncludedType Require(this IXmlIncludedTypeMap includedTypes, Type clrType)
+        {
+            IXmlIncludedType includedType;
+            if (includedTypes.TryGet(clrType, out includedType))
+                return includedType;
+
+            throw Error.NotXmlKnownType(clrType);
+        }
     }
 }

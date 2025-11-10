@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.Collections.Generic;
-
-/// <summary>
-/// Defines the contract for building <see cref="IDictionaryBehavior"/>s.
-/// </summary>
-public interface IDictionaryBehaviorBuilder
+namespace Castle.Components.DictionaryAdapter
 {
+    using System.Collections.Generic;
+
     /// <summary>
-    /// Builds the dictionary behaviors.
+    /// Defines the contract for building <see cref="IDictionaryBehavior"/>s.
     /// </summary>
-    object[] BuildBehaviors();
+    public interface IDictionaryBehaviorBuilder
+    {
+        /// <summary>
+        /// Builds the dictionary behaviors.
+        /// </summary>
+        object[] BuildBehaviors();
+    }
 }

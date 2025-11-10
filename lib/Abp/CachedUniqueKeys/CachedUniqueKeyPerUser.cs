@@ -46,10 +46,8 @@ namespace Abp.CachedUniqueKeys
             }
 
             var cache = GetCache(cacheName);
-            return await cache.GetAsync(
-                GetCacheKeyForUser(tenantId, userId),
-                () => Task.FromResult(Guid.NewGuid().ToString("N"))
-            );
+            return await cache.GetAsync(GetCacheKeyForUser(tenantId, userId),
+                () => Task.FromResult(Guid.NewGuid().ToString("N")));
         }
 
         public virtual async Task RemoveKeyAsync(string cacheName, int? tenantId, long? userId)
@@ -97,10 +95,8 @@ namespace Abp.CachedUniqueKeys
             }
 
             var cache = GetCache(cacheName);
-            return cache.Get(
-                GetCacheKeyForUser(tenantId, userId),
-                () => Guid.NewGuid().ToString("N")
-            );
+            return cache.Get(GetCacheKeyForUser(tenantId, userId),
+                () => Guid.NewGuid().ToString("N"));
         }
 
         public virtual void RemoveKey(string cacheName, int? tenantId, long? userId)

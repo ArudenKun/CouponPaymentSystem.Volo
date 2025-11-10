@@ -103,10 +103,7 @@ namespace Abp
                     // that .NET regards the Data1 and Data2 block as an Int32 and an Int16,
                     // respectively.  That means that it switches the order on little-endian
                     // systems.  So again, we have to reverse.
-                    if (
-                        guidType == SequentialGuidType.SequentialAsString
-                        && BitConverter.IsLittleEndian
-                    )
+                    if (guidType == SequentialGuidType.SequentialAsString && BitConverter.IsLittleEndian)
                     {
                         Array.Reverse(guidBytes, 0, 4);
                         Array.Reverse(guidBytes, 4, 2);
@@ -161,7 +158,7 @@ namespace Abp
             /// The sequential portion of the GUID should be located at the end
             /// of the Data4 block.
             /// </summary>
-            SequentialAtEnd,
+            SequentialAtEnd
         }
     }
 }

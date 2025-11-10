@@ -15,20 +15,13 @@ namespace Abp.Json.SystemTextJson
         protected List<string> InputDateTimeFormats { get; set; }
         protected string OutputDateTimeFormat { get; set; }
 
-        public AbpDateTimeConverter(
-            List<string> inputDateTimeFormats = null,
-            string outputDateTimeFormat = null
-        )
+        public AbpDateTimeConverter(List<string> inputDateTimeFormats = null, string outputDateTimeFormat = null)
         {
             InputDateTimeFormats = inputDateTimeFormats ?? new List<string>();
             OutputDateTimeFormat = outputDateTimeFormat;
         }
 
-        public override DateTime Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        public override DateTime Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (!InputDateTimeFormats.IsNullOrEmpty())
             {
@@ -37,15 +30,7 @@ namespace Abp.Json.SystemTextJson
                     var s = reader.GetString();
                     foreach (var format in InputDateTimeFormats)
                     {
-                        if (
-                            DateTime.TryParseExact(
-                                s,
-                                format,
-                                CultureInfo.CurrentUICulture,
-                                DateTimeStyles.None,
-                                out var outDateTime
-                            )
-                        )
+                        if (DateTime.TryParseExact(s, format, CultureInfo.CurrentUICulture, DateTimeStyles.None, out var outDateTime))
                         {
                             return Clock.Normalize(outDateTime);
                         }
@@ -58,26 +43,15 @@ namespace Abp.Json.SystemTextJson
             }
 
             var dateText = reader.GetString();
-            if (
-                DateTime.TryParse(
-                    dateText,
-                    CultureInfo.CurrentUICulture,
-                    DateTimeStyles.None,
-                    out var date
-                )
-            )
+            if (DateTime.TryParse(dateText, CultureInfo.CurrentUICulture, DateTimeStyles.None, out var date))
             {
-                return Clock.Normalize(date);
+                return Clock.Normalize(date);    
             }
 
             throw new JsonException("Can't get datetime from the reader!");
         }
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            DateTime value,
-            JsonSerializerOptions options
-        )
+        public override void Write(Utf8JsonWriter writer, DateTime value, JsonSerializerOptions options)
         {
             if (OutputDateTimeFormat.IsNullOrWhiteSpace())
             {
@@ -85,11 +59,7 @@ namespace Abp.Json.SystemTextJson
             }
             else
             {
-                writer.WriteStringValue(
-                    Clock
-                        .Normalize(value)
-                        .ToString(OutputDateTimeFormat, CultureInfo.CurrentUICulture)
-                );
+                writer.WriteStringValue(Clock.Normalize(value).ToString(OutputDateTimeFormat, CultureInfo.CurrentUICulture));
             }
         }
     }
@@ -99,20 +69,13 @@ namespace Abp.Json.SystemTextJson
         protected List<string> InputDateTimeFormats { get; set; }
         protected string OutputDateTimeFormat { get; set; }
 
-        public AbpNullableDateTimeConverter(
-            List<string> inputDateTimeFormats = null,
-            string outputDateTimeFormat = null
-        )
+        public AbpNullableDateTimeConverter(List<string> inputDateTimeFormats = null, string outputDateTimeFormat = null)
         {
             InputDateTimeFormats = inputDateTimeFormats ?? new List<string>();
             OutputDateTimeFormat = outputDateTimeFormat;
         }
-
-        public override DateTime? Read(
-            ref Utf8JsonReader reader,
-            Type typeToConvert,
-            JsonSerializerOptions options
-        )
+        
+        public override DateTime? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
             if (!InputDateTimeFormats.IsNullOrEmpty())
             {
@@ -123,18 +86,10 @@ namespace Abp.Json.SystemTextJson
                     {
                         return null;
                     }
-
+                    
                     foreach (var format in InputDateTimeFormats)
                     {
-                        if (
-                            DateTime.TryParseExact(
-                                s,
-                                format,
-                                CultureInfo.CurrentUICulture,
-                                DateTimeStyles.None,
-                                out var outDateTime
-                            )
-                        )
+                        if (DateTime.TryParseExact(s, format, CultureInfo.CurrentUICulture, DateTimeStyles.None, out var outDateTime))
                         {
                             return Clock.Normalize(outDateTime);
                         }
@@ -152,26 +107,15 @@ namespace Abp.Json.SystemTextJson
                 return null;
             }
 
-            if (
-                DateTime.TryParse(
-                    dateText,
-                    CultureInfo.CurrentUICulture,
-                    DateTimeStyles.None,
-                    out var date
-                )
-            )
+            if (DateTime.TryParse(dateText, CultureInfo.CurrentUICulture, DateTimeStyles.None, out var date))
             {
-                return Clock.Normalize(date);
+                return Clock.Normalize(date);    
             }
 
             return null;
         }
 
-        public override void Write(
-            Utf8JsonWriter writer,
-            DateTime? value,
-            JsonSerializerOptions options
-        )
+        public override void Write(Utf8JsonWriter writer, DateTime? value, JsonSerializerOptions options)
         {
             if (value == null)
             {
@@ -185,11 +129,7 @@ namespace Abp.Json.SystemTextJson
                 }
                 else
                 {
-                    writer.WriteStringValue(
-                        Clock
-                            .Normalize(value.Value)
-                            .ToString(OutputDateTimeFormat, CultureInfo.CurrentUICulture)
-                    );
+                    writer.WriteStringValue(Clock.Normalize(value.Value).ToString(OutputDateTimeFormat, CultureInfo.CurrentUICulture));
                 }
             }
         }

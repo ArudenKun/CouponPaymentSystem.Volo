@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.ComponentModel;
-
-public interface IBindingListSource
+namespace Castle.Components.DictionaryAdapter
 {
-    IBindingList AsBindingList { get; }
+    using System.ComponentModel;
+
+    public interface IBindingListSource
+    {
+        IBindingList AsBindingList { get; }
+    }
 }

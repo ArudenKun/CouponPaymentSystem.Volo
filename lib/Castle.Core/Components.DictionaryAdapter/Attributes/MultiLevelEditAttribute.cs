@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Requests support for multi-level editing.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface, AllowMultiple = false)]
-public class MultiLevelEditAttribute : DictionaryBehaviorAttribute, IDictionaryInitializer
+namespace Castle.Components.DictionaryAdapter
 {
-    public void Initialize(IDictionaryAdapter dictionaryAdapter, object[] behaviors)
+    using System;
+
+    /// <summary>
+    /// Requests support for multi-level editing.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false)]
+    public class MultiLevelEditAttribute : DictionaryBehaviorAttribute, IDictionaryInitializer
     {
-        dictionaryAdapter.SupportsMultiLevelEdit = true;
+        public void Initialize(IDictionaryAdapter dictionaryAdapter, object[] behaviors)
+        {
+            dictionaryAdapter.SupportsMultiLevelEdit = true;
+        }
     }
 }

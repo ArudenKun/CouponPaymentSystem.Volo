@@ -12,87 +12,88 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml;
-
-public class SysXmlSubtreeIterator : SysXmlNode, IXmlIterator
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private State state;
+    using System;
+    using System.Xml;
 
-    public SysXmlSubtreeIterator(IXmlNode parent, IXmlNamespaceSource namespaces)
-        : base(namespaces, parent)
+    public class SysXmlSubtreeIterator : SysXmlNode, IXmlIterator
     {
-        if (null == parent)
-            throw Error.ArgumentNull(nameof(parent));
+        private State state;
 
-        var source = parent.RequireRealizable<XmlNode>();
-        if (source.IsReal)
-            node = source.Value;
-
-        type = typeof(object);
-    }
-
-    public bool MoveNext()
-    {
-        switch (state)
+        public SysXmlSubtreeIterator(IXmlNode parent, IXmlNamespaceSource namespaces)
+            : base(namespaces, parent)
         {
-            case State.Initial:
-                return MoveToInitial();
-            case State.Current:
-                return MoveToSubsequent();
-            default:
-                return false;
+            if (null == parent)
+                throw Error.ArgumentNull(nameof(parent));
+
+            var source = parent.RequireRealizable<XmlNode>();
+            if (source.IsReal)
+                node = source.Value;
+
+            type = typeof(object);
         }
-    }
 
-    private bool MoveToInitial()
-    {
-        if (node == null)
-            return false;
+        public bool MoveNext()
+        {
+            switch (state)
+            {
+                case State.Initial:
+                    return MoveToInitial();
+                case State.Current:
+                    return MoveToSubsequent();
+                default:
+                    return false;
+            }
+        }
 
-        state = State.Current;
-        return true;
-    }
+        private bool MoveToInitial()
+        {
+            if (node == null)
+                return false;
 
-    private bool MoveToSubsequent()
-    {
-        if (MoveToElement(node.FirstChild))
+            state = State.Current;
             return true;
+        }
 
-        for (; node != null; node = node.ParentNode)
-            if (MoveToElement(node.NextSibling))
+        private bool MoveToSubsequent()
+        {
+            if (MoveToElement(node.FirstChild))
                 return true;
 
-        state = State.End;
-        return false;
-    }
+            for (; node != null; node = node.ParentNode)
+                if (MoveToElement(node.NextSibling))
+                    return true;
 
-    private bool MoveToElement(XmlNode node)
-    {
-        for (; node != null; node = node.NextSibling)
-            if (node.NodeType == XmlNodeType.Element)
-                return SetNext(node);
+            state = State.End;
+            return false;
+        }
 
-        return false;
-    }
+        private bool MoveToElement(XmlNode node)
+        {
+            for (; node != null; node = node.NextSibling)
+                if (node.NodeType == XmlNodeType.Element)
+                    return SetNext(node);
 
-    private bool SetNext(XmlNode node)
-    {
-        this.node = node;
-        return true;
-    }
+            return false;
+        }
 
-    public override IXmlNode Save()
-    {
-        return new SysXmlNode(node, type, Namespaces);
-    }
+        private bool SetNext(XmlNode node)
+        {
+            this.node = node;
+            return true;
+        }
 
-    private enum State
-    {
-        Initial,
-        Current,
-        End,
+        public override IXmlNode Save()
+        {
+            return new SysXmlNode(node, type, Namespaces);
+        }
+
+        private enum State
+        {
+            Initial,
+            Current,
+            End,
+        }
     }
 }

@@ -2,13 +2,13 @@
 {
     public enum BooleanCompareTypes
     {
-        Equals,
+        Equals
     }
 
     public enum NullableBooleanCompareTypes
     {
         Null,
         NotNull,
-        Equals,
+        Equals
     }
 }

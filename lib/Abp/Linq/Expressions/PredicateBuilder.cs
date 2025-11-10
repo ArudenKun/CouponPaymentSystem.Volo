@@ -16,7 +16,7 @@ namespace Abp.Linq.Expressions
         Or,
 
         /// <summary> The "And" </summary>
-        And,
+        And
     }
 
     /// <summary>
@@ -29,10 +29,7 @@ namespace Abp.Linq.Expressions
             private readonly ParameterExpression _oldParameter;
             private readonly ParameterExpression _newParameter;
 
-            public RebindParameterVisitor(
-                ParameterExpression oldParameter,
-                ParameterExpression newParameter
-            )
+            public RebindParameterVisitor(ParameterExpression oldParameter, ParameterExpression newParameter)
             {
                 _oldParameter = oldParameter;
                 _newParameter = newParameter;
@@ -50,61 +47,31 @@ namespace Abp.Linq.Expressions
         }
 
         /// <summary> Start an expression </summary>
-        public static ExpressionStarter<T> New<T>(Expression<Func<T, bool>> expr = null)
-        {
-            return new ExpressionStarter<T>(expr);
-        }
+        public static ExpressionStarter<T> New<T>(Expression<Func<T, bool>> expr = null) { return new ExpressionStarter<T>(expr); }
 
         /// <summary> Create an expression with a stub expression true or false to use when the expression is not yet started. </summary>
-        public static ExpressionStarter<T> New<T>(bool defaultExpression)
-        {
-            return new ExpressionStarter<T>(defaultExpression);
-        }
+        public static ExpressionStarter<T> New<T>(bool defaultExpression) { return new ExpressionStarter<T>(defaultExpression); }
 
         /// <summary> Always true </summary>
         [Obsolete("Use PredicateBuilder.New() instead.")]
-        public static Expression<Func<T, bool>> True<T>()
-        {
-            return new ExpressionStarter<T>(true);
-        }
+        public static Expression<Func<T, bool>> True<T>() { return new ExpressionStarter<T>(true); }
 
         /// <summary> Always false </summary>
         [Obsolete("Use PredicateBuilder.New() instead.")]
-        public static Expression<Func<T, bool>> False<T>()
-        {
-            return new ExpressionStarter<T>(false);
-        }
+        public static Expression<Func<T, bool>> False<T>() { return new ExpressionStarter<T>(false); }
 
         /// <summary> OR </summary>
-        public static Expression<Func<T, bool>> Or<T>(
-            [NotNull] this Expression<Func<T, bool>> expr1,
-            [NotNull] Expression<Func<T, bool>> expr2
-        )
+        public static Expression<Func<T, bool>> Or<T>([NotNull] this Expression<Func<T, bool>> expr1, [NotNull] Expression<Func<T, bool>> expr2)
         {
-            var expr2Body = new RebindParameterVisitor(
-                expr2.Parameters[0],
-                expr1.Parameters[0]
-            ).Visit(expr2.Body);
-            return Expression.Lambda<Func<T, bool>>(
-                Expression.OrElse(expr1.Body, expr2Body),
-                expr1.Parameters
-            );
+            var expr2Body = new RebindParameterVisitor(expr2.Parameters[0], expr1.Parameters[0]).Visit(expr2.Body);
+            return Expression.Lambda<Func<T, bool>>(Expression.OrElse(expr1.Body, expr2Body), expr1.Parameters);
         }
 
         /// <summary> AND </summary>
-        public static Expression<Func<T, bool>> And<T>(
-            [NotNull] this Expression<Func<T, bool>> expr1,
-            [NotNull] Expression<Func<T, bool>> expr2
-        )
+        public static Expression<Func<T, bool>> And<T>([NotNull] this Expression<Func<T, bool>> expr1, [NotNull] Expression<Func<T, bool>> expr2)
         {
-            var expr2Body = new RebindParameterVisitor(
-                expr2.Parameters[0],
-                expr1.Parameters[0]
-            ).Visit(expr2.Body);
-            return Expression.Lambda<Func<T, bool>>(
-                Expression.AndAlso(expr1.Body, expr2Body),
-                expr1.Parameters
-            );
+            var expr2Body = new RebindParameterVisitor(expr2.Parameters[0], expr1.Parameters[0]).Visit(expr2.Body);
+            return Expression.Lambda<Func<T, bool>>(Expression.AndAlso(expr1.Body, expr2Body), expr1.Parameters);
         }
 
         /// <summary>
@@ -115,11 +82,7 @@ namespace Abp.Linq.Expressions
         /// <param name="second">The second Predicate.</param>
         /// <param name="operator">The Operator (can be "And" or "Or").</param>
         /// <returns>Expression{Func{T, bool}}</returns>
-        public static Expression<Func<T, bool>> Extend<T>(
-            [NotNull] this Expression<Func<T, bool>> first,
-            [NotNull] Expression<Func<T, bool>> second,
-            PredicateOperator @operator = PredicateOperator.Or
-        )
+        public static Expression<Func<T, bool>> Extend<T>([NotNull] this Expression<Func<T, bool>> first, [NotNull] Expression<Func<T, bool>> second, PredicateOperator @operator = PredicateOperator.Or)
         {
             return @operator == PredicateOperator.Or ? first.Or(second) : first.And(second);
         }
@@ -132,11 +95,7 @@ namespace Abp.Linq.Expressions
         /// <param name="second">The second Predicate.</param>
         /// <param name="operator">The Operator (can be "And" or "Or").</param>
         /// <returns>Expression{Func{T, bool}}</returns>
-        public static Expression<Func<T, bool>> Extend<T>(
-            [NotNull] this ExpressionStarter<T> first,
-            [NotNull] Expression<Func<T, bool>> second,
-            PredicateOperator @operator = PredicateOperator.Or
-        )
+        public static Expression<Func<T, bool>> Extend<T>([NotNull] this ExpressionStarter<T> first, [NotNull] Expression<Func<T, bool>> second, PredicateOperator @operator = PredicateOperator.Or)
         {
             return @operator == PredicateOperator.Or ? first.Or(second) : first.And(second);
         }
@@ -148,8 +107,7 @@ namespace Abp.Linq.Expressions
     /// <typeparam name="T">The type</typeparam>
     public class ExpressionStarter<T>
     {
-        public ExpressionStarter()
-            : this(false) { }
+        public ExpressionStarter() : this(false) { }
 
         public ExpressionStarter(bool defaultExpression)
         {
@@ -159,15 +117,13 @@ namespace Abp.Linq.Expressions
                 DefaultExpression = f => false;
         }
 
-        public ExpressionStarter(Expression<Func<T, bool>> exp)
-            : this(false)
+        public ExpressionStarter(Expression<Func<T, bool>> exp) : this(false)
         {
             _predicate = exp;
         }
 
         /// <summary>The actual Predicate. It can only be set by calling Start.</summary>
-        private Expression<Func<T, bool>> Predicate =>
-            (IsStarted || !UseDefaultExpression) ? _predicate : DefaultExpression;
+        private Expression<Func<T, bool>> Predicate => (IsStarted || !UseDefaultExpression) ? _predicate : DefaultExpression;
 
         private Expression<Func<T, bool>> _predicate;
 
@@ -224,9 +180,7 @@ namespace Abp.Linq.Expressions
         /// <param name="right"></param>
         public static implicit operator Func<T, bool>(ExpressionStarter<T> right)
         {
-            return right == null ? null
-                : (right.IsStarted || right.UseDefaultExpression) ? right.Predicate.Compile()
-                : null;
+            return right == null ? null : (right.IsStarted || right.UseDefaultExpression) ? right.Predicate.Compile() : null;
         }
 
         /// <summary>
@@ -243,27 +197,15 @@ namespace Abp.Linq.Expressions
 #if !(NET35)
 
         /// <summary></summary>
-        public Func<T, bool> Compile()
-        {
-            return Predicate.Compile();
-        }
+        public Func<T, bool> Compile() { return Predicate.Compile(); }
 #endif
 
 #if !(NET35 || WINDOWS_APP || NETSTANDARD || PORTABLE || PORTABLE40 || UAP)
         /// <summary></summary>
-        public Func<T, bool> Compile(DebugInfoGenerator debugInfoGenerator)
-        {
-            return Predicate.Compile(debugInfoGenerator);
-        }
+        public Func<T, bool> Compile(DebugInfoGenerator debugInfoGenerator) { return Predicate.Compile(debugInfoGenerator); }
 
         /// <summary></summary>
-        public Expression<Func<T, bool>> Update(
-            Expression body,
-            IEnumerable<ParameterExpression> parameters
-        )
-        {
-            return Predicate.Update(body, parameters);
-        }
+        public Expression<Func<T, bool>> Update(Expression body, IEnumerable<ParameterExpression> parameters) { return Predicate.Update(body, parameters); }
 #endif
         #endregion
 
@@ -271,6 +213,7 @@ namespace Abp.Linq.Expressions
 
         /// <summary></summary>
         public Expression Body => Predicate.Body;
+
 
         /// <summary></summary>
         public ExpressionType NodeType => Predicate.NodeType;
@@ -291,6 +234,7 @@ namespace Abp.Linq.Expressions
         /// <summary></summary>
         public bool TailCall => Predicate.TailCall;
 #endif
+        
         #endregion
 
         #region Implement Expression methods and properties

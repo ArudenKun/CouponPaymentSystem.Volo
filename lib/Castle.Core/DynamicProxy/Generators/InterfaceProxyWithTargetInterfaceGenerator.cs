@@ -12,83 +12,84 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection;
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Generators.Emitters;
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-using Castle.DynamicProxy.Internal;
-using Castle.DynamicProxy.Serialization;
-
-internal sealed class InterfaceProxyWithTargetInterfaceGenerator : BaseInterfaceProxyGenerator
+namespace Castle.DynamicProxy.Generators
 {
-    public InterfaceProxyWithTargetInterfaceGenerator(
-        ModuleScope scope,
-        Type targetType,
-        Type[] interfaces,
-        Type proxyTargetType,
-        ProxyGenerationOptions options
-    )
-        : base(scope, targetType, interfaces, proxyTargetType, options) { }
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Generators.Emitters;
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
+    using Castle.DynamicProxy.Internal;
+    using Castle.DynamicProxy.Serialization;
 
-    protected override bool AllowChangeTarget => true;
-
-    protected override string GeneratorType => ProxyTypeConstants.InterfaceWithTargetInterface;
-
-    protected override CompositeTypeContributor GetProxyTargetContributor(
-        Type proxyTargetType,
-        INamingScope namingScope
-    )
+    internal sealed class InterfaceProxyWithTargetInterfaceGenerator : BaseInterfaceProxyGenerator
     {
-        return new InterfaceProxyWithTargetInterfaceTargetContributor(
-            proxyTargetType,
-            AllowChangeTarget,
-            namingScope
+        public InterfaceProxyWithTargetInterfaceGenerator(
+            ModuleScope scope,
+            Type targetType,
+            Type[] interfaces,
+            Type proxyTargetType,
+            ProxyGenerationOptions options
+        )
+            : base(scope, targetType, interfaces, proxyTargetType, options) { }
+
+        protected override bool AllowChangeTarget => true;
+
+        protected override string GeneratorType => ProxyTypeConstants.InterfaceWithTargetInterface;
+
+        protected override CompositeTypeContributor GetProxyTargetContributor(
+            Type proxyTargetType,
+            INamingScope namingScope
         )
         {
-            Logger = Logger,
-        };
-    }
+            return new InterfaceProxyWithTargetInterfaceTargetContributor(
+                proxyTargetType,
+                AllowChangeTarget,
+                namingScope
+            )
+            {
+                Logger = Logger,
+            };
+        }
 
-    protected override ProxyTargetAccessorContributor GetProxyTargetAccessorContributor()
-    {
-        return new ProxyTargetAccessorContributor(
-            getTargetReference: () => targetField,
-            proxyTargetType
-        );
-    }
+        protected override ProxyTargetAccessorContributor GetProxyTargetAccessorContributor()
+        {
+            return new ProxyTargetAccessorContributor(
+                getTargetReference: () => targetField,
+                proxyTargetType
+            );
+        }
 
-    protected override void AddMappingForAdditionalInterfaces(
-        CompositeTypeContributor contributor,
-        Type[] proxiedInterfaces,
-        IDictionary<Type, ITypeContributor> typeImplementerMapping,
-        ICollection<Type> targetInterfaces
-    ) { }
+        protected override void AddMappingForAdditionalInterfaces(
+            CompositeTypeContributor contributor,
+            Type[] proxiedInterfaces,
+            IDictionary<Type, ITypeContributor> typeImplementerMapping,
+            ICollection<Type> targetInterfaces
+        ) { }
 
-    protected override InterfaceProxyWithoutTargetContributor GetContributorForAdditionalInterfaces(
-        INamingScope namingScope
-    )
-    {
-        return new InterfaceProxyWithOptionalTargetContributor(
-            namingScope,
-            GetTargetExpression,
-            GetTarget
+        protected override InterfaceProxyWithoutTargetContributor GetContributorForAdditionalInterfaces(
+            INamingScope namingScope
         )
         {
-            Logger = Logger,
-        };
-    }
+            return new InterfaceProxyWithOptionalTargetContributor(
+                namingScope,
+                GetTargetExpression,
+                GetTarget
+            )
+            {
+                Logger = Logger,
+            };
+        }
 
-    private Reference GetTarget(ClassEmitter @class, MethodInfo method)
-    {
-        return new AsTypeReference(@class.GetField("__target"), method.DeclaringType);
-    }
+        private Reference GetTarget(ClassEmitter @class, MethodInfo method)
+        {
+            return new AsTypeReference(@class.GetField("__target"), method.DeclaringType);
+        }
 
-    private IExpression GetTargetExpression(ClassEmitter @class, MethodInfo method)
-    {
-        return GetTarget(@class, method);
+        private IExpression GetTargetExpression(ClassEmitter @class, MethodInfo method)
+        {
+            return GetTarget(@class, method);
+        }
     }
 }

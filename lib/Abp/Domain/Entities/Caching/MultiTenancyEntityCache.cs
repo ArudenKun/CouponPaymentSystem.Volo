@@ -8,14 +8,13 @@ using Abp.Runtime.Session;
 
 namespace Abp.Domain.Entities.Caching
 {
-    public abstract class MultiTenancyEntityCache<TEntity, TCacheItem, TPrimaryKey>
-        : EntityCacheBase<TEntity, TCacheItem, TPrimaryKey>,
-            IEventHandler<EntityChangedEventData<TEntity>>,
-            IMultiTenancyEntityCache<TCacheItem, TPrimaryKey>
+    public abstract class MultiTenancyEntityCache<TEntity, TCacheItem, TPrimaryKey> :
+        EntityCacheBase<TEntity, TCacheItem, TPrimaryKey>,
+        IEventHandler<EntityChangedEventData<TEntity>>,
+        IMultiTenancyEntityCache<TCacheItem, TPrimaryKey>
         where TEntity : class, IEntity<TPrimaryKey>
     {
-        public ITypedCache<string, TCacheItem> InternalCache =>
-            CacheManager.GetCache<string, TCacheItem>(CacheName);
+        public ITypedCache<string, TCacheItem> InternalCache => CacheManager.GetCache<string, TCacheItem>(CacheName);
 
         public IAbpSession AbpSession { get; set; }
 
@@ -25,9 +24,12 @@ namespace Abp.Domain.Entities.Caching
             ICacheManager cacheManager,
             IUnitOfWorkManager unitOfWorkManager,
             IRepository<TEntity, TPrimaryKey> repository,
-            string cacheName = null
-        )
-            : base(cacheManager, repository, unitOfWorkManager, cacheName)
+            string cacheName = null)
+            : base(
+                cacheManager,
+                repository,
+                unitOfWorkManager,
+                cacheName)
         {
             _unitOfWorkManager = unitOfWorkManager;
 
@@ -41,10 +43,7 @@ namespace Abp.Domain.Entities.Caching
 
         public override Task<TCacheItem> GetAsync(TPrimaryKey id)
         {
-            return InternalCache.GetAsync(
-                GetCacheKey(id),
-                async () => await GetCacheItemFromDataSourceAsync(id)
-            );
+            return InternalCache.GetAsync(GetCacheKey(id), async () => await GetCacheItemFromDataSourceAsync(id));
         }
 
         public virtual void HandleEvent(EntityChangedEventData<TEntity> eventData)

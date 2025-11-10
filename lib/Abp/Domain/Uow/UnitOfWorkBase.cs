@@ -38,7 +38,7 @@ namespace Abp.Domain.Uow
             get { return _filters.ToImmutableList(); }
         }
         private readonly List<DataFilterConfiguration> _filters;
-
+        
         /// <inheritdoc/>
         public IReadOnlyList<AuditFieldConfiguration> AuditFieldConfiguration
         {
@@ -98,8 +98,7 @@ namespace Abp.Domain.Uow
         protected UnitOfWorkBase(
             IConnectionStringResolver connectionStringResolver,
             IUnitOfWorkDefaultOptions defaultOptions,
-            IUnitOfWorkFilterExecuter filterExecuter
-        )
+            IUnitOfWorkFilterExecuter filterExecuter)
         {
             FilterExecuter = filterExecuter;
             DefaultOptions = defaultOptions;
@@ -146,10 +145,7 @@ namespace Abp.Domain.Uow
                 if (_filters[filterIndex].IsEnabled)
                 {
                     disabledFilters.Add(filterName);
-                    _filters[filterIndex] = new DataFilterConfiguration(
-                        _filters[filterIndex],
-                        false
-                    );
+                    _filters[filterIndex] = new DataFilterConfiguration(_filters[filterIndex], false);
                 }
             }
 
@@ -171,10 +167,7 @@ namespace Abp.Domain.Uow
                 if (!_filters[filterIndex].IsEnabled)
                 {
                     enabledFilters.Add(filterName);
-                    _filters[filterIndex] = new DataFilterConfiguration(
-                        _filters[filterIndex],
-                        true
-                    );
+                    _filters[filterIndex] = new DataFilterConfiguration(_filters[filterIndex], true);
                 }
             }
 
@@ -182,7 +175,7 @@ namespace Abp.Domain.Uow
 
             return new DisposeAction(() => DisableFilter(enabledFilters.ToArray()));
         }
-
+        
         /// <inheritdoc/>
         public IDisposable DisableAuditing(params string[] fieldNames)
         {
@@ -194,13 +187,10 @@ namespace Abp.Domain.Uow
                 if (_auditFieldConfiguration[fieldIndex].IsSavingEnabled)
                 {
                     disabledAuditFields.Add(fieldName);
-                    _auditFieldConfiguration[fieldIndex] = new AuditFieldConfiguration(
-                        _auditFieldConfiguration[fieldIndex].FieldName,
-                        false
-                    );
+                    _auditFieldConfiguration[fieldIndex] = new AuditFieldConfiguration(_auditFieldConfiguration[fieldIndex].FieldName, false);
                 }
             }
-
+            
             return new DisposeAction(() => EnableAuditing(disabledAuditFields.ToArray()));
         }
 
@@ -215,10 +205,7 @@ namespace Abp.Domain.Uow
                 if (!_auditFieldConfiguration[fieldIndex].IsSavingEnabled)
                 {
                     enabledAuditFields.Add(fieldName);
-                    _auditFieldConfiguration[fieldIndex] = new AuditFieldConfiguration(
-                        _auditFieldConfiguration[fieldIndex].FieldName,
-                        true
-                    );
+                    _auditFieldConfiguration[fieldIndex] = new AuditFieldConfiguration(_auditFieldConfiguration[fieldIndex].FieldName, true);
                 }
             }
 
@@ -261,8 +248,7 @@ namespace Abp.Domain.Uow
                 }
                 else
                 {
-                    Completed += (s, e) =>
-                        _filters[filterIndex].FilterParameters[parameterName] = default;
+                    Completed += (s, e) => _filters[filterIndex].FilterParameters[parameterName] = default;
                 }
             });
         }
@@ -272,37 +258,26 @@ namespace Abp.Domain.Uow
             return SetTenantId(tenantId, true);
         }
 
-        public virtual IDisposable SetTenantId(
-            int? tenantId,
-            bool switchMustHaveTenantEnableDisable
-        )
+        public virtual IDisposable SetTenantId(int? tenantId, bool switchMustHaveTenantEnableDisable)
         {
             var oldTenantId = _tenantId;
             _tenantId = tenantId;
 
+
             IDisposable mustHaveTenantEnableChange;
             if (switchMustHaveTenantEnableDisable)
             {
-                mustHaveTenantEnableChange =
-                    tenantId == null
-                        ? DisableFilter(AbpDataFilters.MustHaveTenant)
-                        : EnableFilter(AbpDataFilters.MustHaveTenant);
+                mustHaveTenantEnableChange = tenantId == null
+                    ? DisableFilter(AbpDataFilters.MustHaveTenant)
+                    : EnableFilter(AbpDataFilters.MustHaveTenant);
             }
             else
             {
                 mustHaveTenantEnableChange = NullDisposable.Instance;
             }
 
-            var mayHaveTenantChange = SetFilterParameter(
-                AbpDataFilters.MayHaveTenant,
-                AbpDataFilters.Parameters.TenantId,
-                tenantId
-            );
-            var mustHaveTenantChange = SetFilterParameter(
-                AbpDataFilters.MustHaveTenant,
-                AbpDataFilters.Parameters.TenantId,
-                tenantId ?? 0
-            );
+            var mayHaveTenantChange = SetFilterParameter(AbpDataFilters.MayHaveTenant, AbpDataFilters.Parameters.TenantId, tenantId);
+            var mustHaveTenantChange = SetFilterParameter(AbpDataFilters.MustHaveTenant, AbpDataFilters.Parameters.TenantId, tenantId ?? 0);
 
             return new DisposeAction(() =>
             {
@@ -374,7 +349,10 @@ namespace Abp.Domain.Uow
         /// <summary>
         /// Can be implemented by derived classes to start UOW.
         /// </summary>
-        protected virtual void BeginUow() { }
+        protected virtual void BeginUow()
+        {
+
+        }
 
         /// <summary>
         /// Should be implemented by derived classes to complete UOW.
@@ -401,11 +379,7 @@ namespace Abp.Domain.Uow
             FilterExecuter.ApplyEnableFilter(this, filterName);
         }
 
-        protected virtual void ApplyFilterParameterValue(
-            string filterName,
-            string parameterName,
-            object value
-        )
+        protected virtual void ApplyFilterParameterValue(string filterName, string parameterName, object value)
         {
             FilterExecuter.ApplyFilterParameterValue(this, filterName, parameterName, value);
         }
@@ -415,9 +389,7 @@ namespace Abp.Domain.Uow
             return ConnectionStringResolver.GetNameOrConnectionString(args);
         }
 
-        protected virtual async Task<string> ResolveConnectionStringAsync(
-            ConnectionStringResolveArgs args
-        )
+        protected virtual async Task<string> ResolveConnectionStringAsync(ConnectionStringResolveArgs args)
         {
             return await ConnectionStringResolver.GetNameOrConnectionStringAsync(args);
         }
@@ -451,9 +423,7 @@ namespace Abp.Domain.Uow
         {
             if (_isBeginCalledBefore)
             {
-                throw new AbpException(
-                    "This unit of work has started before. Can not call Start method more than once."
-                );
+                throw new AbpException("This unit of work has started before. Can not call Start method more than once.");
             }
 
             _isBeginCalledBefore = true;
@@ -473,9 +443,7 @@ namespace Abp.Domain.Uow
         {
             for (var i = 0; i < _filters.Count; i++)
             {
-                var filterOverride = filterOverrides.FirstOrDefault(f =>
-                    f.FilterName == _filters[i].FilterName
-                );
+                var filterOverride = filterOverrides.FirstOrDefault(f => f.FilterName == _filters[i].FilterName);
                 if (filterOverride != null)
                 {
                     _filters[i] = filterOverride;
@@ -484,19 +452,11 @@ namespace Abp.Domain.Uow
 
             if (AbpSession.TenantId == null)
             {
-                ChangeFilterIsEnabledIfNotOverrided(
-                    filterOverrides,
-                    AbpDataFilters.MustHaveTenant,
-                    false
-                );
+                ChangeFilterIsEnabledIfNotOverrided(filterOverrides, AbpDataFilters.MustHaveTenant, false);
             }
         }
 
-        private void ChangeFilterIsEnabledIfNotOverrided(
-            List<DataFilterConfiguration> filterOverrides,
-            string filterName,
-            bool isEnabled
-        )
+        private void ChangeFilterIsEnabledIfNotOverrided(List<DataFilterConfiguration> filterOverrides, string filterName, bool isEnabled)
         {
             if (filterOverrides.Any(f => f.FilterName == filterName))
             {
@@ -522,11 +482,7 @@ namespace Abp.Domain.Uow
             var filter = _filters.FirstOrDefault(f => f.FilterName == filterName);
             if (filter == null)
             {
-                throw new AbpException(
-                    "Unknown filter name: "
-                        + filterName
-                        + ". Be sure this filter is registered before."
-                );
+                throw new AbpException("Unknown filter name: " + filterName + ". Be sure this filter is registered before.");
             }
 
             return filter;
@@ -537,26 +493,18 @@ namespace Abp.Domain.Uow
             var filterIndex = _filters.FindIndex(f => f.FilterName == filterName);
             if (filterIndex < 0)
             {
-                throw new AbpException(
-                    "Unknown filter name: "
-                        + filterName
-                        + ". Be sure this filter is registered before."
-                );
+                throw new AbpException("Unknown filter name: " + filterName + ". Be sure this filter is registered before.");
             }
 
             return filterIndex;
         }
-
+        
         private int GetAuditFieldIndex(string filterName)
         {
             var filterIndex = _auditFieldConfiguration.FindIndex(f => f.FieldName == filterName);
             if (filterIndex < 0)
             {
-                throw new AbpException(
-                    "Unknown filter name: "
-                        + filterName
-                        + ". Be sure this filter is registered before."
-                );
+                throw new AbpException("Unknown filter name: " + filterName + ". Be sure this filter is registered before.");
             }
 
             return filterIndex;

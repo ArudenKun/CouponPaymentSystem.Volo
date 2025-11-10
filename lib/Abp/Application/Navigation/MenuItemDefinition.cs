@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Abp.Application.Features;
 using Abp.Authorization;
 using Abp.Collections.Extensions;
 using Abp.Localization;
+using System;
 
 namespace Abp.Application.Navigation
 {
@@ -13,7 +13,7 @@ namespace Abp.Application.Navigation
     public class MenuItemDefinition : IHasMenuItemDefinitions
     {
         /// <summary>
-        /// Unique name of the menu item in the application.
+        /// Unique name of the menu item in the application. 
         /// Can be used to find this menu item later.
         /// </summary>
         public string Name { get; }
@@ -109,8 +109,7 @@ namespace Abp.Application.Navigation
             string target = null,
             bool isEnabled = true,
             bool isVisible = true,
-            IPermissionDependency permissionDependency = null
-        )
+            IPermissionDependency permissionDependency = null)
         {
             Check.NotNull(name, nameof(name));
             Check.NotNull(displayName, nameof(displayName));

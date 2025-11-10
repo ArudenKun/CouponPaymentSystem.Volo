@@ -11,9 +11,7 @@ namespace Abp.Notifications
     /// <summary>
     /// Implements <see cref="INotificationDefinitionManager"/>.
     /// </summary>
-    internal class NotificationDefinitionManager
-        : INotificationDefinitionManager,
-            ISingletonDependency
+    internal class NotificationDefinitionManager : INotificationDefinitionManager, ISingletonDependency
     {
         private readonly INotificationConfiguration _configuration;
         private readonly IocManager _iocManager;
@@ -22,8 +20,7 @@ namespace Abp.Notifications
 
         public NotificationDefinitionManager(
             IocManager iocManager,
-            INotificationConfiguration configuration
-        )
+            INotificationConfiguration configuration)
         {
             _configuration = configuration;
             _iocManager = iocManager;
@@ -37,11 +34,7 @@ namespace Abp.Notifications
 
             foreach (var providerType in _configuration.Providers)
             {
-                using (
-                    var provider = _iocManager.ResolveAsDisposable<NotificationProvider>(
-                        providerType
-                    )
-                )
+                using (var provider = _iocManager.ResolveAsDisposable<NotificationProvider>(providerType))
                 {
                     provider.Object.SetNotifications(context);
                 }
@@ -52,11 +45,7 @@ namespace Abp.Notifications
         {
             if (_notificationDefinitions.ContainsKey(notificationDefinition.Name))
             {
-                throw new AbpInitializationException(
-                    "There is already a notification definition with given name: "
-                        + notificationDefinition.Name
-                        + ". Notification names must be unique!"
-                );
+                throw new AbpInitializationException("There is already a notification definition with given name: " + notificationDefinition.Name + ". Notification names must be unique!");
             }
 
             _notificationDefinitions[notificationDefinition.Name] = notificationDefinition;
@@ -67,9 +56,7 @@ namespace Abp.Notifications
             var definition = GetOrNull(name);
             if (definition == null)
             {
-                throw new AbpException(
-                    "There is no notification definition with given name: " + name
-                );
+                throw new AbpException("There is no notification definition with given name: " + name);
             }
 
             return definition;
@@ -100,18 +87,11 @@ namespace Abp.Notifications
 
             if (notificationDefinition.FeatureDependency != null)
             {
-                using (
-                    var featureDependencyContext =
-                        _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-                )
+                using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
                 {
                     featureDependencyContext.Object.TenantId = user.TenantId;
 
-                    if (
-                        !await notificationDefinition.FeatureDependency.IsSatisfiedAsync(
-                            featureDependencyContext.Object
-                        )
-                    )
+                    if (!await notificationDefinition.FeatureDependency.IsSatisfiedAsync(featureDependencyContext.Object))
                     {
                         return false;
                     }
@@ -120,18 +100,11 @@ namespace Abp.Notifications
 
             if (notificationDefinition.PermissionDependency != null)
             {
-                using (
-                    var permissionDependencyContext =
-                        _iocManager.ResolveAsDisposable<PermissionDependencyContext>()
-                )
+                using (var permissionDependencyContext = _iocManager.ResolveAsDisposable<PermissionDependencyContext>())
                 {
                     permissionDependencyContext.Object.User = user;
 
-                    if (
-                        !await notificationDefinition.PermissionDependency.IsSatisfiedAsync(
-                            permissionDependencyContext.Object
-                        )
-                    )
+                    if (!await notificationDefinition.PermissionDependency.IsSatisfiedAsync(permissionDependencyContext.Object))
                     {
                         return false;
                     }
@@ -151,18 +124,11 @@ namespace Abp.Notifications
 
             if (notificationDefinition.FeatureDependency != null)
             {
-                using (
-                    var featureDependencyContext =
-                        _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-                )
+                using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
                 {
                     featureDependencyContext.Object.TenantId = user.TenantId;
 
-                    if (
-                        !notificationDefinition.FeatureDependency.IsSatisfied(
-                            featureDependencyContext.Object
-                        )
-                    )
+                    if (! notificationDefinition.FeatureDependency.IsSatisfied(featureDependencyContext.Object))
                     {
                         return false;
                     }
@@ -171,18 +137,11 @@ namespace Abp.Notifications
 
             if (notificationDefinition.PermissionDependency != null)
             {
-                using (
-                    var permissionDependencyContext =
-                        _iocManager.ResolveAsDisposable<PermissionDependencyContext>()
-                )
+                using (var permissionDependencyContext = _iocManager.ResolveAsDisposable<PermissionDependencyContext>())
                 {
                     permissionDependencyContext.Object.User = user;
 
-                    if (
-                        !notificationDefinition.PermissionDependency.IsSatisfied(
-                            permissionDependencyContext.Object
-                        )
-                    )
+                    if (! notificationDefinition.PermissionDependency.IsSatisfied(permissionDependencyContext.Object))
                     {
                         return false;
                     }
@@ -192,45 +151,29 @@ namespace Abp.Notifications
             return true;
         }
 
-        public async Task<IReadOnlyList<NotificationDefinition>> GetAllAvailableAsync(
-            UserIdentifier user
-        )
+        public async Task<IReadOnlyList<NotificationDefinition>> GetAllAvailableAsync(UserIdentifier user)
         {
             var availableDefinitions = new List<NotificationDefinition>();
 
-            using (
-                var permissionDependencyContext =
-                    _iocManager.ResolveAsDisposable<PermissionDependencyContext>()
-            )
+            using (var permissionDependencyContext = _iocManager.ResolveAsDisposable<PermissionDependencyContext>())
             {
                 permissionDependencyContext.Object.User = user;
 
-                using (
-                    var featureDependencyContext =
-                        _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-                )
+                using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
                 {
                     featureDependencyContext.Object.TenantId = user.TenantId;
 
                     foreach (var notificationDefinition in GetAll())
                     {
-                        if (
-                            notificationDefinition.PermissionDependency != null
-                            && !await notificationDefinition.PermissionDependency.IsSatisfiedAsync(
-                                permissionDependencyContext.Object
-                            )
-                        )
+                        if (notificationDefinition.PermissionDependency != null &&
+                            !await notificationDefinition.PermissionDependency.IsSatisfiedAsync(permissionDependencyContext.Object))
                         {
                             continue;
                         }
 
-                        if (
-                            user.TenantId.HasValue
-                            && notificationDefinition.FeatureDependency != null
-                            && !await notificationDefinition.FeatureDependency.IsSatisfiedAsync(
-                                featureDependencyContext.Object
-                            )
-                        )
+                        if (user.TenantId.HasValue &&
+                            notificationDefinition.FeatureDependency != null &&
+                            !await notificationDefinition.FeatureDependency.IsSatisfiedAsync(featureDependencyContext.Object))
                         {
                             continue;
                         }
@@ -247,39 +190,25 @@ namespace Abp.Notifications
         {
             var availableDefinitions = new List<NotificationDefinition>();
 
-            using (
-                var permissionDependencyContext =
-                    _iocManager.ResolveAsDisposable<PermissionDependencyContext>()
-            )
+            using (var permissionDependencyContext = _iocManager.ResolveAsDisposable<PermissionDependencyContext>())
             {
                 permissionDependencyContext.Object.User = user;
 
-                using (
-                    var featureDependencyContext =
-                        _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-                )
+                using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
                 {
                     featureDependencyContext.Object.TenantId = user.TenantId;
 
                     foreach (var notificationDefinition in GetAll())
                     {
-                        if (
-                            notificationDefinition.PermissionDependency != null
-                            && !notificationDefinition.PermissionDependency.IsSatisfied(
-                                permissionDependencyContext.Object
-                            )
-                        )
+                        if (notificationDefinition.PermissionDependency != null &&
+                            ! notificationDefinition.PermissionDependency.IsSatisfied(permissionDependencyContext.Object))
                         {
                             continue;
                         }
 
-                        if (
-                            user.TenantId.HasValue
-                            && notificationDefinition.FeatureDependency != null
-                            && !notificationDefinition.FeatureDependency.IsSatisfied(
-                                featureDependencyContext.Object
-                            )
-                        )
+                        if (user.TenantId.HasValue &&
+                            notificationDefinition.FeatureDependency != null &&
+                            ! notificationDefinition.FeatureDependency.IsSatisfied(featureDependencyContext.Object))
                         {
                             continue;
                         }

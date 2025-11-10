@@ -12,76 +12,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class DefaultValueExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly Type type;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public DefaultValueExpression(Type type)
+    internal class DefaultValueExpression : IExpression
     {
-        this.type = type;
-    }
+        private readonly Type type;
 
-    public void Emit(ILGenerator gen)
-    {
-        // TODO: check if this can be simplified by using more of OpCodeUtil and other existing types
-        if (IsPrimitiveOrClass(type))
+        public DefaultValueExpression(Type type)
         {
-            OpCodeUtil.EmitLoadOpCodeForDefaultValueOfType(gen, type);
+            this.type = type;
         }
-        else if (type.IsValueType || type.IsGenericParameter)
-        {
-            // TODO: handle decimal explicitly
-            var local = gen.DeclareLocal(type);
-            gen.Emit(OpCodes.Ldloca_S, local);
-            gen.Emit(OpCodes.Initobj, type);
-            gen.Emit(OpCodes.Ldloc, local);
-        }
-        else if (type.IsByRef)
-        {
-            EmitByRef(gen);
-        }
-        else
-        {
-            throw new NotImplementedException("Can't emit default value for type " + type);
-        }
-    }
 
-    private void EmitByRef(ILGenerator gen)
-    {
-        var elementType = type.GetElementType();
-        if (IsPrimitiveOrClass(elementType))
+        public void Emit(ILGenerator gen)
         {
-            OpCodeUtil.EmitLoadOpCodeForDefaultValueOfType(gen, elementType);
-            OpCodeUtil.EmitStoreIndirectOpCodeForType(gen, elementType);
+            // TODO: check if this can be simplified by using more of OpCodeUtil and other existing types
+            if (IsPrimitiveOrClass(type))
+            {
+                OpCodeUtil.EmitLoadOpCodeForDefaultValueOfType(gen, type);
+            }
+            else if (type.IsValueType || type.IsGenericParameter)
+            {
+                // TODO: handle decimal explicitly
+                var local = gen.DeclareLocal(type);
+                gen.Emit(OpCodes.Ldloca_S, local);
+                gen.Emit(OpCodes.Initobj, type);
+                gen.Emit(OpCodes.Ldloc, local);
+            }
+            else if (type.IsByRef)
+            {
+                EmitByRef(gen);
+            }
+            else
+            {
+                throw new NotImplementedException("Can't emit default value for type " + type);
+            }
         }
-        else if (elementType.IsGenericParameter || elementType.IsValueType)
+
+        private void EmitByRef(ILGenerator gen)
         {
-            gen.Emit(OpCodes.Initobj, elementType);
+            var elementType = type.GetElementType();
+            if (IsPrimitiveOrClass(elementType))
+            {
+                OpCodeUtil.EmitLoadOpCodeForDefaultValueOfType(gen, elementType);
+                OpCodeUtil.EmitStoreIndirectOpCodeForType(gen, elementType);
+            }
+            else if (elementType.IsGenericParameter || elementType.IsValueType)
+            {
+                gen.Emit(OpCodes.Initobj, elementType);
+            }
+            else
+            {
+                throw new NotImplementedException(
+                    "Can't emit default value for reference of type " + elementType
+                );
+            }
         }
-        else
+
+        private bool IsPrimitiveOrClass(Type type)
         {
-            throw new NotImplementedException(
-                "Can't emit default value for reference of type " + elementType
+            if (type.IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
+            {
+                return true;
+            }
+            return (
+                (type.IsClass || type.IsInterface)
+                && type.IsGenericParameter == false
+                && type.IsByRef == false
             );
         }
-    }
-
-    private bool IsPrimitiveOrClass(Type type)
-    {
-        if (type.IsPrimitive && type != typeof(IntPtr) && type != typeof(UIntPtr))
-        {
-            return true;
-        }
-        return (
-            (type.IsClass || type.IsInterface)
-            && type.IsGenericParameter == false
-            && type.IsByRef == false
-        );
     }
 }

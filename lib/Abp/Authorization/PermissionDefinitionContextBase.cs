@@ -21,22 +21,14 @@ namespace Abp.Authorization
             ILocalizableString description = null,
             MultiTenancySides multiTenancySides = MultiTenancySides.Host | MultiTenancySides.Tenant,
             IFeatureDependency featureDependency = null,
-            Dictionary<string, object> properties = null
-        )
+            Dictionary<string, object> properties = null)
         {
             if (Permissions.ContainsKey(name))
             {
                 throw new AbpException("There is already a permission with name: " + name);
             }
 
-            var permission = new Permission(
-                name,
-                displayName,
-                description,
-                multiTenancySides,
-                featureDependency,
-                properties
-            );
+            var permission = new Permission(name, displayName, description, multiTenancySides, featureDependency, properties);
             Permissions[permission.Name] = permission;
             return permission;
         }

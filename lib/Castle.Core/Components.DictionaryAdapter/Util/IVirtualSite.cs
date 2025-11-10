@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-public interface IVirtualSite<T>
+namespace Castle.Components.DictionaryAdapter
 {
-    void OnRealizing(T node);
+    public interface IVirtualSite<T>
+    {
+        void OnRealizing(T node);
+    }
 }

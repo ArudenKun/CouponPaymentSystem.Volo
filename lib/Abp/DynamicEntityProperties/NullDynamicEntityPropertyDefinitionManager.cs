@@ -4,14 +4,13 @@ using Abp.UI.Inputs;
 
 namespace Abp.DynamicEntityProperties
 {
-    public class NullDynamicEntityPropertyDefinitionManager
-        : IDynamicEntityPropertyDefinitionManager
+    public class NullDynamicEntityPropertyDefinitionManager : IDynamicEntityPropertyDefinitionManager
     {
-        public static NullDynamicEntityPropertyDefinitionManager Instance =
-            new NullDynamicEntityPropertyDefinitionManager();
+        public static NullDynamicEntityPropertyDefinitionManager Instance = new NullDynamicEntityPropertyDefinitionManager();
 
-        public void AddAllowedInputType<TInputType>()
-            where TInputType : IInputType { }
+        public void AddAllowedInputType<TInputType>() where TInputType : IInputType
+        {
+        }
 
         public IInputType GetOrNullAllowedInputType(string name)
         {
@@ -33,11 +32,14 @@ namespace Abp.DynamicEntityProperties
             return false;
         }
 
-        public void AddEntity<TEntity>()
-            where TEntity : IEntity<int> { }
+        public void AddEntity<TEntity>() where TEntity : IEntity<int>
+        {
 
-        public void AddEntity<TEntity, TPrimaryKey>()
-            where TEntity : IEntity<TPrimaryKey> { }
+        }
+
+        public void AddEntity<TEntity, TPrimaryKey>() where TEntity : IEntity<TPrimaryKey>
+        {
+        }
 
         public List<string> GetAllEntities()
         {
@@ -49,14 +51,12 @@ namespace Abp.DynamicEntityProperties
             return false;
         }
 
-        public bool ContainsEntity<TEntity, TPrimaryKey>()
-            where TEntity : IEntity<TPrimaryKey>
+        public bool ContainsEntity<TEntity, TPrimaryKey>() where TEntity : IEntity<TPrimaryKey>
         {
             return false;
         }
 
-        public bool ContainsEntity<TEntity>()
-            where TEntity : IEntity<int>
+        public bool ContainsEntity<TEntity>() where TEntity : IEntity<int>
         {
             return false;
         }

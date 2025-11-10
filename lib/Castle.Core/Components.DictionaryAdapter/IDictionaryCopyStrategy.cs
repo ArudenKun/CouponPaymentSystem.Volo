@@ -12,15 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-public interface IDictionaryCopyStrategy
+namespace Castle.Components.DictionaryAdapter
 {
-    bool Copy(
-        IDictionaryAdapter source,
-        IDictionaryAdapter target,
-        ref Func<PropertyDescriptor, bool> selector
-    );
+    using System;
+
+    public interface IDictionaryCopyStrategy
+    {
+        bool Copy(
+            IDictionaryAdapter source,
+            IDictionaryAdapter target,
+            ref Func<PropertyDescriptor, bool> selector
+        );
+    }
 }

@@ -21,9 +21,7 @@ namespace Abp.Runtime.Session
                     return OverridedValue.UserId;
                 }
 
-                var userIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c =>
-                    c.Type == AbpClaimTypes.UserId
-                );
+                var userIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c => c.Type == AbpClaimTypes.UserId);
                 if (string.IsNullOrEmpty(userIdClaim?.Value))
                 {
                     return null;
@@ -53,9 +51,7 @@ namespace Abp.Runtime.Session
                     return OverridedValue.TenantId;
                 }
 
-                var tenantIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c =>
-                    c.Type == AbpClaimTypes.TenantId
-                );
+                var tenantIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c => c.Type == AbpClaimTypes.TenantId);
                 if (!string.IsNullOrEmpty(tenantIdClaim?.Value))
                 {
                     return Convert.ToInt32(tenantIdClaim.Value);
@@ -66,7 +62,7 @@ namespace Abp.Runtime.Session
                     //Resolve tenant id from request only if user has not logged in!
                     return TenantResolver.ResolveTenantId();
                 }
-
+                
                 return null;
             }
         }
@@ -75,9 +71,7 @@ namespace Abp.Runtime.Session
         {
             get
             {
-                var impersonatorUserIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(
-                    c => c.Type == AbpClaimTypes.ImpersonatorUserId
-                );
+                var impersonatorUserIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c => c.Type == AbpClaimTypes.ImpersonatorUserId);
                 if (string.IsNullOrEmpty(impersonatorUserIdClaim?.Value))
                 {
                     return null;
@@ -96,9 +90,7 @@ namespace Abp.Runtime.Session
                     return MultiTenancyConsts.DefaultTenantId;
                 }
 
-                var impersonatorTenantIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(
-                    c => c.Type == AbpClaimTypes.ImpersonatorTenantId
-                );
+                var impersonatorTenantIdClaim = PrincipalAccessor.Principal?.Claims.FirstOrDefault(c => c.Type == AbpClaimTypes.ImpersonatorTenantId);
                 if (string.IsNullOrEmpty(impersonatorTenantIdClaim?.Value))
                 {
                     return null;
@@ -115,9 +107,10 @@ namespace Abp.Runtime.Session
             IPrincipalAccessor principalAccessor,
             IMultiTenancyConfig multiTenancy,
             ITenantResolver tenantResolver,
-            IAmbientScopeProvider<SessionOverride> sessionOverrideScopeProvider
-        )
-            : base(multiTenancy, sessionOverrideScopeProvider)
+            IAmbientScopeProvider<SessionOverride> sessionOverrideScopeProvider)
+            : base(
+                  multiTenancy, 
+                  sessionOverrideScopeProvider)
         {
             TenantResolver = tenantResolver;
             PrincipalAccessor = principalAccessor;

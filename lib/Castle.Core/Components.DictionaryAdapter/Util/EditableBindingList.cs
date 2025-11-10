@@ -12,83 +12,84 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System.Collections.Generic;
-using System.ComponentModel;
-
-public class EditableBindingList<T>
-    : System.ComponentModel.BindingList<T>,
-        IList<T>,
-        IEditableObject,
-        IRevertibleChangeTracking
+namespace Castle.Components.DictionaryAdapter
 {
-    private bool isEditing;
-    private List<T> snapshot;
+    using System.Collections.Generic;
+    using System.ComponentModel;
 
-    public EditableBindingList() { }
-
-    public EditableBindingList(IList<T> initial)
-        : base(initial) { }
-
-    public bool IsChanged
+    public class EditableBindingList<T>
+        : System.ComponentModel.BindingList<T>,
+            IList<T>,
+            IEditableObject,
+            IRevertibleChangeTracking
     {
-        get
+        private bool isEditing;
+        private List<T> snapshot;
+
+        public EditableBindingList() { }
+
+        public EditableBindingList(IList<T> initial)
+            : base(initial) { }
+
+        public bool IsChanged
         {
-            if (snapshot == null || snapshot.Count != Count)
-                return false;
-
-            var items = GetEnumerator();
-            var snapshotItems = snapshot.GetEnumerator();
-
-            while (items.MoveNext() && snapshotItems.MoveNext())
+            get
             {
-                if (ReferenceEquals(items.Current, snapshotItems.Current) == false)
+                if (snapshot == null || snapshot.Count != Count)
                     return false;
 
-                var tracked = items.Current as IChangeTracking;
-                if (tracked != null && tracked.IsChanged)
-                    return true;
+                var items = GetEnumerator();
+                var snapshotItems = snapshot.GetEnumerator();
+
+                while (items.MoveNext() && snapshotItems.MoveNext())
+                {
+                    if (ReferenceEquals(items.Current, snapshotItems.Current) == false)
+                        return false;
+
+                    var tracked = items.Current as IChangeTracking;
+                    if (tracked != null && tracked.IsChanged)
+                        return true;
+                }
+
+                return false;
             }
-
-            return false;
         }
-    }
 
-    public void BeginEdit()
-    {
-        if (isEditing == false)
+        public void BeginEdit()
         {
-            snapshot = new List<T>(this);
-            isEditing = true;
+            if (isEditing == false)
+            {
+                snapshot = new List<T>(this);
+                isEditing = true;
+            }
         }
-    }
 
-    public void EndEdit()
-    {
-        isEditing = false;
-        snapshot = null;
-    }
-
-    public void CancelEdit()
-    {
-        if (isEditing)
+        public void EndEdit()
         {
-            Clear();
-            foreach (var item in snapshot)
-                Add(item);
-            snapshot = null;
             isEditing = false;
+            snapshot = null;
         }
-    }
 
-    public void AcceptChanges()
-    {
-        BeginEdit();
-    }
+        public void CancelEdit()
+        {
+            if (isEditing)
+            {
+                Clear();
+                foreach (var item in snapshot)
+                    Add(item);
+                snapshot = null;
+                isEditing = false;
+            }
+        }
 
-    public void RejectChanges()
-    {
-        CancelEdit();
+        public void AcceptChanges()
+        {
+            BeginEdit();
+        }
+
+        public void RejectChanges()
+        {
+            CancelEdit();
+        }
     }
 }

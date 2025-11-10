@@ -12,17 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Generators.Emitters;
-
-/// <summary>
-///   Interface describing elements composing generated type
-/// </summary>
-internal interface ITypeContributor
+namespace Castle.DynamicProxy.Contributors
 {
-    void CollectElementsToProxy(IProxyGenerationHook hook, MetaType model);
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Generators.Emitters;
 
-    void Generate(ClassEmitter @class);
+    /// <summary>
+    ///   Interface describing elements composing generated type
+    /// </summary>
+    internal interface ITypeContributor
+    {
+        void CollectElementsToProxy(IProxyGenerationHook hook, MetaType model);
+
+        void Generate(ClassEmitter @class);
+    }
 }

@@ -18,37 +18,26 @@ namespace Abp.Authorization
 
         public override void InterceptSynchronous(IInvocation invocation)
         {
-            _authorizationHelper.Authorize(
-                invocation.MethodInvocationTarget,
-                invocation.TargetType
-            );
+            _authorizationHelper.Authorize(invocation.MethodInvocationTarget, invocation.TargetType);
             invocation.Proceed();
         }
 
         protected override async Task InternalInterceptAsynchronous(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();
-
-            await _authorizationHelper.AuthorizeAsync(
-                invocation.MethodInvocationTarget,
-                invocation.TargetType
-            );
+            
+            await _authorizationHelper.AuthorizeAsync(invocation.MethodInvocationTarget, invocation.TargetType);
 
             proceedInfo.Invoke();
             var task = (Task)invocation.ReturnValue;
             await task;
         }
-
-        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(
-            IInvocation invocation
-        )
+        
+        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();
 
-            await _authorizationHelper.AuthorizeAsync(
-                invocation.MethodInvocationTarget,
-                invocation.TargetType
-            );
+            await _authorizationHelper.AuthorizeAsync(invocation.MethodInvocationTarget, invocation.TargetType);
 
             proceedInfo.Invoke();
             var taskResult = (Task<TResult>)invocation.ReturnValue;

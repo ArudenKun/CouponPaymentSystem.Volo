@@ -9,8 +9,7 @@ namespace Abp.DynamicEntityProperties
         /// <summary>
         /// Adds the specified inputType to allowed list. Throws exception if it is already added
         /// </summary>
-        void AddAllowedInputType<TInputType>()
-            where TInputType : IInputType;
+        void AddAllowedInputType<TInputType>() where TInputType : IInputType;
 
         /// <summary>
         /// Gets a Input Type by name.
@@ -63,7 +62,7 @@ namespace Abp.DynamicEntityProperties
         /// <summary>
         /// Returns if contains entity
         /// </summary>
-        bool ContainsEntity<TEntity>()
+        bool ContainsEntity<TEntity>() 
             where TEntity : IEntity<int>;
     }
 }

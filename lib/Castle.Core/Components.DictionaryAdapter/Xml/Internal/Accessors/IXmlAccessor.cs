@@ -12,33 +12,34 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public interface IXmlAccessor
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    Type ClrType { get; }
-    XmlTypeSerializer Serializer { get; }
-    IXmlContext Context { get; }
-    bool IsNillable { get; }
-    bool IsReference { get; }
+    using System;
 
-    object GetValue(
-        IXmlNode node,
-        IDictionaryAdapter parentObject,
-        XmlReferenceManager references,
-        bool nodeExists,
-        bool orStub
-    );
-    void SetValue(
-        IXmlCursor cursor,
-        IDictionaryAdapter parentObject,
-        XmlReferenceManager references,
-        bool hasCurrent,
-        object oldValue,
-        ref object newValue
-    );
+    public interface IXmlAccessor
+    {
+        Type ClrType { get; }
+        XmlTypeSerializer Serializer { get; }
+        IXmlContext Context { get; }
+        bool IsNillable { get; }
+        bool IsReference { get; }
 
-    IXmlCollectionAccessor GetCollectionAccessor(Type itemType);
+        object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parentObject,
+            XmlReferenceManager references,
+            bool nodeExists,
+            bool orStub
+        );
+        void SetValue(
+            IXmlCursor cursor,
+            IDictionaryAdapter parentObject,
+            XmlReferenceManager references,
+            bool hasCurrent,
+            object oldValue,
+            ref object newValue
+        );
+
+        IXmlCollectionAccessor GetCollectionAccessor(Type itemType);
+    }
 }

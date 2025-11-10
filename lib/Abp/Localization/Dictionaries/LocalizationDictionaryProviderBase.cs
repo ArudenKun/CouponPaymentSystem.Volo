@@ -40,21 +40,16 @@ namespace Abp.Localization.Dictionaries
             }
         }
 
-        protected virtual void InitializeDictionaries() { }
+        protected virtual void InitializeDictionaries()
+        {
+        }
 
-        protected virtual void InitializeDictionary<TDictionary>(
-            TDictionary dictionary,
-            bool isDefault = false
-        )
+        protected virtual void InitializeDictionary<TDictionary>(TDictionary dictionary, bool isDefault = false)
             where TDictionary : ILocalizationDictionary
         {
             if (Dictionaries.ContainsKey(dictionary.CultureInfo.Name))
             {
-                throw new AbpInitializationException(
-                    SourceName
-                        + " source contains more than one dictionary for the culture: "
-                        + dictionary.CultureInfo.Name
-                );
+                throw new AbpInitializationException(SourceName + " source contains more than one dictionary for the culture: " + dictionary.CultureInfo.Name);
             }
 
             Dictionaries[dictionary.CultureInfo.Name] = dictionary;
@@ -63,9 +58,7 @@ namespace Abp.Localization.Dictionaries
             {
                 if (DefaultDictionary != null)
                 {
-                    throw new AbpInitializationException(
-                        "Only one default localization dictionary can be for source: " + SourceName
-                    );
+                    throw new AbpInitializationException("Only one default localization dictionary can be for source: " + SourceName);
                 }
 
                 DefaultDictionary = dictionary;

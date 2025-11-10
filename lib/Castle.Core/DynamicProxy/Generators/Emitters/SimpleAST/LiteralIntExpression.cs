@@ -12,56 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Reflection.Emit;
-
-internal class LiteralIntExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly int value;
+    using System.Reflection.Emit;
 
-    public LiteralIntExpression(int value)
+    internal class LiteralIntExpression : IExpression
     {
-        this.value = value;
-    }
+        private readonly int value;
 
-    public void Emit(ILGenerator gen)
-    {
-        switch (value)
+        public LiteralIntExpression(int value)
         {
-            case -1:
-                gen.Emit(OpCodes.Ldc_I4_M1);
-                break;
-            case 0:
-                gen.Emit(OpCodes.Ldc_I4_0);
-                break;
-            case 1:
-                gen.Emit(OpCodes.Ldc_I4_1);
-                break;
-            case 2:
-                gen.Emit(OpCodes.Ldc_I4_2);
-                break;
-            case 3:
-                gen.Emit(OpCodes.Ldc_I4_3);
-                break;
-            case 4:
-                gen.Emit(OpCodes.Ldc_I4_4);
-                break;
-            case 5:
-                gen.Emit(OpCodes.Ldc_I4_5);
-                break;
-            case 6:
-                gen.Emit(OpCodes.Ldc_I4_6);
-                break;
-            case 7:
-                gen.Emit(OpCodes.Ldc_I4_7);
-                break;
-            case 8:
-                gen.Emit(OpCodes.Ldc_I4_8);
-                break;
-            default:
-                gen.Emit(OpCodes.Ldc_I4, value);
-                break;
+            this.value = value;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            switch (value)
+            {
+                case -1:
+                    gen.Emit(OpCodes.Ldc_I4_M1);
+                    break;
+                case 0:
+                    gen.Emit(OpCodes.Ldc_I4_0);
+                    break;
+                case 1:
+                    gen.Emit(OpCodes.Ldc_I4_1);
+                    break;
+                case 2:
+                    gen.Emit(OpCodes.Ldc_I4_2);
+                    break;
+                case 3:
+                    gen.Emit(OpCodes.Ldc_I4_3);
+                    break;
+                case 4:
+                    gen.Emit(OpCodes.Ldc_I4_4);
+                    break;
+                case 5:
+                    gen.Emit(OpCodes.Ldc_I4_5);
+                    break;
+                case 6:
+                    gen.Emit(OpCodes.Ldc_I4_6);
+                    break;
+                case 7:
+                    gen.Emit(OpCodes.Ldc_I4_7);
+                    break;
+                case 8:
+                    gen.Emit(OpCodes.Ldc_I4_8);
+                    break;
+                default:
+                    gen.Emit(OpCodes.Ldc_I4, value);
+                    break;
+            }
         }
     }
 }

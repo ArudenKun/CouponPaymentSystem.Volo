@@ -9,10 +9,7 @@ namespace Abp.Webhooks.Extensions
         /// checks if subscribed to given webhook
         /// </summary>
         /// <returns></returns>
-        public static bool IsSubscribed(
-            this WebhookSubscription webhookSubscription,
-            string webhookName
-        )
+        public static bool IsSubscribed(this WebhookSubscription webhookSubscription, string webhookName)
         {
             if (webhookSubscription.Webhooks.IsNullOrEmpty())
             {
@@ -22,9 +19,7 @@ namespace Abp.Webhooks.Extensions
             return webhookSubscription.Webhooks.Contains(webhookName);
         }
 
-        public static WebhookSubscription ToWebhookSubscription(
-            this WebhookSubscriptionInfo webhookSubscriptionInfo
-        )
+        public static WebhookSubscription ToWebhookSubscription(this WebhookSubscriptionInfo webhookSubscriptionInfo)
         {
             return new WebhookSubscription
             {
@@ -34,7 +29,7 @@ namespace Abp.Webhooks.Extensions
                 Secret = webhookSubscriptionInfo.Secret,
                 WebhookUri = webhookSubscriptionInfo.WebhookUri,
                 Webhooks = webhookSubscriptionInfo.GetSubscribedWebhooks().ToList(),
-                Headers = webhookSubscriptionInfo.GetWebhookHeaders(),
+                Headers = webhookSubscriptionInfo.GetWebhookHeaders()
             };
         }
     }

@@ -1,3 +1,4 @@
+using System;
 using Castle.Windsor;
 
 namespace Abp.Dependency

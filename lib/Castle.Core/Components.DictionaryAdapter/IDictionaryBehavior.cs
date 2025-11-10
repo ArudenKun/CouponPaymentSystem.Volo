@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-/// <summary>
-/// Defines the contract for customizing dictionary access.
-/// </summary>
-public interface IDictionaryBehavior
+namespace Castle.Components.DictionaryAdapter
 {
     /// <summary>
-    /// Determines relative order to apply related behaviors.
+    /// Defines the contract for customizing dictionary access.
     /// </summary>
-    int ExecutionOrder { get; }
+    public interface IDictionaryBehavior
+    {
+        /// <summary>
+        /// Determines relative order to apply related behaviors.
+        /// </summary>
+        int ExecutionOrder { get; }
 
-    /// <summary>
-    /// Copies the dictionary behavior.
-    /// </summary>
-    /// <returns>null if should not be copied.  Otherwise copy.</returns>
-    IDictionaryBehavior Copy();
+        /// <summary>
+        /// Copies the dictionary behavior.
+        /// </summary>
+        /// <returns>null if should not be copied.  Otherwise copy.</returns>
+        IDictionaryBehavior Copy();
+    }
 }

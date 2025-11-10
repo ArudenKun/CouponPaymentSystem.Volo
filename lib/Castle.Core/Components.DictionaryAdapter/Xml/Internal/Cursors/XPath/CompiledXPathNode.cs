@@ -12,118 +12,120 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
-public class CompiledXPathNode
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private string prefix;
-    private string localName;
-    private bool isAttribute;
-    private XPathExpression value;
-    private CompiledXPathNode next;
-    private CompiledXPathNode previous;
-    private IList<CompiledXPathNode> dependencies;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Xml.XPath;
+    using System.Xml.Xsl;
 
-    internal CompiledXPathNode() { }
-
-    public string Prefix
+    public class CompiledXPathNode
     {
-        get { return prefix; }
-        internal set { prefix = value; }
-    }
+        private string prefix;
+        private string localName;
+        private bool isAttribute;
+        private XPathExpression value;
+        private CompiledXPathNode next;
+        private CompiledXPathNode previous;
+        private IList<CompiledXPathNode> dependencies;
 
-    public string LocalName
-    {
-        get { return localName; }
-        internal set { localName = value; }
-    }
+        internal CompiledXPathNode() { }
 
-    public bool IsAttribute
-    {
-        get { return isAttribute; }
-        internal set { isAttribute = value; }
-    }
+        public string Prefix
+        {
+            get { return prefix; }
+            internal set { prefix = value; }
+        }
 
-    public bool IsSelfReference
-    {
-        get { return localName == null; }
-    }
+        public string LocalName
+        {
+            get { return localName; }
+            internal set { localName = value; }
+        }
 
-    public bool IsSimple
-    {
-        get { return next == null && HasNoRealDependencies(); }
-    }
+        public bool IsAttribute
+        {
+            get { return isAttribute; }
+            internal set { isAttribute = value; }
+        }
 
-    public XPathExpression Value
-    {
-        get { return value ?? GetSelfReferenceValue(); }
-        internal set { this.value = value; }
-    }
+        public bool IsSelfReference
+        {
+            get { return localName == null; }
+        }
 
-    public CompiledXPathNode NextNode
-    {
-        get { return next; }
-        internal set { next = value; }
-    }
+        public bool IsSimple
+        {
+            get { return next == null && HasNoRealDependencies(); }
+        }
 
-    public CompiledXPathNode PreviousNode
-    {
-        get { return previous; }
-        internal set { previous = value; }
-    }
+        public XPathExpression Value
+        {
+            get { return value ?? GetSelfReferenceValue(); }
+            internal set { this.value = value; }
+        }
 
-    public IList<CompiledXPathNode> Dependencies
-    {
-        get { return dependencies ?? (dependencies = new List<CompiledXPathNode>()); }
-    }
+        public CompiledXPathNode NextNode
+        {
+            get { return next; }
+            internal set { next = value; }
+        }
 
-    private static readonly IList<CompiledXPathNode> NoDependencies = Array.AsReadOnly(
-        new CompiledXPathNode[0]
-    );
+        public CompiledXPathNode PreviousNode
+        {
+            get { return previous; }
+            internal set { previous = value; }
+        }
 
-    private bool HasNoRealDependencies()
-    {
-        return (
-            dependencies == null
-            || dependencies.Count == 0
-            || (dependencies.Count == 1 && dependencies[0].IsSelfReference)
+        public IList<CompiledXPathNode> Dependencies
+        {
+            get { return dependencies ?? (dependencies = new List<CompiledXPathNode>()); }
+        }
+
+        private static readonly IList<CompiledXPathNode> NoDependencies = Array.AsReadOnly(
+            new CompiledXPathNode[0]
         );
-    }
 
-    private XPathExpression GetSelfReferenceValue()
-    {
-        return dependencies != null && dependencies.Count == 1 && dependencies[0].IsSelfReference
-            ? dependencies[0].value
-            : null;
-    }
+        private bool HasNoRealDependencies()
+        {
+            return (
+                dependencies == null
+                || dependencies.Count == 0
+                || (dependencies.Count == 1 && dependencies[0].IsSelfReference)
+            );
+        }
 
-    internal virtual void Prepare()
-    {
-        dependencies =
-            (dependencies != null) ? Array.AsReadOnly(dependencies.ToArray()) : NoDependencies;
+        private XPathExpression GetSelfReferenceValue()
+        {
+            return
+                dependencies != null && dependencies.Count == 1 && dependencies[0].IsSelfReference
+                ? dependencies[0].value
+                : null;
+        }
 
-        foreach (var child in dependencies)
-            child.Prepare();
+        internal virtual void Prepare()
+        {
+            dependencies =
+                (dependencies != null) ? Array.AsReadOnly(dependencies.ToArray()) : NoDependencies;
 
-        if (next != null)
-            next.Prepare();
-    }
+            foreach (var child in dependencies)
+                child.Prepare();
 
-    internal virtual void SetContext(XsltContext context)
-    {
-        if (value != null)
-            value.SetContext(context);
+            if (next != null)
+                next.Prepare();
+        }
 
-        foreach (var child in dependencies)
-            child.SetContext(context);
+        internal virtual void SetContext(XsltContext context)
+        {
+            if (value != null)
+                value.SetContext(context);
 
-        if (next != null)
-            next.SetContext(context);
+            foreach (var child in dependencies)
+                child.SetContext(context);
+
+            if (next != null)
+                next.SetContext(context);
+        }
     }
 }

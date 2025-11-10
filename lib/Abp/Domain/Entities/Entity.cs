@@ -9,7 +9,10 @@ namespace Abp.Domain.Entities
     /// A shortcut of <see cref="Entity{TPrimaryKey}"/> for most used primary key type (<see cref="int"/>).
     /// </summary>
     [Serializable]
-    public abstract class Entity : Entity<int>, IEntity { }
+    public abstract class Entity : Entity<int>, IEntity
+    {
+
+    }
 
     /// <summary>
     /// Basic implementation of IEntity interface.
@@ -73,35 +76,26 @@ namespace Abp.Domain.Entities
             //Must have a IS-A relation of types or must be same type
             var typeOfThis = GetType();
             var typeOfOther = other.GetType();
-            if (
-                !typeOfThis.GetTypeInfo().IsAssignableFrom(typeOfOther)
-                && !typeOfOther.GetTypeInfo().IsAssignableFrom(typeOfThis)
-            )
+            if (!typeOfThis.GetTypeInfo().IsAssignableFrom(typeOfOther) && !typeOfOther.GetTypeInfo().IsAssignableFrom(typeOfThis))
             {
                 return false;
             }
 
-            if (
-                this is IMayHaveTenant
-                && other is IMayHaveTenant
-                && this.As<IMayHaveTenant>().TenantId != other.As<IMayHaveTenant>().TenantId
-            )
+            if (this is IMayHaveTenant && other is IMayHaveTenant &&
+                this.As<IMayHaveTenant>().TenantId != other.As<IMayHaveTenant>().TenantId)
             {
                 return false;
             }
 
-            if (
-                this is IMustHaveTenant
-                && other is IMustHaveTenant
-                && this.As<IMustHaveTenant>().TenantId != other.As<IMustHaveTenant>().TenantId
-            )
+            if (this is IMustHaveTenant && other is IMustHaveTenant &&
+                this.As<IMustHaveTenant>().TenantId != other.As<IMustHaveTenant>().TenantId)
             {
                 return false;
             }
 
             return Id.Equals(other.Id);
         }
-
+     
         public override string ToString()
         {
             return $"[{GetType().Name} {Id}]";

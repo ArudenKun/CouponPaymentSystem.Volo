@@ -15,226 +15,230 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
-using Castle.DynamicProxy.Generators;
-using Castle.DynamicProxy.Internal;
-
-internal abstract class MembersCollector
+namespace Castle.DynamicProxy.Contributors
 {
-    private const BindingFlags Flags =
-        BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
-    private ILogger logger = NullLogger.Instance;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators;
+    using Castle.DynamicProxy.Internal;
 
-    protected readonly Type type;
-
-    protected MembersCollector(Type type)
+    internal abstract class MembersCollector
     {
-        this.type = type;
-    }
+        private const BindingFlags Flags =
+            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
+        private ILogger logger = NullLogger.Instance;
 
-    public ILogger Logger
-    {
-        get { return logger; }
-        set { logger = value; }
-    }
+        protected readonly Type type;
 
-    public virtual void CollectMembersToProxy(IProxyGenerationHook hook, IMembersCollectorSink sink)
-    {
-        var checkedMethods = new HashSet<MethodInfo>();
-
-        CollectProperties();
-        CollectEvents();
-        // Methods go last, because properties and events have methods too (getters/setters add/remove)
-        // and we don't want to get duplicates, so we collect property and event methods first
-        // then we collect methods, and add only these that aren't there yet
-        CollectMethods();
-
-        void CollectProperties()
+        protected MembersCollector(Type type)
         {
-            var propertiesFound = type.GetProperties(Flags);
-            foreach (var property in propertiesFound)
+            this.type = type;
+        }
+
+        public ILogger Logger
+        {
+            get { return logger; }
+            set { logger = value; }
+        }
+
+        public virtual void CollectMembersToProxy(
+            IProxyGenerationHook hook,
+            IMembersCollectorSink sink
+        )
+        {
+            var checkedMethods = new HashSet<MethodInfo>();
+
+            CollectProperties();
+            CollectEvents();
+            // Methods go last, because properties and events have methods too (getters/setters add/remove)
+            // and we don't want to get duplicates, so we collect property and event methods first
+            // then we collect methods, and add only these that aren't there yet
+            CollectMethods();
+
+            void CollectProperties()
             {
-                AddProperty(property);
+                var propertiesFound = type.GetProperties(Flags);
+                foreach (var property in propertiesFound)
+                {
+                    AddProperty(property);
+                }
+            }
+
+            void CollectEvents()
+            {
+                var eventsFound = type.GetEvents(Flags);
+                foreach (var @event in eventsFound)
+                {
+                    AddEvent(@event);
+                }
+            }
+
+            void CollectMethods()
+            {
+                var methodsFound = type.GetAllInstanceMethods();
+                foreach (var method in methodsFound)
+                {
+                    AddMethod(method, true);
+                }
+            }
+
+            void AddProperty(PropertyInfo property)
+            {
+                MetaMethod getter = null;
+                MetaMethod setter = null;
+
+                if (property.CanRead)
+                {
+                    var getMethod = property.GetGetMethod(true);
+                    getter = AddMethod(getMethod, false);
+                }
+
+                if (property.CanWrite)
+                {
+                    var setMethod = property.GetSetMethod(true);
+                    setter = AddMethod(setMethod, false);
+                }
+
+                if (setter == null && getter == null)
+                {
+                    return;
+                }
+
+                var nonInheritableAttributes = property.GetNonInheritableAttributes();
+                var arguments = property.GetIndexParameters();
+
+                sink.Add(
+                    new MetaProperty(
+                        property,
+                        getter,
+                        setter,
+                        nonInheritableAttributes.Select(a => a.Builder),
+                        arguments.Select(a => a.ParameterType).ToArray()
+                    )
+                );
+            }
+
+            void AddEvent(EventInfo @event)
+            {
+                var addMethod = @event.GetAddMethod(true);
+                var removeMethod = @event.GetRemoveMethod(true);
+                MetaMethod adder = null;
+                MetaMethod remover = null;
+
+                if (addMethod != null)
+                {
+                    adder = AddMethod(addMethod, false);
+                }
+
+                if (removeMethod != null)
+                {
+                    remover = AddMethod(removeMethod, false);
+                }
+
+                if (adder == null && remover == null)
+                {
+                    return;
+                }
+
+                sink.Add(new MetaEvent(@event, adder, remover, EventAttributes.None));
+            }
+
+            MetaMethod AddMethod(MethodInfo method, bool isStandalone)
+            {
+                if (checkedMethods.Add(method) == false)
+                {
+                    return null;
+                }
+
+                if (ProxyUtil.IsAccessibleMethod(method) == false)
+                {
+                    return null;
+                }
+
+                var methodToGenerate = GetMethodToGenerate(method, hook, isStandalone);
+                if (methodToGenerate != null)
+                {
+                    sink.Add(methodToGenerate);
+                }
+
+                return methodToGenerate;
             }
         }
 
-        void CollectEvents()
+        protected abstract MetaMethod GetMethodToGenerate(
+            MethodInfo method,
+            IProxyGenerationHook hook,
+            bool isStandalone
+        );
+
+        /// <summary>
+        ///   Performs some basic screening and invokes the <see cref = "IProxyGenerationHook" />
+        ///   to select methods.
+        /// </summary>
+        protected bool AcceptMethod(MethodInfo method, bool onlyVirtuals, IProxyGenerationHook hook)
         {
-            var eventsFound = type.GetEvents(Flags);
-            foreach (var @event in eventsFound)
-            {
-                AddEvent(@event);
-            }
+            return AcceptMethodPreScreen(method, onlyVirtuals, hook)
+                && hook.ShouldInterceptMethod(type, method);
         }
 
-        void CollectMethods()
+        /// <summary>
+        ///   Performs some basic screening to filter out non-interceptable methods.
+        /// </summary>
+        /// <remarks>
+        ///   The <paramref name="hook"/> will get invoked for non-interceptable method notification only;
+        ///   it does not get asked whether or not to intercept the <paramref name="method"/>.
+        /// </remarks>
+        protected bool AcceptMethodPreScreen(
+            MethodInfo method,
+            bool onlyVirtuals,
+            IProxyGenerationHook hook
+        )
         {
-            var methodsFound = type.GetAllInstanceMethods();
-            foreach (var method in methodsFound)
+            // NOTE: at this point, the method's accessibility should already have been checked (see `AddMethod` above)
+
+            var isOverridable = method.IsVirtual && !method.IsFinal;
+            if (onlyVirtuals && !isOverridable)
             {
-                AddMethod(method, true);
-            }
-        }
-
-        void AddProperty(PropertyInfo property)
-        {
-            MetaMethod getter = null;
-            MetaMethod setter = null;
-
-            if (property.CanRead)
-            {
-                var getMethod = property.GetGetMethod(true);
-                getter = AddMethod(getMethod, false);
-            }
-
-            if (property.CanWrite)
-            {
-                var setMethod = property.GetSetMethod(true);
-                setter = AddMethod(setMethod, false);
-            }
-
-            if (setter == null && getter == null)
-            {
-                return;
-            }
-
-            var nonInheritableAttributes = property.GetNonInheritableAttributes();
-            var arguments = property.GetIndexParameters();
-
-            sink.Add(
-                new MetaProperty(
-                    property,
-                    getter,
-                    setter,
-                    nonInheritableAttributes.Select(a => a.Builder),
-                    arguments.Select(a => a.ParameterType).ToArray()
+                if (
+                    method.DeclaringType != typeof(MarshalByRefObject)
+                    && method.IsGetType() == false
+                    && method.IsMemberwiseClone() == false
                 )
-            );
-        }
-
-        void AddEvent(EventInfo @event)
-        {
-            var addMethod = @event.GetAddMethod(true);
-            var removeMethod = @event.GetRemoveMethod(true);
-            MetaMethod adder = null;
-            MetaMethod remover = null;
-
-            if (addMethod != null)
-            {
-                adder = AddMethod(addMethod, false);
+                {
+                    Logger.LogDebug(
+                        "Excluded non-overridable method {0} on {1} because it cannot be intercepted.",
+                        method.Name,
+                        method.DeclaringType.FullName
+                    );
+                    hook.NonProxyableMemberNotification(type, method);
+                }
+                return false;
             }
 
-            if (removeMethod != null)
-            {
-                remover = AddMethod(removeMethod, false);
-            }
-
-            if (adder == null && remover == null)
-            {
-                return;
-            }
-
-            sink.Add(new MetaEvent(@event, adder, remover, EventAttributes.None));
-        }
-
-        MetaMethod AddMethod(MethodInfo method, bool isStandalone)
-        {
-            if (checkedMethods.Add(method) == false)
-            {
-                return null;
-            }
-
-            if (ProxyUtil.IsAccessibleMethod(method) == false)
-            {
-                return null;
-            }
-
-            var methodToGenerate = GetMethodToGenerate(method, hook, isStandalone);
-            if (methodToGenerate != null)
-            {
-                sink.Add(methodToGenerate);
-            }
-
-            return methodToGenerate;
-        }
-    }
-
-    protected abstract MetaMethod GetMethodToGenerate(
-        MethodInfo method,
-        IProxyGenerationHook hook,
-        bool isStandalone
-    );
-
-    /// <summary>
-    ///   Performs some basic screening and invokes the <see cref = "IProxyGenerationHook" />
-    ///   to select methods.
-    /// </summary>
-    protected bool AcceptMethod(MethodInfo method, bool onlyVirtuals, IProxyGenerationHook hook)
-    {
-        return AcceptMethodPreScreen(method, onlyVirtuals, hook)
-            && hook.ShouldInterceptMethod(type, method);
-    }
-
-    /// <summary>
-    ///   Performs some basic screening to filter out non-interceptable methods.
-    /// </summary>
-    /// <remarks>
-    ///   The <paramref name="hook"/> will get invoked for non-interceptable method notification only;
-    ///   it does not get asked whether or not to intercept the <paramref name="method"/>.
-    /// </remarks>
-    protected bool AcceptMethodPreScreen(
-        MethodInfo method,
-        bool onlyVirtuals,
-        IProxyGenerationHook hook
-    )
-    {
-        // NOTE: at this point, the method's accessibility should already have been checked (see `AddMethod` above)
-
-        var isOverridable = method.IsVirtual && !method.IsFinal;
-        if (onlyVirtuals && !isOverridable)
-        {
-            if (
-                method.DeclaringType != typeof(MarshalByRefObject)
-                && method.IsGetType() == false
-                && method.IsMemberwiseClone() == false
-            )
+            // we can never intercept a sealed (final) method
+            if (method.IsFinal)
             {
                 Logger.LogDebug(
-                    "Excluded non-overridable method {0} on {1} because it cannot be intercepted.",
+                    "Excluded sealed method {0} on {1} because it cannot be intercepted.",
                     method.Name,
                     method.DeclaringType.FullName
                 );
-                hook.NonProxyableMemberNotification(type, method);
+                return false;
             }
-            return false;
-        }
 
-        // we can never intercept a sealed (final) method
-        if (method.IsFinal)
-        {
-            Logger.LogDebug(
-                "Excluded sealed method {0} on {1} because it cannot be intercepted.",
-                method.Name,
-                method.DeclaringType.FullName
-            );
-            return false;
-        }
+            if (method.DeclaringType == typeof(MarshalByRefObject))
+            {
+                return false;
+            }
 
-        if (method.DeclaringType == typeof(MarshalByRefObject))
-        {
-            return false;
-        }
+            if (method.IsFinalizer())
+            {
+                return false;
+            }
 
-        if (method.IsFinalizer())
-        {
-            return false;
+            return true;
         }
-
-        return true;
     }
 }

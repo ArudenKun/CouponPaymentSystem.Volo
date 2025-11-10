@@ -12,51 +12,52 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Diagnostics;
-using System.Reflection.Emit;
-
-[DebuggerDisplay("{reference} as {type}")]
-internal class AsTypeReference : Reference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly Reference reference;
-    private readonly Type type;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection.Emit;
 
-    public AsTypeReference(Reference reference, Type type)
+    [DebuggerDisplay("{reference} as {type}")]
+    internal class AsTypeReference : Reference
     {
-        if (reference == null)
+        private readonly Reference reference;
+        private readonly Type type;
+
+        public AsTypeReference(Reference reference, Type type)
         {
-            throw new ArgumentNullException(nameof(reference));
+            if (reference == null)
+            {
+                throw new ArgumentNullException(nameof(reference));
+            }
+            if (type == null)
+            {
+                throw new ArgumentNullException(nameof(type));
+            }
+            this.reference = reference;
+            this.type = type;
+            if (reference == OwnerReference)
+            {
+                OwnerReference = null;
+            }
         }
-        if (type == null)
+
+        public override void LoadAddressOfReference(ILGenerator gen)
         {
-            throw new ArgumentNullException(nameof(type));
+            // NOTE: Or maybe throw new NotSupportedException() ?
+            reference.LoadAddressOfReference(gen);
         }
-        this.reference = reference;
-        this.type = type;
-        if (reference == OwnerReference)
+
+        public override void LoadReference(ILGenerator gen)
         {
-            OwnerReference = null;
+            reference.LoadReference(gen);
+            gen.Emit(OpCodes.Isinst, type);
         }
-    }
 
-    public override void LoadAddressOfReference(ILGenerator gen)
-    {
-        // NOTE: Or maybe throw new NotSupportedException() ?
-        reference.LoadAddressOfReference(gen);
-    }
-
-    public override void LoadReference(ILGenerator gen)
-    {
-        reference.LoadReference(gen);
-        gen.Emit(OpCodes.Isinst, type);
-    }
-
-    public override void StoreReference(ILGenerator gen)
-    {
-        // NOTE: Or maybe throw new NotSupportedException() ?
-        reference.StoreReference(gen);
+        public override void StoreReference(ILGenerator gen)
+        {
+            // NOTE: Or maybe throw new NotSupportedException() ?
+            reference.StoreReference(gen);
+        }
     }
 }

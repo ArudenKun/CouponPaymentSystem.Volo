@@ -32,8 +32,7 @@ namespace Abp.Resources.Embedded
                 using (var stream = Assembly.GetManifestResourceStream(resourceName))
                 {
                     var relativePath = ConvertToRelativePath(resourceName);
-                    var filePath =
-                        EmbeddedResourcePathHelper.NormalizePath(RootPath) + relativePath;
+                    var filePath = EmbeddedResourcePathHelper.NormalizePath(RootPath) + relativePath;
 
                     resources[filePath] = new EmbeddedResourceItem(
                         filePath,

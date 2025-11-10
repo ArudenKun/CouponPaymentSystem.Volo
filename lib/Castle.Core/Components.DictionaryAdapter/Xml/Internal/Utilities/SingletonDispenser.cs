@@ -12,119 +12,120 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-using System.Threading;
-
-public class SingletonDispenser<TKey, TItem>
-    where TItem : class
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private readonly ReaderWriterLockSlim locker;
-    private readonly Dictionary<TKey, object> items;
-    private readonly Func<TKey, TItem> factory;
+    using System;
+    using System.Collections.Generic;
+    using System.Threading;
 
-    public SingletonDispenser(Func<TKey, TItem> factory)
+    public class SingletonDispenser<TKey, TItem>
+        where TItem : class
     {
-        if (factory == null)
-            throw Error.ArgumentNull(nameof(factory));
+        private readonly ReaderWriterLockSlim locker;
+        private readonly Dictionary<TKey, object> items;
+        private readonly Func<TKey, TItem> factory;
 
-        this.locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
-        this.items = new Dictionary<TKey, object>();
-        this.factory = factory;
-    }
-
-    public TItem this[TKey key]
-    {
-        get { return GetOrCreate(key); }
-        protected set { items[key] = value; }
-    }
-
-    private TItem GetOrCreate(TKey key)
-    {
-        object item;
-        return TryGetExistingItem(key, out item)
-            ? item as TItem ?? WaitForCreate(key, item)
-            : Create(key, item);
-    }
-
-    private bool TryGetExistingItem(TKey key, out object item)
-    {
-        locker.EnterReadLock();
-        try
+        public SingletonDispenser(Func<TKey, TItem> factory)
         {
-            if (items.TryGetValue(key, out item))
-            {
-                return true;
-            }
-        }
-        finally
-        {
-            locker.ExitReadLock();
+            if (factory == null)
+                throw Error.ArgumentNull(nameof(factory));
+
+            this.locker = new ReaderWriterLockSlim(LockRecursionPolicy.NoRecursion);
+            this.items = new Dictionary<TKey, object>();
+            this.factory = factory;
         }
 
-        locker.EnterUpgradeableReadLock();
-        try
+        public TItem this[TKey key]
         {
-            if (items.TryGetValue(key, out item))
+            get { return GetOrCreate(key); }
+            protected set { items[key] = value; }
+        }
+
+        private TItem GetOrCreate(TKey key)
+        {
+            object item;
+            return TryGetExistingItem(key, out item)
+                ? item as TItem ?? WaitForCreate(key, item)
+                : Create(key, item);
+        }
+
+        private bool TryGetExistingItem(TKey key, out object item)
+        {
+            locker.EnterReadLock();
+            try
             {
-                return true;
-            }
-            else
-            {
-                locker.EnterWriteLock();
-                try
+                if (items.TryGetValue(key, out item))
                 {
-                    items[key] = item = new ManualResetEvent(false);
-                    return false;
-                }
-                finally
-                {
-                    locker.ExitWriteLock();
+                    return true;
                 }
             }
+            finally
+            {
+                locker.ExitReadLock();
+            }
+
+            locker.EnterUpgradeableReadLock();
+            try
+            {
+                if (items.TryGetValue(key, out item))
+                {
+                    return true;
+                }
+                else
+                {
+                    locker.EnterWriteLock();
+                    try
+                    {
+                        items[key] = item = new ManualResetEvent(false);
+                        return false;
+                    }
+                    finally
+                    {
+                        locker.ExitWriteLock();
+                    }
+                }
+            }
+            finally
+            {
+                locker.ExitUpgradeableReadLock();
+            }
         }
-        finally
+
+        private TItem WaitForCreate(TKey key, object item)
         {
-            locker.ExitUpgradeableReadLock();
+            var handle = (ManualResetEvent)item;
+
+            handle.WaitOne();
+
+            locker.EnterReadLock();
+            try
+            {
+                return (TItem)items[key];
+            }
+            finally
+            {
+                locker.ExitReadLock();
+            }
         }
-    }
 
-    private TItem WaitForCreate(TKey key, object item)
-    {
-        var handle = (ManualResetEvent)item;
-
-        handle.WaitOne();
-
-        locker.EnterReadLock();
-        try
+        private TItem Create(TKey key, object item)
         {
-            return (TItem)items[key];
-        }
-        finally
-        {
-            locker.ExitReadLock();
-        }
-    }
+            var handle = (ManualResetEvent)item;
 
-    private TItem Create(TKey key, object item)
-    {
-        var handle = (ManualResetEvent)item;
+            var result = factory(key);
 
-        var result = factory(key);
+            locker.EnterWriteLock();
+            try
+            {
+                items[key] = result;
+            }
+            finally
+            {
+                locker.ExitWriteLock();
+            }
 
-        locker.EnterWriteLock();
-        try
-        {
-            items[key] = result;
+            handle.Set();
+            return result;
         }
-        finally
-        {
-            locker.ExitWriteLock();
-        }
-
-        handle.Set();
-        return result;
     }
 }

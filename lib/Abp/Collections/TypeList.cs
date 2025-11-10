@@ -8,7 +8,9 @@ namespace Abp.Collections
     /// <summary>
     /// A shortcut for <see cref="TypeList{TBaseType}"/> to use object as base type.
     /// </summary>
-    public class TypeList : TypeList<object>, ITypeList { }
+    public class TypeList : TypeList<object>, ITypeList
+    {
+    }
 
     /// <summary>
     /// Extends <see cref="List{Type}"/> to add restriction a specific base type.
@@ -20,19 +22,13 @@ namespace Abp.Collections
         /// Gets the count.
         /// </summary>
         /// <value>The count.</value>
-        public int Count
-        {
-            get { return _typeList.Count; }
-        }
+        public int Count { get { return _typeList.Count; } }
 
         /// <summary>
         /// Gets a value indicating whether this instance is read only.
         /// </summary>
         /// <value><c>true</c> if this instance is read only; otherwise, <c>false</c>.</value>
-        public bool IsReadOnly
-        {
-            get { return false; }
-        }
+        public bool IsReadOnly { get { return false; } }
 
         /// <summary>
         /// Gets or sets the <see cref="Type"/> at the specified index.
@@ -59,14 +55,12 @@ namespace Abp.Collections
         }
 
         /// <inheritdoc/>
-        public void Add<T>()
-            where T : TBaseType
+        public void Add<T>() where T : TBaseType
         {
             _typeList.Add(typeof(T));
         }
 
-        public bool TryAdd<T>()
-            where T : TBaseType
+        public bool TryAdd<T>() where T : TBaseType
         {
             if (Contains<T>())
             {
@@ -97,8 +91,7 @@ namespace Abp.Collections
         }
 
         /// <inheritdoc/>
-        public bool Contains<T>()
-            where T : TBaseType
+        public bool Contains<T>() where T : TBaseType
         {
             return Contains(typeof(T));
         }
@@ -110,8 +103,7 @@ namespace Abp.Collections
         }
 
         /// <inheritdoc/>
-        public void Remove<T>()
-            where T : TBaseType
+        public void Remove<T>() where T : TBaseType
         {
             _typeList.Remove(typeof(T));
         }
@@ -155,10 +147,7 @@ namespace Abp.Collections
         {
             if (!typeof(TBaseType).GetTypeInfo().IsAssignableFrom(item))
             {
-                throw new ArgumentException(
-                    "Given item is not type of " + typeof(TBaseType).AssemblyQualifiedName,
-                    "item"
-                );
+                throw new ArgumentException("Given item is not type of " + typeof(TBaseType).AssemblyQualifiedName, "item");
             }
         }
     }

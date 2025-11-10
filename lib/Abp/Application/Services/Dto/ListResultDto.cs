@@ -23,7 +23,10 @@ namespace Abp.Application.Services.Dto
         /// <summary>
         /// Creates a new <see cref="ListResultDto{T}"/> object.
         /// </summary>
-        public ListResultDto() { }
+        public ListResultDto()
+        {
+            
+        }
 
         /// <summary>
         /// Creates a new <see cref="ListResultDto{T}"/> object.

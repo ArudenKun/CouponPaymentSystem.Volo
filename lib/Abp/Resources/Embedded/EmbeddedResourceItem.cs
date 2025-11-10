@@ -36,10 +36,9 @@ namespace Abp.Resources.Embedded
             Content = content;
             Assembly = assembly;
             FileExtension = CalculateFileExtension(FileName);
-            LastModifiedUtc =
-                Assembly.Location != null
-                    ? new FileInfo(Assembly.Location).LastWriteTimeUtc
-                    : DateTime.UtcNow;
+            LastModifiedUtc = Assembly.Location != null
+                ? new FileInfo(Assembly.Location).LastWriteTimeUtc
+                : DateTime.UtcNow;
         }
 
         private static string CalculateFileExtension(string fileName)

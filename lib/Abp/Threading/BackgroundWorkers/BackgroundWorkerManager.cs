@@ -7,11 +7,7 @@ namespace Abp.Threading.BackgroundWorkers
     /// <summary>
     /// Implements <see cref="IBackgroundWorkerManager"/>.
     /// </summary>
-    public class BackgroundWorkerManager
-        : RunnableBase,
-            IBackgroundWorkerManager,
-            ISingletonDependency,
-            IDisposable
+    public class BackgroundWorkerManager : RunnableBase, IBackgroundWorkerManager, ISingletonDependency, IDisposable
     {
         private readonly IIocResolver _iocResolver;
         private readonly List<IBackgroundWorker> _backgroundJobs;

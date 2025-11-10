@@ -12,85 +12,86 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public struct XmlName : IEquatable<XmlName>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlName Empty = default(XmlName);
+    using System;
 
-    private readonly string localName;
-    private readonly string namespaceUri;
-
-    public XmlName(string localName, string namespaceUri)
+    public struct XmlName : IEquatable<XmlName>
     {
-        this.localName = localName;
-        this.namespaceUri = namespaceUri;
-    }
+        public static readonly XmlName Empty = default(XmlName);
 
-    public string LocalName
-    {
-        get { return localName; }
-    }
+        private readonly string localName;
+        private readonly string namespaceUri;
 
-    public string NamespaceUri
-    {
-        get { return namespaceUri; }
-    }
+        public XmlName(string localName, string namespaceUri)
+        {
+            this.localName = localName;
+            this.namespaceUri = namespaceUri;
+        }
 
-    public override int GetHashCode()
-    {
-        return XmlNameComparer.Default.GetHashCode(this);
-    }
+        public string LocalName
+        {
+            get { return localName; }
+        }
 
-    public bool Equals(XmlName other)
-    {
-        return XmlNameComparer.Default.Equals(this, other);
-    }
+        public string NamespaceUri
+        {
+            get { return namespaceUri; }
+        }
 
-    public override bool Equals(object obj)
-    {
-        return obj is XmlName && Equals((XmlName)obj);
-    }
+        public override int GetHashCode()
+        {
+            return XmlNameComparer.Default.GetHashCode(this);
+        }
 
-    public static bool operator ==(XmlName x, XmlName y)
-    {
-        return XmlNameComparer.Default.Equals(x, y);
-    }
+        public bool Equals(XmlName other)
+        {
+            return XmlNameComparer.Default.Equals(this, other);
+        }
 
-    public static bool operator !=(XmlName x, XmlName y)
-    {
-        return !XmlNameComparer.Default.Equals(x, y);
-    }
+        public override bool Equals(object obj)
+        {
+            return obj is XmlName && Equals((XmlName)obj);
+        }
 
-    public XmlName WithNamespaceUri(string namespaceUri)
-    {
-        return new XmlName(localName, namespaceUri);
-    }
+        public static bool operator ==(XmlName x, XmlName y)
+        {
+            return XmlNameComparer.Default.Equals(x, y);
+        }
 
-    public override string ToString()
-    {
-        if (string.IsNullOrEmpty(localName))
-            return string.Empty;
-        if (string.IsNullOrEmpty(namespaceUri))
-            return localName;
-        return string.Concat(namespaceUri, ":", localName);
-    }
+        public static bool operator !=(XmlName x, XmlName y)
+        {
+            return !XmlNameComparer.Default.Equals(x, y);
+        }
 
-    public static XmlName ParseQName(string text)
-    {
-        if (text == null)
-            throw Error.ArgumentNull(nameof(text));
+        public XmlName WithNamespaceUri(string namespaceUri)
+        {
+            return new XmlName(localName, namespaceUri);
+        }
 
-        var index = text.IndexOf(':');
-        if (index == -1)
-            return new XmlName(text, null);
-        if (index == 0)
-            return new XmlName(text.Substring(1), null);
-        if (index == text.Length)
-            return new XmlName(text.Substring(0, index), null);
+        public override string ToString()
+        {
+            if (string.IsNullOrEmpty(localName))
+                return string.Empty;
+            if (string.IsNullOrEmpty(namespaceUri))
+                return localName;
+            return string.Concat(namespaceUri, ":", localName);
+        }
 
-        return new XmlName(text.Substring(index + 1), text.Substring(0, index));
+        public static XmlName ParseQName(string text)
+        {
+            if (text == null)
+                throw Error.ArgumentNull(nameof(text));
+
+            var index = text.IndexOf(':');
+            if (index == -1)
+                return new XmlName(text, null);
+            if (index == 0)
+                return new XmlName(text.Substring(1), null);
+            if (index == text.Length)
+                return new XmlName(text.Substring(0, index), null);
+
+            return new XmlName(text.Substring(index + 1), text.Substring(0, index));
+        }
     }
 }

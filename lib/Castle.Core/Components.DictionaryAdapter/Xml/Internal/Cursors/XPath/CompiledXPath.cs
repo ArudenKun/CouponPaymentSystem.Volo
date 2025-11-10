@@ -12,76 +12,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System.Xml.XPath;
-using System.Xml.Xsl;
-
-public class CompiledXPath
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    private XPathExpression path;
-    private CompiledXPathStep firstStep;
-    private int depth;
+    using System.Xml.XPath;
+    using System.Xml.Xsl;
 
-    internal CompiledXPath() { }
-
-    public XPathExpression Path
+    public class CompiledXPath
     {
-        get { return path; }
-        internal set { path = value; }
-    }
+        private XPathExpression path;
+        private CompiledXPathStep firstStep;
+        private int depth;
 
-    public CompiledXPathStep FirstStep
-    {
-        get { return firstStep; }
-        internal set { firstStep = value; }
-    }
+        internal CompiledXPath() { }
 
-    public CompiledXPathStep LastStep
-    {
-        get
+        public XPathExpression Path
         {
-            var step = null as CompiledXPathStep;
-            var next = firstStep;
-
-            while (next != null)
-            {
-                step = next;
-                next = step.NextStep;
-            }
-
-            return step;
+            get { return path; }
+            internal set { path = value; }
         }
-    }
 
-    public int Depth
-    {
-        get { return depth; }
-        internal set { depth = value; }
-    }
+        public CompiledXPathStep FirstStep
+        {
+            get { return firstStep; }
+            internal set { firstStep = value; }
+        }
 
-    public bool IsCreatable
-    {
-        get { return firstStep != null; }
-    }
+        public CompiledXPathStep LastStep
+        {
+            get
+            {
+                var step = null as CompiledXPathStep;
+                var next = firstStep;
 
-    internal void MakeNotCreatable()
-    {
-        firstStep = null;
-        depth = 0;
-    }
+                while (next != null)
+                {
+                    step = next;
+                    next = step.NextStep;
+                }
 
-    internal void Prepare()
-    {
-        if (firstStep != null)
-            firstStep.Prepare();
-    }
+                return step;
+            }
+        }
 
-    public void SetContext(XsltContext context)
-    {
-        path.SetContext(context);
+        public int Depth
+        {
+            get { return depth; }
+            internal set { depth = value; }
+        }
 
-        if (firstStep != null)
-            firstStep.SetContext(context);
+        public bool IsCreatable
+        {
+            get { return firstStep != null; }
+        }
+
+        internal void MakeNotCreatable()
+        {
+            firstStep = null;
+            depth = 0;
+        }
+
+        internal void Prepare()
+        {
+            if (firstStep != null)
+                firstStep.Prepare();
+        }
+
+        public void SetContext(XsltContext context)
+        {
+            path.SetContext(context);
+
+            if (firstStep != null)
+                firstStep.SetContext(context);
+        }
     }
 }

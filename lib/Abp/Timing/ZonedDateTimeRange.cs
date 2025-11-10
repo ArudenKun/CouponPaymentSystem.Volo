@@ -9,33 +9,32 @@ namespace Abp.Timing
     /// </summary>
     public class ZonedDateTimeRange : DateTimeRange, IZonedDateTimeRange
     {
-        public ZonedDateTimeRange() { }
+        public ZonedDateTimeRange()
+        {
+            
+        }
 
         public ZonedDateTimeRange(string timezone)
         {
             Timezone = timezone;
         }
 
-        public ZonedDateTimeRange(IDateTimeRange dateTimeRange, string timeZoneId)
-            : base(dateTimeRange)
+        public ZonedDateTimeRange(IDateTimeRange dateTimeRange, string timeZoneId) : base(dateTimeRange)
         {
             Timezone = timeZoneId;
         }
 
-        public ZonedDateTimeRange(IZonedDateTimeRange zonedDateTimeRange)
-            : base(zonedDateTimeRange)
+        public ZonedDateTimeRange(IZonedDateTimeRange zonedDateTimeRange) : base(zonedDateTimeRange)
         {
             Timezone = zonedDateTimeRange.Timezone;
         }
 
-        public ZonedDateTimeRange(DateTime startTime, DateTime endTime, string timeZoneId)
-            : base(startTime, endTime)
+        public ZonedDateTimeRange(DateTime startTime, DateTime endTime, string timeZoneId) : base(startTime, endTime)
         {
             Timezone = timeZoneId;
         }
 
-        public ZonedDateTimeRange(DateTime startTime, TimeSpan timeSpan, string timeZoneId)
-            : base(startTime, timeSpan)
+        public ZonedDateTimeRange(DateTime startTime, TimeSpan timeSpan, string timeZoneId) : base(startTime, timeSpan)
         {
             Timezone = timeZoneId;
         }
@@ -106,10 +105,7 @@ namespace Abp.Timing
                 switch (Clock.Kind)
                 {
                     case DateTimeKind.Local:
-                        localTime = TimezoneHelper.ConvertFromUtc(
-                            Clock.Now.ToUniversalTime(),
-                            Timezone
-                        );
+                        localTime = TimezoneHelper.ConvertFromUtc(Clock.Now.ToUniversalTime(), Timezone);
                         break;
                     case DateTimeKind.Unspecified:
                         localTime = Clock.Now;
@@ -133,11 +129,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    now.Date.AddDays(-1),
-                    now.Date.AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(now.Date.AddDays(-1), now.Date.AddMilliseconds(-1), Timezone);
             }
         }
 
@@ -149,11 +141,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    now.Date,
-                    now.Date.AddDays(1).AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(now.Date, now.Date.AddDays(1).AddMilliseconds(-1), Timezone);
             }
         }
 
@@ -165,11 +153,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    now.Date.AddDays(1),
-                    now.Date.AddDays(2).AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(now.Date.AddDays(1), now.Date.AddDays(2).AddMilliseconds(-1), Timezone);
             }
         }
 
@@ -215,6 +199,7 @@ namespace Abp.Timing
             }
         }
 
+
         /// <summary>
         /// Gets a zoned date range representing the last year.
         /// </summary>
@@ -223,11 +208,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    new DateTime(now.Year - 1, 1, 1),
-                    new DateTime(now.Year, 1, 1).AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(new DateTime(now.Year - 1, 1, 1), new DateTime(now.Year, 1, 1).AddMilliseconds(-1), Timezone);
             }
         }
 
@@ -239,11 +220,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    new DateTime(now.Year, 1, 1),
-                    new DateTime(now.Year + 1, 1, 1).AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(new DateTime(now.Year, 1, 1), new DateTime(now.Year + 1, 1, 1).AddMilliseconds(-1), Timezone);
             }
         }
 
@@ -255,13 +232,10 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    new DateTime(now.Year + 1, 1, 1),
-                    new DateTime(now.Year + 2, 1, 1).AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(new DateTime(now.Year + 1, 1, 1), new DateTime(now.Year + 2, 1, 1).AddMilliseconds(-1), Timezone);
             }
         }
+
 
         /// <summary>
         /// Gets a zoned date range representing the last 30 days (30x24 hours) including today.
@@ -283,11 +257,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    now.Date.AddDays(-30),
-                    now.Date.AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(now.Date.AddDays(-30), now.Date.AddMilliseconds(-1), Timezone);
             }
         }
 
@@ -311,11 +281,7 @@ namespace Abp.Timing
             get
             {
                 var now = Now;
-                return new ZonedDateTimeRange(
-                    now.Date.AddDays(-7),
-                    now.Date.AddMilliseconds(-1),
-                    Timezone
-                );
+                return new ZonedDateTimeRange(now.Date.AddDays(-7), now.Date.AddMilliseconds(-1), Timezone);
             }
         }
     }

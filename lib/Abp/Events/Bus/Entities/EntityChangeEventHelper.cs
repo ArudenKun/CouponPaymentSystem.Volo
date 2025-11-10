@@ -101,9 +101,7 @@ namespace Abp.Events.Bus.Entities
                         TriggerEntityDeletedEventOnUowCompleted(changedEntity.Entity);
                         break;
                     default:
-                        throw new AbpException(
-                            "Unknown EntityChangeType: " + changedEntity.ChangeType
-                        );
+                        throw new AbpException("Unknown EntityChangeType: " + changedEntity.ChangeType);
                 }
             }
         }
@@ -112,41 +110,24 @@ namespace Abp.Events.Bus.Entities
         {
             foreach (var domainEvent in domainEvents)
             {
-                EventBus.Trigger(
-                    domainEvent.EventData.GetType(),
-                    domainEvent.SourceEntity,
-                    domainEvent.EventData
-                );
+                EventBus.Trigger(domainEvent.EventData.GetType(), domainEvent.SourceEntity, domainEvent.EventData);
             }
         }
 
-        protected virtual void TriggerEventWithEntity(
-            Type genericEventType,
-            object entity,
-            bool triggerInCurrentUnitOfWork
-        )
+        protected virtual void TriggerEventWithEntity(Type genericEventType, object entity, bool triggerInCurrentUnitOfWork)
         {
             var entityType = entity.GetType();
             var eventType = genericEventType.MakeGenericType(entityType);
 
-            if (
-                triggerInCurrentUnitOfWork
-                || _unitOfWorkManager.Current == null
-                || _unitOfWorkManager.Current?.Options?.Scope == TransactionScopeOption.Suppress
-            )
+            if (triggerInCurrentUnitOfWork ||
+                _unitOfWorkManager.Current == null ||
+                _unitOfWorkManager.Current?.Options?.Scope == TransactionScopeOption.Suppress)
             {
-                EventBus.Trigger(
-                    eventType,
-                    (IEventData)Activator.CreateInstance(eventType, new[] { entity })
-                );
+                EventBus.Trigger(eventType, (IEventData)Activator.CreateInstance(eventType, new[] { entity }));
                 return;
             }
 
-            _unitOfWorkManager.Current.Completed += (sender, args) =>
-                EventBus.Trigger(
-                    eventType,
-                    (IEventData)Activator.CreateInstance(eventType, new[] { entity })
-                );
+            _unitOfWorkManager.Current.Completed += (sender, args) => EventBus.Trigger(eventType, (IEventData)Activator.CreateInstance(eventType, new[] { entity }));
         }
     }
 }

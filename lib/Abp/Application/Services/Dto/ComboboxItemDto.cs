@@ -26,7 +26,10 @@ namespace Abp.Application.Services.Dto
         /// <summary>
         /// Creates a new <see cref="ComboboxItemDto"/>.
         /// </summary>
-        public ComboboxItemDto() { }
+        public ComboboxItemDto()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="ComboboxItemDto"/>.

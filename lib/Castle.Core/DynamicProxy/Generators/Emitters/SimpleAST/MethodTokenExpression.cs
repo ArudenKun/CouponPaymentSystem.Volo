@@ -12,30 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System.Diagnostics;
-using System.Reflection;
-using System.Reflection.Emit;
-using Castle.DynamicProxy.Tokens;
-
-internal class MethodTokenExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly MethodInfo method;
+    using System.Diagnostics;
+    using System.Reflection;
+    using System.Reflection.Emit;
+    using Castle.DynamicProxy.Tokens;
 
-    public MethodTokenExpression(MethodInfo method)
+    internal class MethodTokenExpression : IExpression
     {
-        this.method = method;
-        Debug.Assert(method.DeclaringType != null); // DynamicProxy isn't using global methods nor `DynamicMethod`
-    }
+        private readonly MethodInfo method;
 
-    public void Emit(ILGenerator gen)
-    {
-        gen.Emit(OpCodes.Ldtoken, method);
-        gen.Emit(OpCodes.Ldtoken, method.DeclaringType);
+        public MethodTokenExpression(MethodInfo method)
+        {
+            this.method = method;
+            Debug.Assert(method.DeclaringType != null); // DynamicProxy isn't using global methods nor `DynamicMethod`
+        }
 
-        var minfo = MethodBaseMethods.GetMethodFromHandle;
-        gen.Emit(OpCodes.Call, minfo);
-        gen.Emit(OpCodes.Castclass, typeof(MethodInfo));
+        public void Emit(ILGenerator gen)
+        {
+            gen.Emit(OpCodes.Ldtoken, method);
+            gen.Emit(OpCodes.Ldtoken, method.DeclaringType);
+
+            var minfo = MethodBaseMethods.GetMethodFromHandle;
+            gen.Emit(OpCodes.Call, minfo);
+            gen.Emit(OpCodes.Castclass, typeof(MethodInfo));
+        }
     }
 }

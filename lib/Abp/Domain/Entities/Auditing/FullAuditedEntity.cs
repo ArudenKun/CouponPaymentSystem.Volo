@@ -7,7 +7,10 @@ namespace Abp.Domain.Entities.Auditing
     /// A shortcut of <see cref="FullAuditedEntity{TPrimaryKey}"/> for most used primary key type (<see cref="int"/>).
     /// </summary>
     [Serializable]
-    public abstract class FullAuditedEntity : FullAuditedEntity<int>, IEntity { }
+    public abstract class FullAuditedEntity : FullAuditedEntity<int>, IEntity
+    {
+
+    }
 
     /// <summary>
     /// Implements <see cref="IFullAudited"/> to be a base class for full-audited entities.
@@ -38,9 +41,7 @@ namespace Abp.Domain.Entities.Auditing
     /// <typeparam name="TPrimaryKey">Type of the primary key of the entity</typeparam>
     /// <typeparam name="TUser">Type of the user</typeparam>
     [Serializable]
-    public abstract class FullAuditedEntity<TPrimaryKey, TUser>
-        : AuditedEntity<TPrimaryKey, TUser>,
-            IFullAudited<TUser>
+    public abstract class FullAuditedEntity<TPrimaryKey, TUser> : AuditedEntity<TPrimaryKey, TUser>, IFullAudited<TUser>
         where TUser : IEntity<long>
     {
         /// <summary>

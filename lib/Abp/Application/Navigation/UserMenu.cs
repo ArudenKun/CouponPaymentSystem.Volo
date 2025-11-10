@@ -9,7 +9,7 @@ namespace Abp.Application.Navigation
     public class UserMenu
     {
         /// <summary>
-        /// Unique name of the menu in the application.
+        /// Unique name of the menu in the application. 
         /// </summary>
         public string Name { get; set; }
 
@@ -31,7 +31,10 @@ namespace Abp.Application.Navigation
         /// <summary>
         /// Creates a new <see cref="UserMenu"/> object.
         /// </summary>
-        public UserMenu() { }
+        public UserMenu()
+        {
+            
+        }
 
         /// <summary>
         /// Creates a new <see cref="UserMenu"/> object from given <see cref="MenuDefinition"/>.

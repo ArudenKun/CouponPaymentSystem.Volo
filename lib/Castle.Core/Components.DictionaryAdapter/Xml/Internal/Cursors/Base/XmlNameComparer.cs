@@ -12,36 +12,39 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-
-public class XmlNameComparer : IEqualityComparer<XmlName>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlNameComparer Default = new XmlNameComparer(StringComparer.Ordinal),
-        IgnoreCase = new XmlNameComparer(StringComparer.OrdinalIgnoreCase);
+    using System;
+    using System.Collections.Generic;
 
-    private readonly StringComparer comparer;
-
-    private XmlNameComparer(StringComparer comparer)
+    public class XmlNameComparer : IEqualityComparer<XmlName>
     {
-        this.comparer = comparer;
-    }
+        public static readonly XmlNameComparer Default = new XmlNameComparer(
+                StringComparer.Ordinal
+            ),
+            IgnoreCase = new XmlNameComparer(StringComparer.OrdinalIgnoreCase);
 
-    public int GetHashCode(XmlName name)
-    {
-        var code = (name.LocalName != null) ? comparer.GetHashCode(name.LocalName) : 0;
+        private readonly StringComparer comparer;
 
-        if (name.NamespaceUri != null)
-            code = (code << 7 | code >> 25) ^ comparer.GetHashCode(name.NamespaceUri);
+        private XmlNameComparer(StringComparer comparer)
+        {
+            this.comparer = comparer;
+        }
 
-        return code;
-    }
+        public int GetHashCode(XmlName name)
+        {
+            var code = (name.LocalName != null) ? comparer.GetHashCode(name.LocalName) : 0;
 
-    public bool Equals(XmlName x, XmlName y)
-    {
-        return comparer.Equals(x.LocalName, y.LocalName)
-            && comparer.Equals(x.NamespaceUri, y.NamespaceUri);
+            if (name.NamespaceUri != null)
+                code = (code << 7 | code >> 25) ^ comparer.GetHashCode(name.NamespaceUri);
+
+            return code;
+        }
+
+        public bool Equals(XmlName x, XmlName y)
+        {
+            return comparer.Equals(x.LocalName, y.LocalName)
+                && comparer.Equals(x.NamespaceUri, y.NamespaceUri);
+        }
     }
 }

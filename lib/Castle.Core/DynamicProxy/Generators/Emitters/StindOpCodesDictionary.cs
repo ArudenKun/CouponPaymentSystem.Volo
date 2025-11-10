@@ -12,58 +12,59 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters;
-
-using System;
-using System.Collections.Generic;
-using System.Reflection.Emit;
-
-/// <summary>
-///   Provides appropriate Stind.X opcode
-///   for the type of primitive value to be stored indirectly.
-/// </summary>
-internal sealed class StindOpCodesDictionary : Dictionary<Type, OpCode>
+namespace Castle.DynamicProxy.Generators.Emitters
 {
-    private static readonly StindOpCodesDictionary dict = new StindOpCodesDictionary();
+    using System;
+    using System.Collections.Generic;
+    using System.Reflection.Emit;
 
-    // has to be assigned explicitly to suppress compiler warning
-    private static readonly OpCode emptyOpCode = new OpCode();
-
-    private StindOpCodesDictionary()
+    /// <summary>
+    ///   Provides appropriate Stind.X opcode
+    ///   for the type of primitive value to be stored indirectly.
+    /// </summary>
+    internal sealed class StindOpCodesDictionary : Dictionary<Type, OpCode>
     {
-        Add(typeof(bool), OpCodes.Stind_I1);
-        Add(typeof(char), OpCodes.Stind_I2);
-        Add(typeof(SByte), OpCodes.Stind_I1);
-        Add(typeof(Int16), OpCodes.Stind_I2);
-        Add(typeof(Int32), OpCodes.Stind_I4);
-        Add(typeof(Int64), OpCodes.Stind_I8);
-        Add(typeof(float), OpCodes.Stind_R4);
-        Add(typeof(double), OpCodes.Stind_R8);
-        Add(typeof(byte), OpCodes.Stind_I1);
-        Add(typeof(UInt16), OpCodes.Stind_I2);
-        Add(typeof(UInt32), OpCodes.Stind_I4);
-        Add(typeof(UInt64), OpCodes.Stind_I8);
-    }
+        private static readonly StindOpCodesDictionary dict = new StindOpCodesDictionary();
 
-    public new OpCode this[Type type]
-    {
-        get
+        // has to be assigned explicitly to suppress compiler warning
+        private static readonly OpCode emptyOpCode = new OpCode();
+
+        private StindOpCodesDictionary()
         {
-            if (TryGetValue(type, out var opCode))
-            {
-                return opCode;
-            }
-            return EmptyOpCode;
+            Add(typeof(bool), OpCodes.Stind_I1);
+            Add(typeof(char), OpCodes.Stind_I2);
+            Add(typeof(SByte), OpCodes.Stind_I1);
+            Add(typeof(Int16), OpCodes.Stind_I2);
+            Add(typeof(Int32), OpCodes.Stind_I4);
+            Add(typeof(Int64), OpCodes.Stind_I8);
+            Add(typeof(float), OpCodes.Stind_R4);
+            Add(typeof(double), OpCodes.Stind_R8);
+            Add(typeof(byte), OpCodes.Stind_I1);
+            Add(typeof(UInt16), OpCodes.Stind_I2);
+            Add(typeof(UInt32), OpCodes.Stind_I4);
+            Add(typeof(UInt64), OpCodes.Stind_I8);
         }
-    }
 
-    public static OpCode EmptyOpCode
-    {
-        get { return emptyOpCode; }
-    }
+        public new OpCode this[Type type]
+        {
+            get
+            {
+                if (TryGetValue(type, out var opCode))
+                {
+                    return opCode;
+                }
+                return EmptyOpCode;
+            }
+        }
 
-    public static StindOpCodesDictionary Instance
-    {
-        get { return dict; }
+        public static OpCode EmptyOpCode
+        {
+            get { return emptyOpCode; }
+        }
+
+        public static StindOpCodesDictionary Instance
+        {
+            get { return dict; }
+        }
     }
 }

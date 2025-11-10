@@ -12,19 +12,20 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Tokens;
-
-using System.Reflection;
-using Castle.DynamicProxy.Internal;
-
-internal static class TypeUtilMethods
+namespace Castle.DynamicProxy.Tokens
 {
-    public static readonly MethodInfo Sort = typeof(TypeUtil).GetMethod(
-        "Sort",
-        BindingFlags.Public | BindingFlags.Static
-    );
-    public static readonly MethodInfo GetTypeOrNull = typeof(TypeUtil).GetMethod(
-        "GetTypeOrNull",
-        BindingFlags.Public | BindingFlags.Static
-    );
+    using System.Reflection;
+    using Castle.DynamicProxy.Internal;
+
+    internal static class TypeUtilMethods
+    {
+        public static readonly MethodInfo Sort = typeof(TypeUtil).GetMethod(
+            "Sort",
+            BindingFlags.Public | BindingFlags.Static
+        );
+        public static readonly MethodInfo GetTypeOrNull = typeof(TypeUtil).GetMethod(
+            "GetTypeOrNull",
+            BindingFlags.Public | BindingFlags.Static
+        );
+    }
 }

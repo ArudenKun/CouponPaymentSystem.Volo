@@ -12,11 +12,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public interface IXmlKnownType : IXmlIdentity
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    Type ClrType { get; }
+    using System;
+
+    public interface IXmlKnownType : IXmlIdentity
+    {
+        Type ClrType { get; }
+    }
 }

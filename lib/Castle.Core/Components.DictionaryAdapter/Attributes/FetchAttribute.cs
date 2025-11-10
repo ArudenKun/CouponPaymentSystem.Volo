@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Identifies an interface or property to be pre-fetched.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
-public class FetchAttribute : Attribute
+namespace Castle.Components.DictionaryAdapter
 {
-    /// <summary>
-    /// Instructs fetching to occur.
-    /// </summary>
-    public FetchAttribute()
-        : this(true) { }
+    using System;
 
     /// <summary>
-    /// Instructs fetching according to <paramref name="fetch"/>
+    /// Identifies an interface or property to be pre-fetched.
     /// </summary>
-    public FetchAttribute(bool fetch)
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = false)]
+    public class FetchAttribute : Attribute
     {
-        Fetch = fetch;
-    }
+        /// <summary>
+        /// Instructs fetching to occur.
+        /// </summary>
+        public FetchAttribute()
+            : this(true) { }
 
-    /// <summary>
-    /// Gets whether or not fetching should occur.
-    /// </summary>
-    public bool Fetch { get; private set; }
+        /// <summary>
+        /// Instructs fetching according to <paramref name="fetch"/>
+        /// </summary>
+        public FetchAttribute(bool fetch)
+        {
+            Fetch = fetch;
+        }
+
+        /// <summary>
+        /// Gets whether or not fetching should occur.
+        /// </summary>
+        public bool Fetch { get; private set; }
+    }
 }

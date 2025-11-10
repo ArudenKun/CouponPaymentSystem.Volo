@@ -28,7 +28,11 @@ namespace Abp.Aspects
         bool Handled { get; set; }
     }
 
-    internal interface IAbpBeforeExecutionInterceptionContext : IAbpInterceptionContext { }
+    internal interface IAbpBeforeExecutionInterceptionContext : IAbpInterceptionContext
+    {
+
+    }
+
 
     internal interface IAbpAfterExecutionInterceptionContext : IAbpInterceptionContext
     {
@@ -48,9 +52,13 @@ namespace Abp.Aspects
     {
         public TAspect Aspect { get; set; }
 
-        public virtual void BeforeExecution(IAbpBeforeExecutionInterceptionContext context) { }
+        public virtual void BeforeExecution(IAbpBeforeExecutionInterceptionContext context)
+        {
+        }
 
-        public virtual void AfterExecution(IAbpAfterExecutionInterceptionContext context) { }
+        public virtual void AfterExecution(IAbpAfterExecutionInterceptionContext context)
+        {
+        }
     }
 
     internal class Test_Aspects
@@ -60,7 +68,9 @@ namespace Abp.Aspects
             public int TestValue { get; set; }
 
             public MyAspectAttribute()
-                : base(typeof(MyInterceptor)) { }
+                : base(typeof(MyInterceptor))
+            {
+            }
         }
 
         internal class MyInterceptor : AbpInterceptorBase<MyAspectAttribute>
@@ -79,7 +89,10 @@ namespace Abp.Aspects
         public class MyService
         {
             [MyAspect(TestValue = 41)] //Usage!
-            public void DoIt() { }
+            public void DoIt()
+            {
+
+            }
         }
 
         public class MyClient

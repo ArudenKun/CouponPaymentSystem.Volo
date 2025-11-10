@@ -8,9 +8,7 @@ using Abp.UI.Inputs;
 
 namespace Abp.DynamicEntityProperties
 {
-    public class DynamicEntityPropertyDefinitionManager
-        : IDynamicEntityPropertyDefinitionManager,
-            ISingletonDependency
+    public class DynamicEntityPropertyDefinitionManager : IDynamicEntityPropertyDefinitionManager, ISingletonDependency
     {
         private readonly IDynamicEntityPropertyConfiguration _dynamicEntityPropertiesConfiguration;
         private readonly IocManager _iocManager;
@@ -22,7 +20,7 @@ namespace Abp.DynamicEntityProperties
         public DynamicEntityPropertyDefinitionManager(
             IDynamicEntityPropertyConfiguration dynamicEntityPropertiesConfiguration,
             IocManager iocManager
-        )
+            )
         {
             _dynamicEntityPropertiesConfiguration = dynamicEntityPropertiesConfiguration;
             _iocManager = iocManager;
@@ -38,35 +36,25 @@ namespace Abp.DynamicEntityProperties
 
             foreach (var providerType in _dynamicEntityPropertiesConfiguration.Providers)
             {
-                using (
-                    var provider =
-                        _iocManager.ResolveAsDisposable<DynamicEntityPropertyDefinitionProvider>(
-                            providerType
-                        )
-                )
+                using (var provider = _iocManager.ResolveAsDisposable<DynamicEntityPropertyDefinitionProvider>(providerType))
                 {
                     provider.Object.SetDynamicEntityProperties(context);
                 }
             }
         }
 
-        public void AddAllowedInputType<TInputType>()
-            where TInputType : IInputType
+        public void AddAllowedInputType<TInputType>() where TInputType : IInputType
         {
             var inputTypeName = InputTypeBase.GetName<TInputType>();
 
             if (inputTypeName.IsNullOrWhiteSpace())
             {
-                throw new ArgumentNullException(
-                    typeof(TInputType).FullName + "/" + nameof(inputTypeName)
-                );
+                throw new ArgumentNullException(typeof(TInputType).FullName + "/" + nameof(inputTypeName));
             }
 
             if (_allowedInputTypes.ContainsKey(inputTypeName))
             {
-                throw new Exception(
-                    $"Input types must be unique.There is already an input type named \"{inputTypeName}\""
-                );
+                throw new Exception($"Input types must be unique.There is already an input type named \"{inputTypeName}\"");
             }
 
             _allowedInputTypes.Add(inputTypeName, typeof(TInputType));
@@ -86,9 +74,7 @@ namespace Abp.DynamicEntityProperties
 
         public List<IInputType> GetAllAllowedInputTypes()
         {
-            return _allowedInputTypes
-                .Select(inputType => (IInputType)Activator.CreateInstance(inputType.Value))
-                .ToList();
+            return _allowedInputTypes.Select(inputType => (IInputType)Activator.CreateInstance(inputType.Value)).ToList();
         }
 
         public bool ContainsInputType(string name)
@@ -96,14 +82,12 @@ namespace Abp.DynamicEntityProperties
             return _allowedInputTypes.ContainsKey(name);
         }
 
-        public void AddEntity<TEntity>()
-            where TEntity : IEntity<int>
+        public void AddEntity<TEntity>() where TEntity : IEntity<int>
         {
             AddEntity<TEntity, int>();
         }
 
-        public void AddEntity<TEntity, TPrimaryKey>()
-            where TEntity : IEntity<TPrimaryKey>
+        public void AddEntity<TEntity, TPrimaryKey>() where TEntity : IEntity<TPrimaryKey>
         {
             string entityName = typeof(TEntity).FullName;
             if (_entities.Contains(entityName))
@@ -124,14 +108,12 @@ namespace Abp.DynamicEntityProperties
             return _entities.Contains(entityFullName);
         }
 
-        public bool ContainsEntity<TEntity, TPrimaryKey>()
-            where TEntity : IEntity<TPrimaryKey>
+        public bool ContainsEntity<TEntity, TPrimaryKey>() where TEntity : IEntity<TPrimaryKey>
         {
             return ContainsEntity(typeof(TEntity).FullName);
         }
 
-        public bool ContainsEntity<TEntity>()
-            where TEntity : IEntity<int>
+        public bool ContainsEntity<TEntity>() where TEntity : IEntity<int>
         {
             return ContainsEntity<TEntity, int>();
         }

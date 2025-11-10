@@ -1,6 +1,6 @@
-﻿using System.Linq;
+﻿using JetBrains.Annotations;
+using System.Linq;
 using System.Threading.Tasks;
-using JetBrains.Annotations;
 
 namespace Abp.RealTime
 {
@@ -16,16 +16,14 @@ namespace Abp.RealTime
         /// <param name="user">User.</param>
         public static async Task<bool> IsOnlineAsync(
             [NotNull] this IOnlineClientManager onlineClientManager,
-            [NotNull] UserIdentifier user
-        )
+            [NotNull] UserIdentifier user)
         {
             return (await onlineClientManager.GetAllByUserIdAsync(user)).Any();
         }
 
         public static async Task<bool> RemoveAsync(
             [NotNull] this IOnlineClientManager onlineClientManager,
-            [NotNull] IOnlineClient client
-        )
+            [NotNull] IOnlineClient client)
         {
             Check.NotNull(onlineClientManager, nameof(onlineClientManager));
             Check.NotNull(client, nameof(client));

@@ -8,8 +8,6 @@ namespace Abp.DynamicEntityProperties
         /// Used to add/manipulate dynamic property definitions.
         /// </summary>
         /// <param name="context">Context</param>,
-        public abstract void SetDynamicEntityProperties(
-            IDynamicEntityPropertyDefinitionContext context
-        );
+        public abstract void SetDynamicEntityProperties(IDynamicEntityPropertyDefinitionContext context);
     }
 }

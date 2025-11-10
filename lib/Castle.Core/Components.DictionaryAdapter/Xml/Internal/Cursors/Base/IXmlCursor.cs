@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public interface IXmlCursor : IXmlIterator
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    void Reset();
-    void MoveTo(IXmlNode node);
-    void MoveToEnd();
+    using System;
 
-    void Create(Type type);
-    void Coerce(Type type);
-    void Remove();
-    void RemoveAllNext();
+    public interface IXmlCursor : IXmlIterator
+    {
+        void Reset();
+        void MoveTo(IXmlNode node);
+        void MoveToEnd();
+
+        void Create(Type type);
+        void Coerce(Type type);
+        void Remove();
+        void RemoveAllNext();
+    }
 }

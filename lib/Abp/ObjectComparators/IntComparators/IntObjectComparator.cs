@@ -4,11 +4,7 @@ namespace Abp.ObjectComparators.IntComparators
 {
     public class IntObjectComparator : ObjectComparatorBase<int, IntCompareTypes>
     {
-        protected override bool Compare(
-            int baseObject,
-            int compareObject,
-            IntCompareTypes compareType
-        )
+        protected override bool Compare(int baseObject, int compareObject, IntCompareTypes compareType)
         {
             switch (compareType)
             {
@@ -30,11 +26,7 @@ namespace Abp.ObjectComparators.IntComparators
 
     public class NullableIntObjectComparator : ObjectComparatorBase<int?, NullableIntCompareTypes>
     {
-        protected override bool Compare(
-            int? baseObject,
-            int? compareObject,
-            NullableIntCompareTypes compareType
-        )
+        protected override bool Compare(int? baseObject, int? compareObject, NullableIntCompareTypes compareType)
         {
             switch (compareType)
             {

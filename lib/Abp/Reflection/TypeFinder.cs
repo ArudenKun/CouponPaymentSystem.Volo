@@ -1,7 +1,9 @@
-﻿using System.Reflection;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Reflection;
 using Abp.Collections.Extensions;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Reflection
 {
@@ -75,7 +77,7 @@ namespace Abp.Reflection
                 }
                 catch (Exception ex)
                 {
-                    Logger.LogWarning(ex, "Error on CreateTypeList");
+                    Logger.Warn(ex.ToString(), ex);
                 }
             }
 

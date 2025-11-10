@@ -67,8 +67,7 @@ namespace Abp.Extensions
         /// <returns></returns>
         public static IEnumerable<DateTime> DaysOfMonth(int year, int month)
         {
-            return Enumerable
-                .Range(0, DateTime.DaysInMonth(year, month))
+            return Enumerable.Range(0, DateTime.DaysInMonth(year, month))
                 .Select(day => new DateTime(year, month, day + 1));
         }
 
@@ -83,13 +82,10 @@ namespace Abp.Extensions
             return DaysOfMonth(dateTime.Year, dateTime.Month)
                 .Where(date => dateTime.DayOfWeek.Equals(date.DayOfWeek))
                 .Select(x => new { n = ++y, date = x })
-                .Where(x =>
-                    x.date.Equals(new DateTime(dateTime.Year, dateTime.Month, dateTime.Day))
-                )
-                .Select(x => x.n)
-                .FirstOrDefault();
+                .Where(x => x.date.Equals(new DateTime(dateTime.Year, dateTime.Month, dateTime.Day)))
+                .Select(x => x.n).FirstOrDefault();
         }
-
+        
         /// <summary>
         /// Gets the total days in a month
         /// </summary>
@@ -99,7 +95,7 @@ namespace Abp.Extensions
         {
             return DaysOfMonth(dateTime.Year, dateTime.Month).Count();
         }
-
+        
         /// <summary>
         /// Takes any date and returns it's value as an Unspecified DateTime
         /// </summary>
@@ -112,15 +108,7 @@ namespace Abp.Extensions
                 return date;
             }
 
-            return new DateTime(
-                date.Year,
-                date.Month,
-                date.Day,
-                date.Hour,
-                date.Minute,
-                date.Second,
-                DateTimeKind.Unspecified
-            );
+            return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, DateTimeKind.Unspecified);
         }
 
         /// <summary>
@@ -130,15 +118,7 @@ namespace Abp.Extensions
         /// <returns></returns>
         public static DateTime TrimMilliseconds(this DateTime date)
         {
-            return new DateTime(
-                date.Year,
-                date.Month,
-                date.Day,
-                date.Hour,
-                date.Minute,
-                date.Second,
-                date.Kind
-            );
+            return new DateTime(date.Year, date.Month, date.Day, date.Hour, date.Minute, date.Second, date.Kind);
         }
     }
 }

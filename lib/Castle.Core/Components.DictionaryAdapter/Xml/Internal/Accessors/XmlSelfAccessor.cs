@@ -12,25 +12,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public class XmlSelfAccessor : XmlAccessor
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    internal static readonly XmlAccessorFactory<XmlSelfAccessor> Factory = (name, type, context) =>
-        new XmlSelfAccessor(type, context);
+    using System;
 
-    public XmlSelfAccessor(Type clrType, IXmlContext context)
-        : base(clrType, context) { }
-
-    public override void ConfigureNillable(bool nillable)
+    public class XmlSelfAccessor : XmlAccessor
     {
-        // This behavior cannot support nillable
-    }
+        internal static readonly XmlAccessorFactory<XmlSelfAccessor> Factory = (
+            name,
+            type,
+            context
+        ) => new XmlSelfAccessor(type, context);
 
-    public override IXmlCursor SelectPropertyNode(IXmlNode parentNode, bool mutable)
-    {
-        return parentNode.SelectSelf(ClrType);
+        public XmlSelfAccessor(Type clrType, IXmlContext context)
+            : base(clrType, context) { }
+
+        public override void ConfigureNillable(bool nillable)
+        {
+            // This behavior cannot support nillable
+        }
+
+        public override IXmlCursor SelectPropertyNode(IXmlNode parentNode, bool mutable)
+        {
+            return parentNode.SelectSelf(ClrType);
+        }
     }
 }

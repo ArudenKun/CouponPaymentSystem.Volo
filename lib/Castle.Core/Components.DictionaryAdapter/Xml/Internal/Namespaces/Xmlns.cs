@@ -12,10 +12,11 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public static class Xmlns
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public const string Prefix = "xmlns",
-        NamespaceUri = "http://www.w3.org/2000/xmlns/";
+    public static class Xmlns
+    {
+        public const string Prefix = "xmlns",
+            NamespaceUri = "http://www.w3.org/2000/xmlns/";
+    }
 }

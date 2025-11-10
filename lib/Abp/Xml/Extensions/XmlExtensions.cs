@@ -21,8 +21,8 @@ namespace Abp.Xml.Extensions
                 throw new AbpException(node.Name + " node has not " + attributeName + " attribute");
             }
 
-            return node
-                .Attributes.Cast<XmlAttribute>()
+            return node.Attributes
+                .Cast<XmlAttribute>()
                 .Where(attr => attr.Name == attributeName)
                 .Select(attr => attr.Value)
                 .FirstOrDefault();

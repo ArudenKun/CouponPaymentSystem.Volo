@@ -8,9 +8,9 @@ namespace Abp.Events.Bus.Handlers.Internals
     /// This event handler is an adapter to be able to use an action as <see cref="IAsyncEventHandler{TEventData}"/> implementation.
     /// </summary>
     /// <typeparam name="TEventData">Event type</typeparam>
-    internal class AsyncActionEventHandler<TEventData>
-        : IAsyncEventHandler<TEventData>,
-            ITransientDependency
+    internal class AsyncActionEventHandler<TEventData> :
+        IAsyncEventHandler<TEventData>,
+        ITransientDependency
     {
         /// <summary>
         /// Function to handle the event.

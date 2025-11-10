@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-
-internal abstract class TypeReference : Reference
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly Type type;
+    using System;
 
-    protected TypeReference(Type argumentType)
-        : this(null, argumentType) { }
-
-    protected TypeReference(Reference owner, Type type)
-        : base(owner)
+    internal abstract class TypeReference : Reference
     {
-        this.type = type;
-    }
+        private readonly Type type;
 
-    public Type Type
-    {
-        get { return type; }
+        protected TypeReference(Type argumentType)
+            : this(null, argumentType) { }
+
+        protected TypeReference(Reference owner, Type type)
+            : base(owner)
+        {
+            this.type = type;
+        }
+
+        public Type Type
+        {
+            get { return type; }
+        }
     }
 }

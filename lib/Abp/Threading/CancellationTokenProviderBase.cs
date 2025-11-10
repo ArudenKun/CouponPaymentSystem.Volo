@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Threading;
 using Abp.Runtime;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using Castle.Core.Logging;
 
 namespace Abp.Threading
 {
     public abstract class CancellationTokenProviderBase : ICancellationTokenProvider
     {
-        public const string CancellationTokenOverrideContextKey =
-            "Abp.Threading.CancellationToken.Override";
+        public const string CancellationTokenOverrideContextKey = "Abp.Threading.CancellationToken.Override";
 
         public abstract CancellationToken Token { get; }
 
@@ -17,12 +15,9 @@ namespace Abp.Threading
 
         protected IAmbientScopeProvider<CancellationTokenOverride> CancellationTokenOverrideScopeProvider { get; }
 
-        protected CancellationTokenOverride OverridedValue =>
-            CancellationTokenOverrideScopeProvider.GetValue(CancellationTokenOverrideContextKey);
+        protected CancellationTokenOverride OverridedValue => CancellationTokenOverrideScopeProvider.GetValue(CancellationTokenOverrideContextKey);
 
-        protected CancellationTokenProviderBase(
-            IAmbientScopeProvider<CancellationTokenOverride> cancellationTokenOverrideScopeProvider
-        )
+        protected CancellationTokenProviderBase(IAmbientScopeProvider<CancellationTokenOverride> cancellationTokenOverrideScopeProvider)
         {
             CancellationTokenOverrideScopeProvider = cancellationTokenOverrideScopeProvider;
             Logger = NullLogger.Instance;
@@ -30,10 +25,7 @@ namespace Abp.Threading
 
         public IDisposable Use(CancellationToken cancellationToken)
         {
-            return CancellationTokenOverrideScopeProvider.BeginScope(
-                CancellationTokenOverrideContextKey,
-                new CancellationTokenOverride(cancellationToken)
-            );
+            return CancellationTokenOverrideScopeProvider.BeginScope(CancellationTokenOverrideContextKey, new CancellationTokenOverride(cancellationToken));
         }
     }
 }

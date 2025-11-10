@@ -12,36 +12,37 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Assigns a property to a group.
-/// </summary>
-[AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
-public class GroupAttribute : Attribute
+namespace Castle.Components.DictionaryAdapter
 {
-    /// <summary>
-    /// Constructs a group assignment.
-    /// </summary>
-    /// <param name="group">The group name.</param>
-    public GroupAttribute(object group)
-    {
-        Group = new[] { group };
-    }
+    using System;
 
     /// <summary>
-    /// Constructs a group assignment.
+    /// Assigns a property to a group.
     /// </summary>
-    /// <param name="group">The group name.</param>
-    public GroupAttribute(params object[] group)
+    [AttributeUsage(AttributeTargets.Property, AllowMultiple = true)]
+    public class GroupAttribute : Attribute
     {
-        Group = group;
-    }
+        /// <summary>
+        /// Constructs a group assignment.
+        /// </summary>
+        /// <param name="group">The group name.</param>
+        public GroupAttribute(object group)
+        {
+            Group = new[] { group };
+        }
 
-    /// <summary>
-    /// Gets the group the property is assigned to.
-    /// </summary>
-    public object[] Group { get; private set; }
+        /// <summary>
+        /// Constructs a group assignment.
+        /// </summary>
+        /// <param name="group">The group name.</param>
+        public GroupAttribute(params object[] group)
+        {
+            Group = group;
+        }
+
+        /// <summary>
+        /// Gets the group the property is assigned to.
+        /// </summary>
+        public object[] Group { get; private set; }
+    }
 }

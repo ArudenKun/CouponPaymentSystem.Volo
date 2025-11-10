@@ -1,7 +1,7 @@
-﻿using System;
+﻿using JetBrains.Annotations;
+using System;
 using System.Linq;
 using System.Reflection;
-using JetBrains.Annotations;
 
 namespace Abp.Reflection.Extensions
 {
@@ -12,26 +12,20 @@ namespace Abp.Reflection.Extensions
             return type.GetTypeInfo().Assembly;
         }
 
-        public static MethodInfo GetMethod(
-            this Type type,
-            string methodName,
-            int pParametersCount = 0,
-            int pGenericArgumentsCount = 0
-        )
+        public static MethodInfo GetMethod(this Type type, string methodName, int pParametersCount = 0, int pGenericArgumentsCount = 0)
         {
-            return type.GetMethods()
-                .Where(m => m.Name == methodName)
-                .ToList()
+            return type
+                .GetMethods()
+                .Where(m => m.Name == methodName).ToList()
                 .Select(m => new
                 {
                     Method = m,
                     Params = m.GetParameters(),
-                    Args = m.GetGenericArguments(),
+                    Args = m.GetGenericArguments()
                 })
-                .Where(x =>
-                    x.Params.Length == pParametersCount && x.Args.Length == pGenericArgumentsCount
-                )
-                .Select(x => x.Method)
+                .Where(x => x.Params.Length == pParametersCount
+                            && x.Args.Length == pGenericArgumentsCount
+                ).Select(x => x.Method)
                 .First();
         }
 

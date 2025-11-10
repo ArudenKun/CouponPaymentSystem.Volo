@@ -22,7 +22,10 @@ namespace Abp.Localization
         /// <summary>
         /// Needed for serialization.
         /// </summary>
-        private LocalizableString() { }
+        private LocalizableString()
+        {
+            
+        }
 
         /// <param name="name">Unique Name of the string to be localized</param>
         /// <param name="sourceName">Unique name of the localization source</param>

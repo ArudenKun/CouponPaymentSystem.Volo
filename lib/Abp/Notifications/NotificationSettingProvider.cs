@@ -6,9 +6,7 @@ namespace Abp.Notifications
 {
     public class NotificationSettingProvider : SettingProvider
     {
-        public override IEnumerable<SettingDefinition> GetSettingDefinitions(
-            SettingDefinitionProviderContext context
-        )
+        public override IEnumerable<SettingDefinition> GetSettingDefinitions(SettingDefinitionProviderContext context)
         {
             return new[]
             {
@@ -17,8 +15,7 @@ namespace Abp.Notifications
                     "true",
                     L("ReceiveNotifications"),
                     scopes: SettingScopes.User,
-                    clientVisibilityProvider: new VisibleSettingClientVisibilityProvider()
-                ),
+                    clientVisibilityProvider: new VisibleSettingClientVisibilityProvider())
             };
         }
 

@@ -13,7 +13,10 @@ namespace Abp.Application.Services.Dto
     {
         public TId? Id { get; set; }
 
-        public NullableIdDto() { }
+        public NullableIdDto()
+        {
+
+        }
 
         public NullableIdDto(TId? id)
         {
@@ -27,9 +30,15 @@ namespace Abp.Application.Services.Dto
     [Serializable]
     public class NullableIdDto : NullableIdDto<int>
     {
-        public NullableIdDto() { }
+        public NullableIdDto()
+        {
+
+        }
 
         public NullableIdDto(int? id)
-            : base(id) { }
+            : base(id)
+        {
+
+        }
     }
 }

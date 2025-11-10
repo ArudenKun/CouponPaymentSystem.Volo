@@ -12,72 +12,77 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators;
-
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using Castle.DynamicProxy.Contributors;
-using Castle.DynamicProxy.Serialization;
-
-internal sealed class InterfaceProxyWithTargetGenerator : BaseInterfaceProxyGenerator
+namespace Castle.DynamicProxy.Generators
 {
-    public InterfaceProxyWithTargetGenerator(
-        ModuleScope scope,
-        Type targetType,
-        Type[] interfaces,
-        Type proxyTargetType,
-        ProxyGenerationOptions options
-    )
-        : base(scope, targetType, interfaces, proxyTargetType, options) { }
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using Castle.DynamicProxy.Contributors;
+    using Castle.DynamicProxy.Serialization;
 
-    protected override bool AllowChangeTarget => false;
-
-    protected override string GeneratorType => ProxyTypeConstants.InterfaceWithTarget;
-
-    protected override CompositeTypeContributor GetProxyTargetContributor(
-        Type proxyTargetType,
-        INamingScope namingScope
-    )
+    internal sealed class InterfaceProxyWithTargetGenerator : BaseInterfaceProxyGenerator
     {
-        return new InterfaceProxyTargetContributor(proxyTargetType, AllowChangeTarget, namingScope)
+        public InterfaceProxyWithTargetGenerator(
+            ModuleScope scope,
+            Type targetType,
+            Type[] interfaces,
+            Type proxyTargetType,
+            ProxyGenerationOptions options
+        )
+            : base(scope, targetType, interfaces, proxyTargetType, options) { }
+
+        protected override bool AllowChangeTarget => false;
+
+        protected override string GeneratorType => ProxyTypeConstants.InterfaceWithTarget;
+
+        protected override CompositeTypeContributor GetProxyTargetContributor(
+            Type proxyTargetType,
+            INamingScope namingScope
+        )
         {
-            Logger = Logger,
-        };
-    }
-
-    protected override ProxyTargetAccessorContributor GetProxyTargetAccessorContributor()
-    {
-        return new ProxyTargetAccessorContributor(
-            getTargetReference: () => targetField,
-            proxyTargetType
-        );
-    }
-
-    protected override void AddMappingForAdditionalInterfaces(
-        CompositeTypeContributor contributor,
-        Type[] proxiedInterfaces,
-        IDictionary<Type, ITypeContributor> typeImplementerMapping,
-        ICollection<Type> targetInterfaces
-    )
-    {
-        foreach (var @interface in interfaces)
-        {
-            if (
-                !ImplementedByTarget(targetInterfaces, @interface)
-                || proxiedInterfaces.Contains(@interface)
+            return new InterfaceProxyTargetContributor(
+                proxyTargetType,
+                AllowChangeTarget,
+                namingScope
             )
             {
-                continue;
-            }
-
-            contributor.AddInterfaceToProxy(@interface);
-            AddMappingNoCheck(@interface, contributor, typeImplementerMapping);
+                Logger = Logger,
+            };
         }
-    }
 
-    private bool ImplementedByTarget(ICollection<Type> targetInterfaces, Type @interface)
-    {
-        return targetInterfaces.Contains(@interface);
+        protected override ProxyTargetAccessorContributor GetProxyTargetAccessorContributor()
+        {
+            return new ProxyTargetAccessorContributor(
+                getTargetReference: () => targetField,
+                proxyTargetType
+            );
+        }
+
+        protected override void AddMappingForAdditionalInterfaces(
+            CompositeTypeContributor contributor,
+            Type[] proxiedInterfaces,
+            IDictionary<Type, ITypeContributor> typeImplementerMapping,
+            ICollection<Type> targetInterfaces
+        )
+        {
+            foreach (var @interface in interfaces)
+            {
+                if (
+                    !ImplementedByTarget(targetInterfaces, @interface)
+                    || proxiedInterfaces.Contains(@interface)
+                )
+                {
+                    continue;
+                }
+
+                contributor.AddInterfaceToProxy(@interface);
+                AddMappingNoCheck(@interface, contributor, typeImplementerMapping);
+            }
+        }
+
+        private bool ImplementedByTarget(ICollection<Type> targetInterfaces, Type @interface)
+        {
+            return targetInterfaces.Contains(@interface);
+        }
     }
 }

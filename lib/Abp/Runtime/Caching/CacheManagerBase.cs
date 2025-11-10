@@ -11,8 +11,9 @@ namespace Abp.Runtime.Caching
     [Obsolete("Use CacheManagerBase<TCache> instead.")]
     public abstract class CacheManagerBase : CacheManagerBase<ICache>, ICacheManager
     {
-        protected CacheManagerBase(ICachingConfiguration configuration)
-            : base(configuration) { }
+        protected CacheManagerBase(ICachingConfiguration configuration) : base(configuration)
+        {
+        }
     }
 
     /// <summary>
@@ -21,6 +22,7 @@ namespace Abp.Runtime.Caching
     public abstract class CacheManagerBase<TCache> : ICacheManager<TCache>, ISingletonDependency
         where TCache : class, ICacheOptions
     {
+
         protected readonly ICachingConfiguration Configuration;
 
         protected readonly ConcurrentDictionary<string, TCache> Caches;
@@ -44,28 +46,21 @@ namespace Abp.Runtime.Caching
         {
             Check.NotNull(name, nameof(name));
 
-            return Caches.GetOrAdd(
-                name,
-                (cacheName) =>
+            return Caches.GetOrAdd(name, (cacheName) =>
+            {
+                var cache = CreateCacheImplementation(cacheName);
+
+                var configurators = Configuration.Configurators.Where(c => c.CacheName == null || c.CacheName == cacheName);
+
+                foreach (var configurator in configurators)
                 {
-                    var cache = CreateCacheImplementation(cacheName);
-
-                    var configurators = Configuration.Configurators.Where(c =>
-                        c.CacheName == null || c.CacheName == cacheName
-                    );
-
-                    foreach (var configurator in configurators)
-                    {
-                        configurator.InitAction?.Invoke(cache);
-                    }
-
-                    return cache;
+                    configurator.InitAction?.Invoke(cache);
                 }
-            );
+
+                return cache;
+            });
         }
-
         protected abstract void DisposeCaches();
-
         public virtual void Dispose()
         {
             DisposeCaches();

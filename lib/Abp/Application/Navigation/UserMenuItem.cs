@@ -9,7 +9,7 @@ namespace Abp.Application.Navigation
     public class UserMenuItem
     {
         /// <summary>
-        /// Unique name of the menu item in the application.
+        /// Unique name of the menu item in the application. 
         /// </summary>
         public string Name { get; set; }
 
@@ -61,15 +61,15 @@ namespace Abp.Application.Navigation
         /// <summary>
         /// Creates a new <see cref="UserMenuItem"/> object.
         /// </summary>
-        public UserMenuItem() { }
+        public UserMenuItem()
+        {
+            
+        }
 
         /// <summary>
         /// Creates a new <see cref="UserMenuItem"/> object from given <see cref="MenuItemDefinition"/>.
         /// </summary>
-        public UserMenuItem(
-            MenuItemDefinition menuItemDefinition,
-            ILocalizationContext localizationContext
-        )
+        public UserMenuItem(MenuItemDefinition menuItemDefinition, ILocalizationContext localizationContext)
         {
             Name = menuItemDefinition.Name;
             Icon = menuItemDefinition.Icon;

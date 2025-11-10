@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Abp.Dependency;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
-using Abp.Dependency;
 
 namespace Abp.RealTime
 {
@@ -57,14 +57,10 @@ namespace Abp.RealTime
             return Task.FromResult<IReadOnlyList<IOnlineClient>>(Clients.Values.ToImmutableList());
         }
 
-        public async Task<IReadOnlyList<IOnlineClient>> GetAllByUserIdAsync(
-            UserIdentifier userIdentifier
-        )
+        public async Task<IReadOnlyList<IOnlineClient>> GetAllByUserIdAsync(UserIdentifier userIdentifier)
         {
             return (await GetAllAsync())
-                .Where(c =>
-                    c.UserId == userIdentifier.UserId && c.TenantId == userIdentifier.TenantId
-                )
+                .Where(c => c.UserId == userIdentifier.UserId && c.TenantId == userIdentifier.TenantId)
                 .ToImmutableList();
         }
     }

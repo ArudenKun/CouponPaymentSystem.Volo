@@ -15,9 +15,7 @@ namespace Abp.Localization
 
             try
             {
-                return CultureInfo
-                    .GetCultures(CultureTypes.AllCultures)
-                    .Any(e => e.Name.ToLowerInvariant() == cultureCode.ToLowerInvariant());
+                return CultureInfo.GetCultures(CultureTypes.AllCultures).Any(e => e.Name.ToLowerInvariant() == cultureCode.ToLowerInvariant());
             }
             catch (CultureNotFoundException)
             {

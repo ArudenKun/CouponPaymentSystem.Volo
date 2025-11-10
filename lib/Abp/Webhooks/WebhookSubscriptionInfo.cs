@@ -1,9 +1,9 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using Abp.Domain.Entities;
+﻿using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.MultiTenancy;
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Abp.Webhooks
 {
@@ -37,11 +37,11 @@ namespace Abp.Webhooks
         /// Subscribed webhook definitions unique names.It contains webhook definitions list as json
         /// <para>
         /// Do not change it manually.
-        /// Use <see cref=" WebhookSubscriptionInfoExtensions.GetSubscribedWebhooks"/>,
-        /// <see cref=" WebhookSubscriptionInfoExtensions.SubscribeWebhook"/>,
-        /// <see cref="WebhookSubscriptionInfoExtensions.UnsubscribeWebhook"/> and
+        /// Use <see cref=" WebhookSubscriptionInfoExtensions.GetSubscribedWebhooks"/>, 
+        /// <see cref=" WebhookSubscriptionInfoExtensions.SubscribeWebhook"/>, 
+        /// <see cref="WebhookSubscriptionInfoExtensions.UnsubscribeWebhook"/> and 
         /// <see cref="WebhookSubscriptionInfoExtensions.RemoveAllSubscribedWebhooks"/> to change it.
-        /// </para>
+        /// </para> 
         /// </summary>
         public virtual string Webhooks { get; set; }
 
@@ -49,11 +49,11 @@ namespace Abp.Webhooks
         /// Gets a set of additional HTTP headers.That headers will be sent with the webhook. It contains webhook header dictionary as json
         /// <para>
         /// Do not change it manually.
-        /// Use <see cref=" WebhookSubscriptionInfoExtensions.GetWebhookHeaders"/>,
-        /// <see cref="WebhookSubscriptionInfoExtensions.AddWebhookHeader"/>,
-        /// <see cref="WebhookSubscriptionInfoExtensions.RemoveWebhookHeader"/>,
+        /// Use <see cref=" WebhookSubscriptionInfoExtensions.GetWebhookHeaders"/>, 
+        /// <see cref="WebhookSubscriptionInfoExtensions.AddWebhookHeader"/>, 
+        /// <see cref="WebhookSubscriptionInfoExtensions.RemoveWebhookHeader"/>, 
         /// <see cref="WebhookSubscriptionInfoExtensions.RemoveAllWebhookHeaders"/> to change it.
-        /// </para>
+        /// </para> 
         /// </summary>
         public virtual string Headers { get; set; }
 

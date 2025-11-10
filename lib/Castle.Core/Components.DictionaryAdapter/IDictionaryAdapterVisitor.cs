@@ -12,39 +12,40 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Contract for traversing a <see cref="IDictionaryAdapter"/>.
-/// </summary>
-public interface IDictionaryAdapterVisitor
+namespace Castle.Components.DictionaryAdapter
 {
-    bool VisitDictionaryAdapter(IDictionaryAdapter dictionaryAdapter, object state);
+    using System;
 
-    bool VisitDictionaryAdapter(
-        IDictionaryAdapter dictionaryAdapter,
-        Func<PropertyDescriptor, bool> selector,
-        object state
-    );
+    /// <summary>
+    /// Contract for traversing a <see cref="IDictionaryAdapter"/>.
+    /// </summary>
+    public interface IDictionaryAdapterVisitor
+    {
+        bool VisitDictionaryAdapter(IDictionaryAdapter dictionaryAdapter, object state);
 
-    void VisitProperty(
-        IDictionaryAdapter dictionaryAdapter,
-        PropertyDescriptor property,
-        object state
-    );
+        bool VisitDictionaryAdapter(
+            IDictionaryAdapter dictionaryAdapter,
+            Func<PropertyDescriptor, bool> selector,
+            object state
+        );
 
-    void VisitInterface(
-        IDictionaryAdapter dictionaryAdapter,
-        PropertyDescriptor property,
-        object state
-    );
+        void VisitProperty(
+            IDictionaryAdapter dictionaryAdapter,
+            PropertyDescriptor property,
+            object state
+        );
 
-    void VisitCollection(
-        IDictionaryAdapter dictionaryAdapter,
-        PropertyDescriptor property,
-        Type collectionItemType,
-        object state
-    );
+        void VisitInterface(
+            IDictionaryAdapter dictionaryAdapter,
+            PropertyDescriptor property,
+            object state
+        );
+
+        void VisitCollection(
+            IDictionaryAdapter dictionaryAdapter,
+            PropertyDescriptor property,
+            Type collectionItemType,
+            object state
+        );
+    }
 }

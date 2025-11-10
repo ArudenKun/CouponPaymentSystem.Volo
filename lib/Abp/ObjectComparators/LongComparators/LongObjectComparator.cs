@@ -2,13 +2,10 @@
 
 namespace Abp.ObjectComparators.LongComparators
 {
+
     public class LongObjectComparator : ObjectComparatorBase<long, LongCompareTypes>
     {
-        protected override bool Compare(
-            long baseObject,
-            long compareObject,
-            LongCompareTypes compareType
-        )
+        protected override bool Compare(long baseObject, long compareObject, LongCompareTypes compareType)
         {
             switch (compareType)
             {
@@ -28,14 +25,9 @@ namespace Abp.ObjectComparators.LongComparators
         }
     }
 
-    public class NullableLongObjectComparator
-        : ObjectComparatorBase<long?, NullableLongCompareTypes>
+    public class NullableLongObjectComparator : ObjectComparatorBase<long?, NullableLongCompareTypes>
     {
-        protected override bool Compare(
-            long? baseObject,
-            long? compareObject,
-            NullableLongCompareTypes compareType
-        )
+        protected override bool Compare(long? baseObject, long? compareObject, NullableLongCompareTypes compareType)
         {
             switch (compareType)
             {

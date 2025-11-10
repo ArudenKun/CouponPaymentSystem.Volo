@@ -12,62 +12,72 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Contributors;
-
-using System;
-using System.Diagnostics;
-using System.Reflection;
-using Castle.DynamicProxy.Generators;
-
-internal sealed class InterfaceMembersWithDefaultImplementationCollector : MembersCollector
+namespace Castle.DynamicProxy.Contributors
 {
-    private readonly InterfaceMapping map;
+    using System;
+    using System.Diagnostics;
+    using System.Reflection;
+    using Castle.DynamicProxy.Generators;
 
-    public InterfaceMembersWithDefaultImplementationCollector(Type interfaceType, Type classToProxy)
-        : base(interfaceType)
+    internal sealed class InterfaceMembersWithDefaultImplementationCollector : MembersCollector
     {
-        Debug.Assert(interfaceType != null);
-        Debug.Assert(interfaceType.IsInterface);
+        private readonly InterfaceMapping map;
 
-        Debug.Assert(classToProxy != null);
-        Debug.Assert(classToProxy.IsClass);
-
-        map = classToProxy.GetInterfaceMap(interfaceType);
-    }
-
-    protected override MetaMethod GetMethodToGenerate(
-        MethodInfo method,
-        IProxyGenerationHook hook,
-        bool isStandalone
-    )
-    {
-        if (method.IsAbstract || method.IsFinal || method.IsVirtual == false)
+        public InterfaceMembersWithDefaultImplementationCollector(
+            Type interfaceType,
+            Type classToProxy
+        )
+            : base(interfaceType)
         {
-            // This collector is only interested in overridable methods with default implementations.
-            // All other interface methods should be dealt with in other contributors.
-            //
-            // (Note this is the opposite check of that in `TypeUtil.HasAnyOverridableDefaultImplementations`,
-            // which is the method used to filter out whole interfaces before this collector gets run for them.)
-            return null;
+            Debug.Assert(interfaceType != null);
+            Debug.Assert(interfaceType.IsInterface);
+
+            Debug.Assert(classToProxy != null);
+            Debug.Assert(classToProxy.IsClass);
+
+            map = classToProxy.GetInterfaceMap(interfaceType);
         }
 
-        var index = Array.IndexOf(map.InterfaceMethods, method);
-        Debug.Assert(index >= 0);
-
-        var methodOnTarget = map.TargetMethods[index];
-        if (methodOnTarget.DeclaringType.IsInterface == false)
+        protected override MetaMethod GetMethodToGenerate(
+            MethodInfo method,
+            IProxyGenerationHook hook,
+            bool isStandalone
+        )
         {
-            // An interface method can have its default implementation "overridden" in the class,
-            // in which case this collector isn't interested in it and another should deal with it.
-            return null;
-        }
+            if (method.IsAbstract || method.IsFinal || method.IsVirtual == false)
+            {
+                // This collector is only interested in overridable methods with default implementations.
+                // All other interface methods should be dealt with in other contributors.
+                //
+                // (Note this is the opposite check of that in `TypeUtil.HasAnyOverridableDefaultImplementations`,
+                // which is the method used to filter out whole interfaces before this collector gets run for them.)
+                return null;
+            }
 
-        var proxyable = AcceptMethod(method, true, hook);
-        if (!proxyable)
-        {
-            return null;
-        }
+            var index = Array.IndexOf(map.InterfaceMethods, method);
+            Debug.Assert(index >= 0);
 
-        return new MetaMethod(method, methodOnTarget, isStandalone, proxyable, !method.IsAbstract);
+            var methodOnTarget = map.TargetMethods[index];
+            if (methodOnTarget.DeclaringType.IsInterface == false)
+            {
+                // An interface method can have its default implementation "overridden" in the class,
+                // in which case this collector isn't interested in it and another should deal with it.
+                return null;
+            }
+
+            var proxyable = AcceptMethod(method, true, hook);
+            if (!proxyable)
+            {
+                return null;
+            }
+
+            return new MetaMethod(
+                method,
+                methodOnTarget,
+                isStandalone,
+                proxyable,
+                !method.IsAbstract
+            );
+        }
     }
 }

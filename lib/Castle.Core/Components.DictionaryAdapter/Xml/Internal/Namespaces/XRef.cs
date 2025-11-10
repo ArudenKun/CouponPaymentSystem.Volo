@@ -12,44 +12,45 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-
-public static class XRef
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static string GetId(this IXmlNode node)
+    using System;
+    using System.Collections.Generic;
+
+    public static class XRef
     {
-        return node.GetAttribute(XRef.Id);
+        public static string GetId(this IXmlNode node)
+        {
+            return node.GetAttribute(XRef.Id);
+        }
+
+        public static void SetId(this IXmlCursor node, string id)
+        {
+            node.SetAttribute(XRef.Id, id);
+        }
+
+        public static string GetReference(this IXmlNode node)
+        {
+            return node.GetAttribute(XRef.Ref);
+        }
+
+        public static void SetReference(this IXmlCursor cursor, string id)
+        {
+            cursor.SetAttribute(XRef.Ref, id);
+        }
+
+        public const string Prefix = "x",
+            NamespaceUri = "urn:schemas-castle-org:xml-reference";
+
+        public static readonly XmlName Id = new XmlName("id", NamespaceUri),
+            Ref = new XmlName("ref", NamespaceUri);
+
+        internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
+            NamespaceUri,
+            Prefix
+        )
+        {
+            Root = true,
+        };
     }
-
-    public static void SetId(this IXmlCursor node, string id)
-    {
-        node.SetAttribute(XRef.Id, id);
-    }
-
-    public static string GetReference(this IXmlNode node)
-    {
-        return node.GetAttribute(XRef.Ref);
-    }
-
-    public static void SetReference(this IXmlCursor cursor, string id)
-    {
-        cursor.SetAttribute(XRef.Ref, id);
-    }
-
-    public const string Prefix = "x",
-        NamespaceUri = "urn:schemas-castle-org:xml-reference";
-
-    public static readonly XmlName Id = new XmlName("id", NamespaceUri),
-        Ref = new XmlName("ref", NamespaceUri);
-
-    internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
-        NamespaceUri,
-        Prefix
-    )
-    {
-        Root = true,
-    };
 }

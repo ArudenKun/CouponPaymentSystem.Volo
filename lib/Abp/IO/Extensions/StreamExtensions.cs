@@ -1,6 +1,6 @@
 ﻿using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
+using System.Threading;
 
 namespace Abp.IO.Extensions
 {
@@ -15,10 +15,7 @@ namespace Abp.IO.Extensions
             }
         }
 
-        public static async Task<byte[]> GetAllBytesAsync(
-            this Stream stream,
-            CancellationToken cancellationToken = default
-        )
+        public static async Task<byte[]> GetAllBytesAsync(this Stream stream, CancellationToken cancellationToken = default)
         {
             using (var memoryStream = new MemoryStream())
             {
@@ -31,11 +28,7 @@ namespace Abp.IO.Extensions
             }
         }
 
-        public static Task CopyToAsync(
-            this Stream stream,
-            Stream destination,
-            CancellationToken cancellationToken
-        )
+        public static Task CopyToAsync(this Stream stream, Stream destination, CancellationToken cancellationToken)
         {
             if (stream.CanSeek)
             {

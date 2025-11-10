@@ -12,25 +12,26 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Collections;
-
-/// <summary>
-/// Contract for creating additional Dictionary adapters.
-/// </summary>
-public interface IDictionaryCreate
+namespace Castle.Components.DictionaryAdapter
 {
-    T Create<T>();
+    using System;
+    using System.Collections;
 
-    object Create(Type type);
+    /// <summary>
+    /// Contract for creating additional Dictionary adapters.
+    /// </summary>
+    public interface IDictionaryCreate
+    {
+        T Create<T>();
 
-    T Create<T>(IDictionary dictionary);
+        object Create(Type type);
 
-    object Create(Type type, IDictionary dictionary);
+        T Create<T>(IDictionary dictionary);
 
-    T Create<T>(Action<T> init);
+        object Create(Type type, IDictionary dictionary);
 
-    T Create<T>(IDictionary dictionary, Action<T> init);
+        T Create<T>(Action<T> init);
+
+        T Create<T>(IDictionary dictionary, Action<T> init);
+    }
 }

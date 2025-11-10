@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-internal interface IStatement : IExpressionOrStatement { }
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
+{
+    internal interface IStatement : IExpressionOrStatement { }
+}

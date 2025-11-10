@@ -12,24 +12,25 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-[AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
-public class XmlNamespaceAttribute : Attribute
+namespace Castle.Components.DictionaryAdapter
 {
-    public XmlNamespaceAttribute(string namespaceUri, string prefix)
+    using System;
+
+    [AttributeUsage(AttributeTargets.Interface | AttributeTargets.Property, AllowMultiple = true)]
+    public class XmlNamespaceAttribute : Attribute
     {
-        NamespaceUri = namespaceUri;
-        Prefix = prefix;
+        public XmlNamespaceAttribute(string namespaceUri, string prefix)
+        {
+            NamespaceUri = namespaceUri;
+            Prefix = prefix;
+        }
+
+        public bool Root { get; set; }
+
+        public bool Default { get; set; }
+
+        public string NamespaceUri { get; private set; }
+
+        public string Prefix { get; private set; }
     }
-
-    public bool Root { get; set; }
-
-    public bool Default { get; set; }
-
-    public string NamespaceUri { get; private set; }
-
-    public string Prefix { get; private set; }
 }

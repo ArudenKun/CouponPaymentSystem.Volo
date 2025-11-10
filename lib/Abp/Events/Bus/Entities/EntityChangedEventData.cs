@@ -16,6 +16,9 @@ namespace Abp.Events.Bus.Entities
         /// </summary>
         /// <param name="entity">Changed entity in this event</param>
         public EntityChangedEventData(TEntity entity)
-            : base(entity) { }
+            : base(entity)
+        {
+
+        }
     }
 }

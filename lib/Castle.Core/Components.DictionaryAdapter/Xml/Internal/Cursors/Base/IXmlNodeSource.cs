@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public interface IXmlNodeSource
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    IXmlNode Node { get; }
+    public interface IXmlNodeSource
+    {
+        IXmlNode Node { get; }
+    }
 }

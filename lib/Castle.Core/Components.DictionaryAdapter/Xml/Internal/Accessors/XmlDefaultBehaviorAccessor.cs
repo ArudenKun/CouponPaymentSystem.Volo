@@ -12,40 +12,41 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml;
-
-public class XmlDefaultBehaviorAccessor : XmlNodeAccessor
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    internal static readonly XmlAccessorFactory<XmlDefaultBehaviorAccessor> Factory = (
-        name,
-        type,
-        context
-    ) => new XmlDefaultBehaviorAccessor(name, type, context);
+    using System;
+    using System.Xml;
 
-    public XmlDefaultBehaviorAccessor(Type type, IXmlContext context)
-        : base(type, context) { }
-
-    public XmlDefaultBehaviorAccessor(string name, Type type, IXmlContext context)
-        : base(name, type, context) { }
-
-    public override IXmlCursor SelectPropertyNode(IXmlNode node, bool mutable)
+    public class XmlDefaultBehaviorAccessor : XmlNodeAccessor
     {
-        var flags =
-            Serializer.Kind == XmlTypeKind.Simple ? CursorFlags.AllNodes : CursorFlags.Elements;
-        return node.SelectChildren(KnownTypes, Context, flags.MutableIf(mutable));
-    }
+        internal static readonly XmlAccessorFactory<XmlDefaultBehaviorAccessor> Factory = (
+            name,
+            type,
+            context
+        ) => new XmlDefaultBehaviorAccessor(name, type, context);
 
-    public override IXmlCursor SelectCollectionNode(IXmlNode node, bool mutable)
-    {
-        return SelectPropertyNode(node, mutable);
-    }
+        public XmlDefaultBehaviorAccessor(Type type, IXmlContext context)
+            : base(type, context) { }
 
-    public override IXmlCursor SelectCollectionItems(IXmlNode node, bool mutable)
-    {
-        var flags = CursorFlags.Elements | CursorFlags.Multiple;
-        return node.SelectChildren(KnownTypes, Context, flags.MutableIf(mutable));
+        public XmlDefaultBehaviorAccessor(string name, Type type, IXmlContext context)
+            : base(name, type, context) { }
+
+        public override IXmlCursor SelectPropertyNode(IXmlNode node, bool mutable)
+        {
+            var flags =
+                Serializer.Kind == XmlTypeKind.Simple ? CursorFlags.AllNodes : CursorFlags.Elements;
+            return node.SelectChildren(KnownTypes, Context, flags.MutableIf(mutable));
+        }
+
+        public override IXmlCursor SelectCollectionNode(IXmlNode node, bool mutable)
+        {
+            return SelectPropertyNode(node, mutable);
+        }
+
+        public override IXmlCursor SelectCollectionItems(IXmlNode node, bool mutable)
+        {
+            var flags = CursorFlags.Elements | CursorFlags.Multiple;
+            return node.SelectChildren(KnownTypes, Context, flags.MutableIf(mutable));
+        }
     }
 }

@@ -12,43 +12,44 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Configuration;
-
-using System;
-using System.Collections.Generic;
-
-/// <summary>
-/// A collection of <see cref="IConfiguration"/> objects.
-/// </summary>
-#if FEATURE_SERIALIZATION
-[Serializable]
-#endif
-public class ConfigurationCollection : List<IConfiguration>
+namespace Castle.Core.Configuration
 {
-    /// <summary>
-    /// Creates a new instance of <c>ConfigurationCollection</c>.
-    /// </summary>
-    public ConfigurationCollection() { }
+    using System;
+    using System.Collections.Generic;
 
     /// <summary>
-    /// Creates a new instance of <c>ConfigurationCollection</c>.
+    /// A collection of <see cref="IConfiguration"/> objects.
     /// </summary>
-    public ConfigurationCollection(IEnumerable<IConfiguration> value)
-        : base(value) { }
-
-    public IConfiguration this[string name]
+#if FEATURE_SERIALIZATION
+    [Serializable]
+#endif
+    public class ConfigurationCollection : List<IConfiguration>
     {
-        get
-        {
-            foreach (IConfiguration config in this)
-            {
-                if (name.Equals(config.Name))
-                {
-                    return config;
-                }
-            }
+        /// <summary>
+        /// Creates a new instance of <c>ConfigurationCollection</c>.
+        /// </summary>
+        public ConfigurationCollection() { }
 
-            return null;
+        /// <summary>
+        /// Creates a new instance of <c>ConfigurationCollection</c>.
+        /// </summary>
+        public ConfigurationCollection(IEnumerable<IConfiguration> value)
+            : base(value) { }
+
+        public IConfiguration this[string name]
+        {
+            get
+            {
+                foreach (IConfiguration config in this)
+                {
+                    if (name.Equals(config.Name))
+                    {
+                        return config;
+                    }
+                }
+
+                return null;
+            }
         }
     }
 }

@@ -43,7 +43,9 @@ namespace Abp.Configuration
         public T Get<T>(string name)
         {
             var value = this[name];
-            return value == null ? default(T) : (T)Convert.ChangeType(value, typeof(T));
+            return value == null
+                ? default(T)
+                : (T) Convert.ChangeType(value, typeof (T));
         }
 
         /// <summary>
@@ -111,7 +113,7 @@ namespace Abp.Configuration
                 value = creator();
                 Set(name, value);
             }
-            return (T)value;
+            return (T) value;
         }
     }
 }

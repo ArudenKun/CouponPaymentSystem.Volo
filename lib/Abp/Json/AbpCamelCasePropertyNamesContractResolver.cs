@@ -6,10 +6,7 @@ namespace Abp.Json
 {
     public class AbpCamelCasePropertyNamesContractResolver : CamelCasePropertyNamesContractResolver
     {
-        protected override JsonProperty CreateProperty(
-            MemberInfo member,
-            MemberSerialization memberSerialization
-        )
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             JsonProperty property = base.CreateProperty(member, memberSerialization);
 

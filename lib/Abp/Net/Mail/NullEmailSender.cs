@@ -1,6 +1,6 @@
 using System.Net.Mail;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Logging.Abstractions;
+using System.Threading.Tasks;
+using Castle.Core.Logging;
 
 namespace Abp.Net.Mail
 {
@@ -24,25 +24,25 @@ namespace Abp.Net.Mail
 
         protected override Task SendEmailAsync(MailMessage mail)
         {
-            Logger.LogWarning("USING NullEmailSender!");
-            Logger.LogDebug("SendEmailAsync:");
+            Logger.Warn("USING NullEmailSender!");
+            Logger.Debug("SendEmailAsync:");
             LogEmail(mail);
             return Task.FromResult(0);
         }
 
         protected override void SendEmail(MailMessage mail)
         {
-            Logger.LogWarning("USING NullEmailSender!");
-            Logger.LogDebug("SendEmail:");
+            Logger.Warn("USING NullEmailSender!");
+            Logger.Debug("SendEmail:");
             LogEmail(mail);
         }
 
         private void LogEmail(MailMessage mail)
         {
-            Logger.LogDebug(mail.To.ToString());
-            Logger.LogDebug(mail.CC.ToString());
-            Logger.LogDebug(mail.Subject);
-            Logger.LogDebug(mail.Body);
+            Logger.Debug(mail.To.ToString());
+            Logger.Debug(mail.CC.ToString());
+            Logger.Debug(mail.Subject);
+            Logger.Debug(mail.Body);
         }
     }
 }

@@ -9,10 +9,7 @@ namespace Abp.Json
 {
     public class AbpContractResolver : DefaultContractResolver
     {
-        protected override JsonProperty CreateProperty(
-            MemberInfo member,
-            MemberSerialization memberSerialization
-        )
+        protected override JsonProperty CreateProperty(MemberInfo member, MemberSerialization memberSerialization)
         {
             JsonProperty property = base.CreateProperty(member, memberSerialization);
 

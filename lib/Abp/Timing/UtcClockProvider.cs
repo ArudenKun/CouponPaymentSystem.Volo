@@ -28,6 +28,9 @@ namespace Abp.Timing
             return dateTime;
         }
 
-        internal UtcClockProvider() { }
+        internal UtcClockProvider()
+        {
+
+        }
     }
 }

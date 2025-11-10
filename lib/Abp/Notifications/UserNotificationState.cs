@@ -13,6 +13,6 @@
         /// <summary>
         /// Notification is read by user.
         /// </summary>
-        Read,
+        Read
     }
 }

@@ -12,30 +12,31 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-using System.Reflection;
-
-public abstract partial class DictionaryAdapterBase
+namespace Castle.Components.DictionaryAdapter
 {
-    public T Coerce<T>()
-        where T : class
-    {
-        return (T)Coerce(typeof(T));
-    }
+    using System;
+    using System.Reflection;
 
-    public object Coerce(Type type)
+    public abstract partial class DictionaryAdapterBase
     {
-        if (type.IsAssignableFrom(Meta.Type))
-            return this;
-
-        if (This.CoerceStrategy != null)
+        public T Coerce<T>()
+            where T : class
         {
-            var coerced = This.CoerceStrategy.Coerce(this, type);
-            if (coerced != null)
-                return coerced;
+            return (T)Coerce(typeof(T));
         }
-        return This.Factory.GetAdapter(type, This.Dictionary, This.Descriptor);
+
+        public object Coerce(Type type)
+        {
+            if (type.IsAssignableFrom(Meta.Type))
+                return this;
+
+            if (This.CoerceStrategy != null)
+            {
+                var coerced = This.CoerceStrategy.Coerce(this, type);
+                if (coerced != null)
+                    return coerced;
+            }
+            return This.Factory.GetAdapter(type, This.Dictionary, This.Descriptor);
+        }
     }
 }

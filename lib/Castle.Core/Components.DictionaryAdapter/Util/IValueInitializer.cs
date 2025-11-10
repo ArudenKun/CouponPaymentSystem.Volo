@@ -12,9 +12,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-public interface IValueInitializer
+namespace Castle.Components.DictionaryAdapter
 {
-    void Initialize(IDictionaryAdapter dictionaryAdapter, object value);
+    public interface IValueInitializer
+    {
+        void Initialize(IDictionaryAdapter dictionaryAdapter, object value);
+    }
 }

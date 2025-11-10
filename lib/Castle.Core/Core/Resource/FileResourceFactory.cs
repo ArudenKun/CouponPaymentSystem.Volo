@@ -12,32 +12,33 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Core.Resource;
-
-using System;
-
-/// <summary>
-///
-/// </summary>
-public class FileResourceFactory : IResourceFactory
+namespace Castle.Core.Resource
 {
-    public FileResourceFactory() { }
+    using System;
 
-    public bool Accept(CustomUri uri)
+    /// <summary>
+    ///
+    /// </summary>
+    public class FileResourceFactory : IResourceFactory
     {
-        return "file".Equals(uri.Scheme);
-    }
+        public FileResourceFactory() { }
 
-    public IResource Create(CustomUri uri)
-    {
-        return Create(uri, null);
-    }
+        public bool Accept(CustomUri uri)
+        {
+            return "file".Equals(uri.Scheme);
+        }
 
-    public IResource Create(CustomUri uri, string basePath)
-    {
-        if (basePath != null)
-            return new FileResource(uri, basePath);
-        else
-            return new FileResource(uri);
+        public IResource Create(CustomUri uri)
+        {
+            return Create(uri, null);
+        }
+
+        public IResource Create(CustomUri uri, string basePath)
+        {
+            if (basePath != null)
+                return new FileResource(uri, basePath);
+            else
+                return new FileResource(uri);
+        }
     }
 }

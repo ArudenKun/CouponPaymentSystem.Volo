@@ -9,7 +9,7 @@ namespace Abp.Webhooks
         /// Default is false
         /// </summary>
         public bool UseOnlyGivenHeaders { get; set; }
-
+        
         /// <summary>
         /// That headers will be sent with the webhook.
         /// </summary>

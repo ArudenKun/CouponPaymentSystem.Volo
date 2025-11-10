@@ -12,54 +12,57 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.Serialization;
-
-public class XmlAttributeBehaviorAccessor : XmlNodeAccessor, IConfigurable<XmlAttributeAttribute>
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    internal static readonly XmlAccessorFactory<XmlAttributeBehaviorAccessor> Factory = (
-        name,
-        type,
-        context
-    ) => new XmlAttributeBehaviorAccessor(name, type, context);
+    using System;
+    using System.Xml.Serialization;
 
-    public XmlAttributeBehaviorAccessor(string name, Type type, IXmlContext context)
-        : base(name, type, context)
+    public class XmlAttributeBehaviorAccessor
+        : XmlNodeAccessor,
+            IConfigurable<XmlAttributeAttribute>
     {
-        if (Serializer.Kind != XmlTypeKind.Simple)
+        internal static readonly XmlAccessorFactory<XmlAttributeBehaviorAccessor> Factory = (
+            name,
+            type,
+            context
+        ) => new XmlAttributeBehaviorAccessor(name, type, context);
+
+        public XmlAttributeBehaviorAccessor(string name, Type type, IXmlContext context)
+            : base(name, type, context)
+        {
+            if (Serializer.Kind != XmlTypeKind.Simple)
+                throw Error.NotSupported();
+        }
+
+        public void Configure(XmlAttributeAttribute attribute)
+        {
+            ConfigureLocalName(attribute.AttributeName);
+            ConfigureNamespaceUri(attribute.Namespace);
+        }
+
+        public override void ConfigureNillable(bool nillable)
+        {
+            // Attributes are never nillable
+        }
+
+        public override void ConfigureReference(bool isReference)
+        {
+            // Attributes cannot store references
+        }
+
+        public override IXmlCollectionAccessor GetCollectionAccessor(Type itemType)
+        {
             throw Error.NotSupported();
-    }
+        }
 
-    public void Configure(XmlAttributeAttribute attribute)
-    {
-        ConfigureLocalName(attribute.AttributeName);
-        ConfigureNamespaceUri(attribute.Namespace);
-    }
+        public override IXmlCursor SelectPropertyNode(IXmlNode node, bool mutable)
+        {
+            return node.SelectChildren(this, Context, CursorFlags.Attributes.MutableIf(mutable));
+        }
 
-    public override void ConfigureNillable(bool nillable)
-    {
-        // Attributes are never nillable
-    }
-
-    public override void ConfigureReference(bool isReference)
-    {
-        // Attributes cannot store references
-    }
-
-    public override IXmlCollectionAccessor GetCollectionAccessor(Type itemType)
-    {
-        throw Error.NotSupported();
-    }
-
-    public override IXmlCursor SelectPropertyNode(IXmlNode node, bool mutable)
-    {
-        return node.SelectChildren(this, Context, CursorFlags.Attributes.MutableIf(mutable));
-    }
-
-    public override IXmlCursor SelectCollectionNode(IXmlNode node, bool mutable)
-    {
-        throw Error.NotSupported();
+        public override IXmlCursor SelectCollectionNode(IXmlNode node, bool mutable)
+        {
+            throw Error.NotSupported();
+        }
     }
 }

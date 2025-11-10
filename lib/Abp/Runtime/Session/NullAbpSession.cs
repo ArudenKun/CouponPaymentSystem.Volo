@@ -26,12 +26,13 @@ namespace Abp.Runtime.Session
 
         public override int? ImpersonatorTenantId => null;
 
-        private NullAbpSession()
+        private NullAbpSession() 
             : base(
-                new MultiTenancyConfig(),
-                new DataContextAmbientScopeProvider<SessionOverride>(
-                    new AsyncLocalAmbientDataContext()
-                )
-            ) { }
+                  new MultiTenancyConfig(), 
+                  new DataContextAmbientScopeProvider<SessionOverride>(new AsyncLocalAmbientDataContext())
+            )
+        {
+
+        }
     }
 }

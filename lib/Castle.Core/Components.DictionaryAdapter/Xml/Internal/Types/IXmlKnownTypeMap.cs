@@ -12,26 +12,27 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-
-public interface IXmlKnownTypeMap
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    IXmlKnownType Default { get; }
+    using System;
 
-    bool TryGet(IXmlIdentity xmlNode, out IXmlKnownType knownType);
-    bool TryGet(Type clrType, out IXmlKnownType knownType);
-}
-
-public static class XmlKnownTypeMapExtensions
-{
-    public static IXmlKnownType Require(this IXmlKnownTypeMap map, Type clrType)
+    public interface IXmlKnownTypeMap
     {
-        IXmlKnownType knownType;
-        if (map.TryGet(clrType, out knownType))
-            return knownType;
+        IXmlKnownType Default { get; }
 
-        throw Error.NotXmlKnownType(clrType);
+        bool TryGet(IXmlIdentity xmlNode, out IXmlKnownType knownType);
+        bool TryGet(Type clrType, out IXmlKnownType knownType);
+    }
+
+    public static class XmlKnownTypeMapExtensions
+    {
+        public static IXmlKnownType Require(this IXmlKnownTypeMap map, Type clrType)
+        {
+            IXmlKnownType knownType;
+            if (map.TryGet(clrType, out knownType))
+                return knownType;
+
+            throw Error.NotXmlKnownType(clrType);
+        }
     }
 }

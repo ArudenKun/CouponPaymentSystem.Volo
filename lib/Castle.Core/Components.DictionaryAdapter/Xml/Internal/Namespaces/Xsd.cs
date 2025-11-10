@@ -12,18 +12,19 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-public static class Xsd
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public const string Prefix = "xsd",
-        NamespaceUri = "http://www.w3.org/2001/XMLSchema";
-
-    internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
-        NamespaceUri,
-        Prefix
-    )
+    public static class Xsd
     {
-        Root = true,
-    };
+        public const string Prefix = "xsd",
+            NamespaceUri = "http://www.w3.org/2001/XMLSchema";
+
+        internal static readonly XmlNamespaceAttribute Namespace = new XmlNamespaceAttribute(
+            NamespaceUri,
+            Prefix
+        )
+        {
+            Root = true,
+        };
+    }
 }

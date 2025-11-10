@@ -10,10 +10,9 @@ namespace Abp.EntityHistory
         /// shortcut of (IEntitySnapshotManager).GetEntitySnapshotAsync &lt;TEntity, int &gt;
         /// </summary>
         public static async Task<EntityHistorySnapshot> GetSnapshotAsync<TEntity>(
-            this IEntitySnapshotManager entitySnapshotManager,
-            int id,
-            DateTime snapshotTime
-        )
+            this IEntitySnapshotManager entitySnapshotManager, 
+            int id, 
+            DateTime snapshotTime)
             where TEntity : class, IEntity<int>
         {
             return await entitySnapshotManager.GetSnapshotAsync<TEntity, int>(id, snapshotTime);

@@ -4,11 +4,7 @@ namespace Abp.ObjectComparators.BooleanComparators
 {
     public class BooleanObjectComparator : ObjectComparatorBase<bool, BooleanCompareTypes>
     {
-        protected override bool Compare(
-            bool baseObject,
-            bool compareObject,
-            BooleanCompareTypes compareType
-        )
+        protected override bool Compare(bool baseObject, bool compareObject, BooleanCompareTypes compareType)
         {
             switch (compareType)
             {
@@ -20,14 +16,9 @@ namespace Abp.ObjectComparators.BooleanComparators
         }
     }
 
-    public class NullableBooleanObjectComparator
-        : ObjectComparatorBase<bool?, NullableBooleanCompareTypes>
+    public class NullableBooleanObjectComparator : ObjectComparatorBase<bool?, NullableBooleanCompareTypes>
     {
-        protected override bool Compare(
-            bool? baseObject,
-            bool? compareObject,
-            NullableBooleanCompareTypes compareType
-        )
+        protected override bool Compare(bool? baseObject, bool? compareObject, NullableBooleanCompareTypes compareType)
         {
             switch (compareType)
             {

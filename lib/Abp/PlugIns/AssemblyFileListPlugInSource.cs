@@ -44,10 +44,7 @@ namespace Abp.PlugIns
                 }
                 catch (Exception ex)
                 {
-                    throw new AbpInitializationException(
-                        "Could not get module types from assembly: " + assembly.FullName,
-                        ex
-                    );
+                    throw new AbpInitializationException("Could not get module types from assembly: " + assembly.FullName, ex);
                 }
             }
 
@@ -56,11 +53,9 @@ namespace Abp.PlugIns
 
         private List<Assembly> LoadAssemblies()
         {
-            return FilePaths
-                .Select(
-                    Assembly.LoadFile //TODO: Use AssemblyLoadContext.Default.LoadFromAssemblyPath instead?
-                )
-                .ToList();
+            return FilePaths.Select(
+                Assembly.LoadFile //TODO: Use AssemblyLoadContext.Default.LoadFromAssemblyPath instead?
+            ).ToList();
         }
     }
 }

@@ -1,5 +1,5 @@
+using System;
 using System.Reflection;
-using Castle.MicroKernel.Registration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Dependency
@@ -27,8 +27,6 @@ namespace Abp.Dependency
         /// <param name="assembly">Assembly to register</param>
         /// <param name="config">Additional configuration</param>
         void RegisterAssemblyByConvention(Assembly assembly, ConventionalRegistrationConfig config);
-
-        void Register(params IRegistration[] registrations);
 
         /// <summary>
         /// Registers a type as self registration.

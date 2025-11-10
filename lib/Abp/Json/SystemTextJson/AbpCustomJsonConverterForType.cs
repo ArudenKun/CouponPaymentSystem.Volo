@@ -6,7 +6,7 @@ using Abp.Reflection;
 
 namespace Abp.Json.SystemTextJson
 {
-    public class AbpJsonConverterForType : JsonConverter<Type>
+    public class AbpJsonConverterForType: JsonConverter<Type>
     {
         public override Type Read(
             ref Utf8JsonReader reader,
@@ -19,11 +19,15 @@ namespace Abp.Json.SystemTextJson
             {
                 throw new Exception("AssemblyQualifiedName is empty!");
             }
-
+            
             return Type.GetType(assemblyQualifiedName);
         }
 
-        public override void Write(Utf8JsonWriter writer, Type value, JsonSerializerOptions options)
+        public override void Write(
+            Utf8JsonWriter writer,
+            Type value,
+            JsonSerializerOptions options
+        )
         {
             var assemblyQualifiedName = TypeHelper.SerializeType(value).ToString();
             writer.WriteStringValue(assemblyQualifiedName);

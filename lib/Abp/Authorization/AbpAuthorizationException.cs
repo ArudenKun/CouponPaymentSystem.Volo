@@ -9,7 +9,7 @@ namespace Abp.Authorization
     /// This exception is thrown on an unauthorized request.
     /// </summary>
     [Serializable]
-    public class AbpAuthorizationException : AbpException, IHasLogSeverity
+    public class AbpAuthorizationException : AbpException, IHasLogLevel
     {
         /// <summary>
         /// Default log severity
@@ -20,14 +20,14 @@ namespace Abp.Authorization
         /// Severity of the exception.
         /// Default: Warn.
         /// </summary>
-        public LogLevel Severity { get; set; }
+        public LogLevel LogLevel { get; set; }
 
         /// <summary>
         /// Creates a new <see cref="AbpAuthorizationException"/> object.
         /// </summary>
         public AbpAuthorizationException()
         {
-            Severity = DefaultLogSeverity;
+            LogLevel = DefaultLogSeverity;
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace Abp.Authorization
         public AbpAuthorizationException(string message)
             : base(message)
         {
-            Severity = DefaultLogSeverity;
+            LogLevel = DefaultLogSeverity;
         }
 
         /// <summary>
@@ -57,7 +57,7 @@ namespace Abp.Authorization
         public AbpAuthorizationException(string message, Exception innerException)
             : base(message, innerException)
         {
-            Severity = DefaultLogSeverity;
+            LogLevel = DefaultLogSeverity;
         }
     }
 }

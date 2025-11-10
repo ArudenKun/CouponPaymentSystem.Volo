@@ -12,45 +12,46 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Contract for manipulating the Dictionary adapter.
-/// </summary>
-public interface IDictionaryAdapter
-    : IDictionaryEdit,
-        IDictionaryNotify,
-        IDictionaryValidate,
-        IDictionaryCreate
+namespace Castle.Components.DictionaryAdapter
 {
-    DictionaryAdapterMeta Meta { get; }
+    using System;
 
-    DictionaryAdapterInstance This { get; }
+    /// <summary>
+    /// Contract for manipulating the Dictionary adapter.
+    /// </summary>
+    public interface IDictionaryAdapter
+        : IDictionaryEdit,
+            IDictionaryNotify,
+            IDictionaryValidate,
+            IDictionaryCreate
+    {
+        DictionaryAdapterMeta Meta { get; }
 
-    string GetKey(string propertyName);
+        DictionaryAdapterInstance This { get; }
 
-    object GetProperty(string propertyName, bool ifExists);
+        string GetKey(string propertyName);
 
-    object ReadProperty(string key);
+        object GetProperty(string propertyName, bool ifExists);
 
-    T GetPropertyOfType<T>(string propertyName);
+        object ReadProperty(string key);
 
-    bool SetProperty(string propertyName, ref object value);
+        T GetPropertyOfType<T>(string propertyName);
 
-    void StoreProperty(PropertyDescriptor property, string key, object value);
+        bool SetProperty(string propertyName, ref object value);
 
-    void ClearProperty(PropertyDescriptor property, string key);
+        void StoreProperty(PropertyDescriptor property, string key, object value);
 
-    bool ShouldClearProperty(PropertyDescriptor property, object value);
+        void ClearProperty(PropertyDescriptor property, string key);
 
-    void CopyTo(IDictionaryAdapter other);
+        bool ShouldClearProperty(PropertyDescriptor property, object value);
 
-    void CopyTo(IDictionaryAdapter other, Func<PropertyDescriptor, bool> selector);
+        void CopyTo(IDictionaryAdapter other);
 
-    T Coerce<T>()
-        where T : class;
+        void CopyTo(IDictionaryAdapter other, Func<PropertyDescriptor, bool> selector);
 
-    object Coerce(Type type);
+        T Coerce<T>()
+            where T : class;
+
+        object Coerce(Type type);
+    }
 }

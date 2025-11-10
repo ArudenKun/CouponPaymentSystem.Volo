@@ -15,21 +15,21 @@ namespace Abp.Localization.Sources
         /// </summary>
         public static NullLocalizationSource Instance { get; } = new NullLocalizationSource();
 
-        public string Name
-        {
-            get { return null; }
-        }
+        public string Name { get { return null; } }
 
         private readonly IReadOnlyList<LocalizedString> _emptyStringArray = new LocalizedString[0];
 
-        private NullLocalizationSource() { }
+        private NullLocalizationSource()
+        {
 
-        public void Initialize(
-            ILocalizationConfiguration configuration,
-            IIocResolver iocResolver
-        ) { }
+        }
 
-        public string? FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
+        public void Initialize(ILocalizationConfiguration configuration, IIocResolver iocResolver)
+        {
+
+        }
+
+        public string FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
         {
             return null;
         }
@@ -44,12 +44,12 @@ namespace Abp.Localization.Sources
             return name;
         }
 
-        public string? GetStringOrNull(string name, bool tryDefaults = true)
+        public string GetStringOrNull(string name, bool tryDefaults = true)
         {
             return null;
         }
 
-        public string? GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
+        public string GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
         {
             return null;
         }
@@ -69,11 +69,7 @@ namespace Abp.Localization.Sources
             return null;
         }
 
-        public List<string> GetStringsOrNull(
-            List<string> names,
-            CultureInfo culture,
-            bool tryDefaults = true
-        )
+        public List<string> GetStringsOrNull(List<string> names, CultureInfo culture, bool tryDefaults = true)
         {
             return null;
         }
@@ -83,10 +79,7 @@ namespace Abp.Localization.Sources
             return _emptyStringArray;
         }
 
-        public IReadOnlyList<LocalizedString> GetAllStrings(
-            CultureInfo culture,
-            bool includeDefaults = true
-        )
+        public IReadOnlyList<LocalizedString> GetAllStrings(CultureInfo culture, bool includeDefaults = true)
         {
             return _emptyStringArray;
         }

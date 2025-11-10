@@ -23,8 +23,7 @@ namespace Abp.Domain.Uow
         public UnitOfWorkManager(
             IIocResolver iocResolver,
             ICurrentUnitOfWorkProvider currentUnitOfWorkProvider,
-            IUnitOfWorkDefaultOptions defaultOptions
-        )
+            IUnitOfWorkDefaultOptions defaultOptions)
         {
             _iocResolver = iocResolver;
             _currentUnitOfWorkProvider = currentUnitOfWorkProvider;

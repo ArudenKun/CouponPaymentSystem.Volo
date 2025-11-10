@@ -12,102 +12,108 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class ConvertExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly IExpression right;
-    private Type fromType;
-    private Type target;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public ConvertExpression(Type targetType, IExpression right)
-        : this(targetType, typeof(object), right) { }
-
-    public ConvertExpression(Type targetType, Type fromType, IExpression right)
+    internal class ConvertExpression : IExpression
     {
-        target = targetType;
-        this.fromType = fromType;
-        this.right = right;
-    }
+        private readonly IExpression right;
+        private Type fromType;
+        private Type target;
 
-    public void Emit(ILGenerator gen)
-    {
-        right.Emit(gen);
+        public ConvertExpression(Type targetType, IExpression right)
+            : this(targetType, typeof(object), right) { }
 
-        if (fromType == target)
+        public ConvertExpression(Type targetType, Type fromType, IExpression right)
         {
-            return;
+            target = targetType;
+            this.fromType = fromType;
+            this.right = right;
         }
 
-        if (fromType.IsByRef)
+        public void Emit(ILGenerator gen)
         {
-            fromType = fromType.GetElementType();
-        }
+            right.Emit(gen);
 
-        if (target.IsByRef)
-        {
-            target = target.GetElementType();
-        }
-
-        if (target.IsValueType)
-        {
-            if (fromType.IsValueType)
+            if (fromType == target)
             {
-                throw new NotImplementedException("Cannot convert between distinct value types");
+                return;
             }
-            else
+
+            if (fromType.IsByRef)
             {
-                // Unbox conversion
-                // Assumes fromType is a boxed value
-                // if we can, we emit a box and ldind, otherwise, we will use unbox.any
-                if (LdindOpCodesDictionary.Instance[target] != LdindOpCodesDictionary.EmptyOpCode)
+                fromType = fromType.GetElementType();
+            }
+
+            if (target.IsByRef)
+            {
+                target = target.GetElementType();
+            }
+
+            if (target.IsValueType)
+            {
+                if (fromType.IsValueType)
                 {
-                    gen.Emit(OpCodes.Unbox, target);
-                    OpCodeUtil.EmitLoadIndirectOpCodeForType(gen, target);
+                    throw new NotImplementedException(
+                        "Cannot convert between distinct value types"
+                    );
                 }
                 else
                 {
-                    gen.Emit(OpCodes.Unbox_Any, target);
+                    // Unbox conversion
+                    // Assumes fromType is a boxed value
+                    // if we can, we emit a box and ldind, otherwise, we will use unbox.any
+                    if (
+                        LdindOpCodesDictionary.Instance[target]
+                        != LdindOpCodesDictionary.EmptyOpCode
+                    )
+                    {
+                        gen.Emit(OpCodes.Unbox, target);
+                        OpCodeUtil.EmitLoadIndirectOpCodeForType(gen, target);
+                    }
+                    else
+                    {
+                        gen.Emit(OpCodes.Unbox_Any, target);
+                    }
                 }
-            }
-        }
-        else
-        {
-            if (fromType.IsValueType)
-            {
-                // Box conversion
-                gen.Emit(OpCodes.Box, fromType);
-                EmitCastIfNeeded(typeof(object), target, gen);
             }
             else
             {
-                // Possible down-cast
-                EmitCastIfNeeded(fromType, target, gen);
+                if (fromType.IsValueType)
+                {
+                    // Box conversion
+                    gen.Emit(OpCodes.Box, fromType);
+                    EmitCastIfNeeded(typeof(object), target, gen);
+                }
+                else
+                {
+                    // Possible down-cast
+                    EmitCastIfNeeded(fromType, target, gen);
+                }
             }
         }
-    }
 
-    private static void EmitCastIfNeeded(Type from, Type target, ILGenerator gen)
-    {
-        if (target.IsGenericParameter)
+        private static void EmitCastIfNeeded(Type from, Type target, ILGenerator gen)
         {
-            gen.Emit(OpCodes.Unbox_Any, target);
-        }
-        else if (from.IsGenericParameter)
-        {
-            gen.Emit(OpCodes.Box, from);
-        }
-        else if (target.IsGenericType && target != from)
-        {
-            gen.Emit(OpCodes.Castclass, target);
-        }
-        else if (target.IsSubclassOf(from))
-        {
-            gen.Emit(OpCodes.Castclass, target);
+            if (target.IsGenericParameter)
+            {
+                gen.Emit(OpCodes.Unbox_Any, target);
+            }
+            else if (from.IsGenericParameter)
+            {
+                gen.Emit(OpCodes.Box, from);
+            }
+            else if (target.IsGenericType && target != from)
+            {
+                gen.Emit(OpCodes.Castclass, target);
+            }
+            else if (target.IsSubclassOf(from))
+            {
+                gen.Emit(OpCodes.Castclass, target);
+            }
         }
     }
 }

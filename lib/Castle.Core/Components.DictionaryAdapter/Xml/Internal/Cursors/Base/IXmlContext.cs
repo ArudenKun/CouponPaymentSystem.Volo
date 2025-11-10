@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Collections.Generic;
-
-public interface IXmlContext : IXmlNamespaceSource
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    string ChildNamespaceUri { get; }
+    using System;
+    using System.Collections.Generic;
 
-    IXmlContext Clone();
-    XmlName GetDefaultXsiType(Type clrType);
-    IEnumerable<IXmlIncludedType> GetIncludedTypes(Type baseType);
-    bool IsReservedNamespaceUri(string namespaceUri);
+    public interface IXmlContext : IXmlNamespaceSource
+    {
+        string ChildNamespaceUri { get; }
 
-    void AddVariable(XPathVariableAttribute attribute);
-    void AddFunction(XPathFunctionAttribute attribute);
-    void Enlist(CompiledXPath path);
+        IXmlContext Clone();
+        XmlName GetDefaultXsiType(Type clrType);
+        IEnumerable<IXmlIncludedType> GetIncludedTypes(Type baseType);
+        bool IsReservedNamespaceUri(string namespaceUri);
+
+        void AddVariable(XPathVariableAttribute attribute);
+        void AddFunction(XPathFunctionAttribute attribute);
+        void Enlist(CompiledXPath path);
+    }
 }

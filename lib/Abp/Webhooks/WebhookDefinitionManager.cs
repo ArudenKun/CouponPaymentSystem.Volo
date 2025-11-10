@@ -15,7 +15,7 @@ namespace Abp.Webhooks
         public WebhookDefinitionManager(
             IWebhooksConfiguration webhooksConfiguration,
             IocManager iocManager
-        )
+            )
         {
             _webhooksConfiguration = webhooksConfiguration;
             _iocManager = iocManager;
@@ -28,11 +28,7 @@ namespace Abp.Webhooks
 
             foreach (var providerType in _webhooksConfiguration.Providers)
             {
-                using (
-                    var provider = _iocManager.ResolveAsDisposable<WebhookDefinitionProvider>(
-                        providerType
-                    )
-                )
+                using (var provider = _iocManager.ResolveAsDisposable<WebhookDefinitionProvider>(providerType))
                 {
                     provider.Object.SetWebhooks(context);
                 }
@@ -43,11 +39,7 @@ namespace Abp.Webhooks
         {
             if (_webhookDefinitions.ContainsKey(webhookDefinition.Name))
             {
-                throw new AbpInitializationException(
-                    "There is already a webhook definition with given name: "
-                        + webhookDefinition.Name
-                        + ". Webhook names must be unique!"
-                );
+                throw new AbpInitializationException("There is already a webhook definition with given name: " + webhookDefinition.Name + ". Webhook names must be unique!");
             }
 
             _webhookDefinitions.Add(webhookDefinition.Name, webhookDefinition);
@@ -67,9 +59,7 @@ namespace Abp.Webhooks
         {
             if (!_webhookDefinitions.ContainsKey(name))
             {
-                throw new KeyNotFoundException(
-                    $"Webhook definitions does not contain a definition with the key \"{name}\"."
-                );
+                throw new KeyNotFoundException($"Webhook definitions does not contain a definition with the key \"{name}\".");
             }
 
             return _webhookDefinitions[name];
@@ -109,18 +99,11 @@ namespace Abp.Webhooks
                 return true;
             }
 
-            using (
-                var featureDependencyContext =
-                    _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-            )
+            using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
             {
                 featureDependencyContext.Object.TenantId = tenantId;
 
-                if (
-                    !await webhookDefinition.FeatureDependency.IsSatisfiedAsync(
-                        featureDependencyContext.Object
-                    )
-                )
+                if (!await webhookDefinition.FeatureDependency.IsSatisfiedAsync(featureDependencyContext.Object))
                 {
                     return false;
                 }
@@ -148,18 +131,11 @@ namespace Abp.Webhooks
                 return true;
             }
 
-            using (
-                var featureDependencyContext =
-                    _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-            )
+            using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
             {
                 featureDependencyContext.Object.TenantId = tenantId;
 
-                if (
-                    !webhookDefinition.FeatureDependency.IsSatisfied(
-                        featureDependencyContext.Object
-                    )
-                )
+                if (!webhookDefinition.FeatureDependency.IsSatisfied(featureDependencyContext.Object))
                 {
                     return false;
                 }

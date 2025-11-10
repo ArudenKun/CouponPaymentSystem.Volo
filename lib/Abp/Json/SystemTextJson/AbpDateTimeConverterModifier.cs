@@ -13,10 +13,7 @@ namespace Abp.Json.SystemTextJson
         private readonly List<string> _inputDateTimeFormats;
         private readonly string _outputDateTimeFormat;
 
-        public AbpDateTimeConverterModifier(
-            List<string> inputDateTimeFormats,
-            string outputDateTimeFormat
-        )
+        public AbpDateTimeConverterModifier(List<string> inputDateTimeFormats, string outputDateTimeFormat)
         {
             _inputDateTimeFormats = inputDateTimeFormats;
             _outputDateTimeFormat = outputDateTimeFormat;
@@ -29,42 +26,19 @@ namespace Abp.Json.SystemTextJson
 
         private void Modify(JsonTypeInfo jsonTypeInfo)
         {
-            if (
-                ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableDateTimeNormalizationAttribute>(
-                    jsonTypeInfo.Type
-                ) != null
-            )
+            if (ReflectionHelper.GetSingleAttributeOfMemberOrDeclaringTypeOrDefault<DisableDateTimeNormalizationAttribute>(jsonTypeInfo.Type) != null)
             {
                 return;
             }
 
-            foreach (
-                var property in jsonTypeInfo.Properties.Where(x =>
-                    x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?)
-                )
-            )
+            foreach (var property in jsonTypeInfo.Properties.Where(x => x.PropertyType == typeof(DateTime) || x.PropertyType == typeof(DateTime?)))
             {
-                if (
-                    property.AttributeProvider == null
-                    || !property
-                        .AttributeProvider.GetCustomAttributes(
-                            typeof(DisableDateTimeNormalizationAttribute),
-                            false
-                        )
-                        .Any()
-                )
+                if (property.AttributeProvider == null ||
+                    !property.AttributeProvider.GetCustomAttributes(typeof(DisableDateTimeNormalizationAttribute), false).Any())
                 {
-                    property.CustomConverter =
-                        property.PropertyType == typeof(DateTime)
-                            ? (JsonConverter)
-                                new AbpDateTimeConverter(
-                                    _inputDateTimeFormats,
-                                    _outputDateTimeFormat
-                                )
-                            : new AbpNullableDateTimeConverter(
-                                _inputDateTimeFormats,
-                                _outputDateTimeFormat
-                            );
+                    property.CustomConverter = property.PropertyType == typeof(DateTime)
+                        ? (JsonConverter) new AbpDateTimeConverter(_inputDateTimeFormats, _outputDateTimeFormat)
+                        : new AbpNullableDateTimeConverter(_inputDateTimeFormats, _outputDateTimeFormat);
                 }
             }
         }

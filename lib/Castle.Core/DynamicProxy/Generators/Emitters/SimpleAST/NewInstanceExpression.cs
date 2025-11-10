@@ -12,41 +12,42 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-using System;
-using System.Reflection;
-using System.Reflection.Emit;
-
-internal class NewInstanceExpression : IExpression
+namespace Castle.DynamicProxy.Generators.Emitters.SimpleAST
 {
-    private readonly IExpression[] arguments;
-    private ConstructorInfo constructor;
+    using System;
+    using System.Reflection;
+    using System.Reflection.Emit;
 
-    public NewInstanceExpression(ConstructorInfo constructor, params IExpression[] args)
+    internal class NewInstanceExpression : IExpression
     {
-        this.constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
-        arguments = args;
-    }
+        private readonly IExpression[] arguments;
+        private ConstructorInfo constructor;
 
-    public NewInstanceExpression(Type target)
-    {
-        constructor =
-            target.GetConstructor(Type.EmptyTypes)
-            ?? throw new MissingMethodException("Could not find default constructor.");
-        arguments = null;
-    }
-
-    public void Emit(ILGenerator gen)
-    {
-        if (arguments != null)
+        public NewInstanceExpression(ConstructorInfo constructor, params IExpression[] args)
         {
-            foreach (var exp in arguments)
-            {
-                exp.Emit(gen);
-            }
+            this.constructor = constructor ?? throw new ArgumentNullException(nameof(constructor));
+            arguments = args;
         }
 
-        gen.Emit(OpCodes.Newobj, constructor);
+        public NewInstanceExpression(Type target)
+        {
+            constructor =
+                target.GetConstructor(Type.EmptyTypes)
+                ?? throw new MissingMethodException("Could not find default constructor.");
+            arguments = null;
+        }
+
+        public void Emit(ILGenerator gen)
+        {
+            if (arguments != null)
+            {
+                foreach (var exp in arguments)
+                {
+                    exp.Emit(gen);
+                }
+            }
+
+            gen.Emit(OpCodes.Newobj, constructor);
+        }
     }
 }

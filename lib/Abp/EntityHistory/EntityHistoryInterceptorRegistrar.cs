@@ -20,26 +20,14 @@ namespace Abp.EntityHistory
 
                 var entityHistoryConfiguration = iocManager.Resolve<IEntityHistoryConfiguration>();
 
-                if (
-                    ShouldIntercept(
-                        entityHistoryConfiguration,
-                        handler.ComponentModel.Implementation
-                    )
-                )
+                if (ShouldIntercept(entityHistoryConfiguration, handler.ComponentModel.Implementation))
                 {
-                    handler.ComponentModel.Interceptors.Add(
-                        new InterceptorReference(
-                            typeof(AbpAsyncDeterminationInterceptor<EntityHistoryInterceptor>)
-                        )
-                    );
+                    handler.ComponentModel.Interceptors.Add(new InterceptorReference(typeof(AbpAsyncDeterminationInterceptor<EntityHistoryInterceptor>)));
                 }
             };
         }
-
-        private static bool ShouldIntercept(
-            IEntityHistoryConfiguration entityHistoryConfiguration,
-            Type type
-        )
+        
+        private static bool ShouldIntercept(IEntityHistoryConfiguration entityHistoryConfiguration, Type type)
         {
             if (type.GetTypeInfo().IsDefined(typeof(UseCaseAttribute), true))
             {

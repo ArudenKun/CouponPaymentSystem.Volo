@@ -12,20 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.DynamicProxy.Generators.Emitters;
-
-using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
-
-internal class TypeConstructorEmitter : ConstructorEmitter
+namespace Castle.DynamicProxy.Generators.Emitters
 {
-    internal TypeConstructorEmitter(AbstractTypeEmitter mainType)
-        : base(mainType, mainType.TypeBuilder.DefineTypeInitializer()) { }
+    using Castle.DynamicProxy.Generators.Emitters.SimpleAST;
 
-    public override void EnsureValidCodeBlock()
+    internal class TypeConstructorEmitter : ConstructorEmitter
     {
-        if (CodeBuilder.IsEmpty)
+        internal TypeConstructorEmitter(AbstractTypeEmitter mainType)
+            : base(mainType, mainType.TypeBuilder.DefineTypeInitializer()) { }
+
+        public override void EnsureValidCodeBlock()
         {
-            CodeBuilder.AddStatement(new ReturnStatement());
+            if (CodeBuilder.IsEmpty)
+            {
+                CodeBuilder.AddStatement(new ReturnStatement());
+            }
         }
     }
 }

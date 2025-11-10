@@ -18,10 +18,7 @@ namespace Abp.Specifications
             _map = map ?? new Dictionary<ParameterExpression, ParameterExpression>();
         }
 
-        internal static Expression ReplaceParameters(
-            Dictionary<ParameterExpression, ParameterExpression> map,
-            Expression exp
-        )
+        internal static Expression ReplaceParameters(Dictionary<ParameterExpression, ParameterExpression> map, Expression exp)
         {
             return new ParameterRebinder(map).Visit(exp);
         }

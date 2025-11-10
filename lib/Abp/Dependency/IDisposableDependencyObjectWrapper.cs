@@ -8,6 +8,8 @@ namespace Abp.Dependency
     /// In <see cref="IDisposable.Dispose"/> method, <see cref="IIocResolver.Release"/> is called to dispose the object.
     /// This is non-generic version of <see cref="IDisposableDependencyObjectWrapper{T}"/> interface.
     /// </summary>
-    public interface IDisposableDependencyObjectWrapper
-        : IDisposableDependencyObjectWrapper<object> { }
+    public interface IDisposableDependencyObjectWrapper : IDisposableDependencyObjectWrapper<object>
+    {
+
+    }
 }

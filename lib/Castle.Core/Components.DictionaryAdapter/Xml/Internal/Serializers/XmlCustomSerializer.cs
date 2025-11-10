@@ -12,53 +12,58 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter.Xml;
-
-using System;
-using System.Xml.Serialization;
-
-public class XmlCustomSerializer : XmlTypeSerializer
+namespace Castle.Components.DictionaryAdapter.Xml
 {
-    public static readonly XmlCustomSerializer Instance = new XmlCustomSerializer();
+    using System;
+    using System.Xml.Serialization;
 
-    private XmlCustomSerializer() { }
-
-    public override XmlTypeKind Kind
+    public class XmlCustomSerializer : XmlTypeSerializer
     {
-        get { return XmlTypeKind.Complex; }
-    }
+        public static readonly XmlCustomSerializer Instance = new XmlCustomSerializer();
 
-    public override object GetValue(IXmlNode node, IDictionaryAdapter parent, IXmlAccessor accessor)
-    {
-        var serializable = (IXmlSerializable)Activator.CreateInstance(node.ClrType);
+        private XmlCustomSerializer() { }
 
-        using (var reader = new XmlSubtreeReader(node, XmlDefaultSerializer.Root))
+        public override XmlTypeKind Kind
         {
-            // Do NOT pre-read containing element
-            // ...IXmlSerializable is not a symmetric contract
-            serializable.ReadXml(reader);
+            get { return XmlTypeKind.Complex; }
         }
 
-        return serializable;
-    }
-
-    public override void SetValue(
-        IXmlNode node,
-        IDictionaryAdapter parent,
-        IXmlAccessor accessor,
-        object oldValue,
-        ref object value
-    )
-    {
-        var serializable = (IXmlSerializable)value;
-        var root = XmlDefaultSerializer.Root;
-
-        using (var writer = new XmlSubtreeWriter(node))
+        public override object GetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor
+        )
         {
-            // Pre-write containing element
-            writer.WriteStartElement(string.Empty, root.ElementName, root.Namespace);
-            serializable.WriteXml(writer);
-            writer.WriteEndElement();
+            var serializable = (IXmlSerializable)Activator.CreateInstance(node.ClrType);
+
+            using (var reader = new XmlSubtreeReader(node, XmlDefaultSerializer.Root))
+            {
+                // Do NOT pre-read containing element
+                // ...IXmlSerializable is not a symmetric contract
+                serializable.ReadXml(reader);
+            }
+
+            return serializable;
+        }
+
+        public override void SetValue(
+            IXmlNode node,
+            IDictionaryAdapter parent,
+            IXmlAccessor accessor,
+            object oldValue,
+            ref object value
+        )
+        {
+            var serializable = (IXmlSerializable)value;
+            var root = XmlDefaultSerializer.Root;
+
+            using (var writer = new XmlSubtreeWriter(node))
+            {
+                // Pre-write containing element
+                writer.WriteStartElement(string.Empty, root.ElementName, root.Namespace);
+                serializable.WriteXml(writer);
+                writer.WriteEndElement();
+            }
         }
     }
 }

@@ -19,12 +19,7 @@ namespace Abp.Runtime.Validation.Interception
 
         public override void InterceptSynchronous(IInvocation invocation)
         {
-            if (
-                AbpCrossCuttingConcerns.IsApplied(
-                    invocation.InvocationTarget,
-                    AbpCrossCuttingConcerns.Validation
-                )
-            )
+            if (AbpCrossCuttingConcerns.IsApplied(invocation.InvocationTarget, AbpCrossCuttingConcerns.Validation))
             {
                 invocation.Proceed();
                 return;
@@ -32,26 +27,19 @@ namespace Abp.Runtime.Validation.Interception
 
             using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
             {
-                validator.Object.Initialize(
-                    invocation.MethodInvocationTarget,
-                    invocation.Arguments
-                );
+                validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
                 validator.Object.Validate();
             }
-
+            
             invocation.Proceed();
         }
+
 
         protected override async Task InternalInterceptAsynchronous(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();
 
-            if (
-                AbpCrossCuttingConcerns.IsApplied(
-                    invocation.InvocationTarget,
-                    AbpCrossCuttingConcerns.Validation
-                )
-            )
+            if (AbpCrossCuttingConcerns.IsApplied(invocation.InvocationTarget, AbpCrossCuttingConcerns.Validation))
             {
                 proceedInfo.Invoke();
                 await ((Task)invocation.ReturnValue);
@@ -60,10 +48,7 @@ namespace Abp.Runtime.Validation.Interception
 
             using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
             {
-                validator.Object.Initialize(
-                    invocation.MethodInvocationTarget,
-                    invocation.Arguments
-                );
+                validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
                 validator.Object.Validate();
             }
 
@@ -71,18 +56,11 @@ namespace Abp.Runtime.Validation.Interception
             await ((Task)invocation.ReturnValue);
         }
 
-        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(
-            IInvocation invocation
-        )
+        protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(IInvocation invocation)
         {
             var proceedInfo = invocation.CaptureProceedInfo();
 
-            if (
-                AbpCrossCuttingConcerns.IsApplied(
-                    invocation.InvocationTarget,
-                    AbpCrossCuttingConcerns.Validation
-                )
-            )
+            if (AbpCrossCuttingConcerns.IsApplied(invocation.InvocationTarget, AbpCrossCuttingConcerns.Validation))
             {
                 proceedInfo.Invoke();
                 return await ((Task<TResult>)invocation.ReturnValue);
@@ -90,10 +68,7 @@ namespace Abp.Runtime.Validation.Interception
 
             using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
             {
-                validator.Object.Initialize(
-                    invocation.MethodInvocationTarget,
-                    invocation.Arguments
-                );
+                validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
                 validator.Object.Validate();
             }
 

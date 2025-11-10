@@ -12,21 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-public class DynamicValueDelegate<T> : DynamicValue<T>
+namespace Castle.Components.DictionaryAdapter
 {
-    private readonly Func<T> dynamicDelegate;
+    using System;
 
-    public DynamicValueDelegate(Func<T> dynamicDelegate)
+    public class DynamicValueDelegate<T> : DynamicValue<T>
     {
-        this.dynamicDelegate = dynamicDelegate;
-    }
+        private readonly Func<T> dynamicDelegate;
 
-    public override T Value
-    {
-        get { return dynamicDelegate(); }
+        public DynamicValueDelegate(Func<T> dynamicDelegate)
+        {
+            this.dynamicDelegate = dynamicDelegate;
+        }
+
+        public override T Value
+        {
+            get { return dynamicDelegate(); }
+        }
     }
 }

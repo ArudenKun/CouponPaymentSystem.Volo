@@ -16,10 +16,7 @@ namespace Abp.Authorization
     /// <summary>
     /// Permission manager.
     /// </summary>
-    public class PermissionManager
-        : PermissionDefinitionContextBase,
-            IPermissionManager,
-            ISingletonDependency
+    public class PermissionManager : PermissionDefinitionContextBase, IPermissionManager, ISingletonDependency
     {
         public IAbpSession AbpSession { get; set; }
 
@@ -35,8 +32,7 @@ namespace Abp.Authorization
             IIocManager iocManager,
             IAuthorizationConfiguration authorizationConfiguration,
             IUnitOfWorkManager unitOfWorkManager,
-            IMultiTenancyConfig multiTenancy
-        )
+            IMultiTenancyConfig multiTenancy)
         {
             _iocManager = iocManager;
             _authorizationConfiguration = authorizationConfiguration;
@@ -50,11 +46,7 @@ namespace Abp.Authorization
         {
             foreach (var providerType in _authorizationConfiguration.Providers)
             {
-                using (
-                    var provider = _iocManager.ResolveAsDisposable<AuthorizationProvider>(
-                        providerType
-                    )
-                )
+                using (var provider = _iocManager.ResolveAsDisposable<AuthorizationProvider>(providerType))
                 {
                     provider.Object.SetPermissions(this);
                 }
@@ -76,112 +68,80 @@ namespace Abp.Authorization
 
         public virtual IReadOnlyList<Permission> GetAllPermissions(bool tenancyFilter = true)
         {
-            using (
-                var featureDependencyContext =
-                    _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-            )
+            using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
             {
                 var featureDependencyContextObject = featureDependencyContext.Object;
                 featureDependencyContextObject.TenantId = GetCurrentTenantId();
 
-                return Permissions
-                    .Values.WhereIf(
-                        tenancyFilter,
-                        p => p.MultiTenancySides.HasFlag(GetCurrentMultiTenancySide())
-                    )
+                return Permissions.Values
+                    .WhereIf(tenancyFilter, p => p.MultiTenancySides.HasFlag(GetCurrentMultiTenancySide()))
                     .Where(p =>
-                        p.FeatureDependency == null
-                        || GetCurrentMultiTenancySide() == MultiTenancySides.Host
-                        || p.FeatureDependency.IsSatisfied(featureDependencyContextObject)
-                    )
-                    .ToImmutableList();
+                        p.FeatureDependency == null ||
+                        GetCurrentMultiTenancySide() == MultiTenancySides.Host ||
+                        p.FeatureDependency.IsSatisfied(featureDependencyContextObject)
+                    ).ToImmutableList();
             }
         }
 
-        public virtual async Task<IReadOnlyList<Permission>> GetAllPermissionsAsync(
-            bool tenancyFilter = true
-        )
+        public virtual async Task<IReadOnlyList<Permission>> GetAllPermissionsAsync(bool tenancyFilter = true)
         {
-            using (
-                var featureDependencyContext =
-                    _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-            )
+            using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
             {
                 var featureDependencyContextObject = featureDependencyContext.Object;
                 featureDependencyContextObject.TenantId = GetCurrentTenantId();
 
-                var permissions = Permissions
-                    .Values.WhereIf(
-                        tenancyFilter,
-                        p => p.MultiTenancySides.HasFlag(GetCurrentMultiTenancySide())
-                    )
+                var permissions = Permissions.Values
+                    .WhereIf(tenancyFilter, p => p.MultiTenancySides.HasFlag(GetCurrentMultiTenancySide()))
                     .ToList();
 
                 var result = await FilterSatisfiedPermissionsAsync(
                     featureDependencyContextObject,
                     permissions,
-                    p =>
-                        p.FeatureDependency == null
-                        || GetCurrentMultiTenancySide() == MultiTenancySides.Host
+                    p => p.FeatureDependency == null || GetCurrentMultiTenancySide() == MultiTenancySides.Host
                 );
 
                 return result.ToImmutableList();
             }
         }
 
-        public virtual IReadOnlyList<Permission> GetAllPermissions(
-            MultiTenancySides multiTenancySides
-        )
+        public virtual IReadOnlyList<Permission> GetAllPermissions(MultiTenancySides multiTenancySides)
         {
-            using (
-                var featureDependencyContext =
-                    _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-            )
+            using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
             {
                 var featureDependencyContextObject = featureDependencyContext.Object;
                 featureDependencyContextObject.TenantId = GetCurrentTenantId();
 
-                return Permissions
-                    .Values.Where(p => p.MultiTenancySides.HasFlag(multiTenancySides))
+                return Permissions.Values
+                    .Where(p => p.MultiTenancySides.HasFlag(multiTenancySides))
                     .Where(p =>
-                        p.FeatureDependency == null
-                        || GetCurrentMultiTenancySide() == MultiTenancySides.Host
-                        || (
-                            p.MultiTenancySides.HasFlag(MultiTenancySides.Host)
-                            && multiTenancySides.HasFlag(MultiTenancySides.Host)
-                        )
-                        || p.FeatureDependency.IsSatisfied(featureDependencyContextObject)
-                    )
-                    .ToImmutableList();
+                        p.FeatureDependency == null ||
+                        GetCurrentMultiTenancySide() == MultiTenancySides.Host ||
+                        (p.MultiTenancySides.HasFlag(MultiTenancySides.Host) &&
+                         multiTenancySides.HasFlag(MultiTenancySides.Host)) ||
+                        p.FeatureDependency.IsSatisfied(featureDependencyContextObject)
+                    ).ToImmutableList();
             }
         }
 
-        public virtual async Task<IReadOnlyList<Permission>> GetAllPermissionsAsync(
-            MultiTenancySides multiTenancySides
-        )
+        public virtual async Task<IReadOnlyList<Permission>> GetAllPermissionsAsync(MultiTenancySides multiTenancySides)
         {
-            using (
-                var featureDependencyContext =
-                    _iocManager.ResolveAsDisposable<FeatureDependencyContext>()
-            )
+            using (var featureDependencyContext = _iocManager.ResolveAsDisposable<FeatureDependencyContext>())
             {
                 var featureDependencyContextObject = featureDependencyContext.Object;
                 featureDependencyContextObject.TenantId = GetCurrentTenantId();
 
-                var permissions = Permissions
-                    .Values.Where(p => p.MultiTenancySides.HasFlag(multiTenancySides))
+                var permissions = Permissions.Values
+                    .Where(p => p.MultiTenancySides.HasFlag(multiTenancySides))
                     .ToList();
 
                 var result = await FilterSatisfiedPermissionsAsync(
                     featureDependencyContextObject,
                     permissions,
                     p =>
-                        p.FeatureDependency == null
-                        || GetCurrentMultiTenancySide() == MultiTenancySides.Host
-                        || (
-                            p.MultiTenancySides.HasFlag(MultiTenancySides.Host)
-                            && multiTenancySides.HasFlag(MultiTenancySides.Host)
-                        )
+                        p.FeatureDependency == null ||
+                        GetCurrentMultiTenancySide() == MultiTenancySides.Host ||
+                        (p.MultiTenancySides.HasFlag(MultiTenancySides.Host) &&
+                         multiTenancySides.HasFlag(MultiTenancySides.Host))
                 );
 
                 return result.ToImmutableList();
@@ -191,23 +151,18 @@ namespace Abp.Authorization
         private async Task<IList<Permission>> FilterSatisfiedPermissionsAsync(
             FeatureDependencyContext featureDependencyContextObject,
             IList<Permission> unfilteredPermissions,
-            Func<Permission, bool> filter
-        )
+            Func<Permission, bool> filter)
         {
             var filteredPermissions = new List<Permission>();
 
             foreach (var permission in unfilteredPermissions)
             {
-                if (
-                    !filter.Invoke(permission)
-                    && !await permission.FeatureDependency.IsSatisfiedAsync(
-                        featureDependencyContextObject
-                    )
-                )
+                if (!filter.Invoke(permission) &&
+                    !await permission.FeatureDependency.IsSatisfiedAsync(featureDependencyContextObject))
                 {
                     continue;
                 }
-
+                
                 filteredPermissions.Add(permission);
             }
 

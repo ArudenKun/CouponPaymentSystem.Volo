@@ -12,22 +12,23 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-namespace Castle.Components.DictionaryAdapter;
-
-using System;
-
-/// <summary>
-/// Assigns a prefix to the keyed properties using the interface name.
-/// </summary>
-[AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
-public class TypeKeyPrefixAttribute : DictionaryBehaviorAttribute, IDictionaryKeyBuilder
+namespace Castle.Components.DictionaryAdapter
 {
-    string IDictionaryKeyBuilder.GetKey(
-        IDictionaryAdapter dictionaryAdapter,
-        string key,
-        PropertyDescriptor property
-    )
+    using System;
+
+    /// <summary>
+    /// Assigns a prefix to the keyed properties using the interface name.
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Interface, AllowMultiple = false, Inherited = true)]
+    public class TypeKeyPrefixAttribute : DictionaryBehaviorAttribute, IDictionaryKeyBuilder
     {
-        return string.Format("{0}#{1}", property.Property.DeclaringType.FullName, key);
+        string IDictionaryKeyBuilder.GetKey(
+            IDictionaryAdapter dictionaryAdapter,
+            string key,
+            PropertyDescriptor property
+        )
+        {
+            return string.Format("{0}#{1}", property.Property.DeclaringType.FullName, key);
+        }
     }
 }

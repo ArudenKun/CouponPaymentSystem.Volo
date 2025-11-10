@@ -7,7 +7,7 @@ namespace Abp.Domain.Uow
     /// This attribute is used to indicate that declaring method is atomic and should be considered as a unit of work.
     /// A method that has this attribute is intercepted, a database connection is opened and a transaction is started before call the method.
     /// At the end of method call, transaction is committed and all changes applied to the database if there is no exception,
-    /// otherwise it's rolled back.
+    /// otherwise it's rolled back. 
     /// </summary>
     /// <remarks>
     /// This attribute has no effect if there is already a unit of work before calling this method, if so, it uses the same transaction.
@@ -48,7 +48,10 @@ namespace Abp.Domain.Uow
         /// <summary>
         /// Creates a new UnitOfWorkAttribute object.
         /// </summary>
-        public UnitOfWorkAttribute() { }
+        public UnitOfWorkAttribute()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new <see cref="UnitOfWorkAttribute"/> object.
@@ -162,11 +165,7 @@ namespace Abp.Domain.Uow
         /// <param name="scope">Transaction scope</param>
         /// <param name="isolationLevel">Transaction isolation level</param>
         /// <param name="timeout">Transaction  timeout as milliseconds</param>
-        public UnitOfWorkAttribute(
-            TransactionScopeOption scope,
-            IsolationLevel isolationLevel,
-            int timeout
-        )
+        public UnitOfWorkAttribute(TransactionScopeOption scope, IsolationLevel isolationLevel, int timeout)
         {
             IsTransactional = true;
             Scope = scope;
@@ -194,7 +193,7 @@ namespace Abp.Domain.Uow
                 IsTransactional = IsTransactional,
                 IsolationLevel = IsolationLevel,
                 Timeout = Timeout,
-                Scope = Scope,
+                Scope = Scope
             };
         }
     }

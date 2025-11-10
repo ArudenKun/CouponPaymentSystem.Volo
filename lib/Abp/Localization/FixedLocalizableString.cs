@@ -18,7 +18,10 @@ namespace Abp.Localization
         /// <summary>
         /// Needed for serialization.
         /// </summary>
-        private FixedLocalizableString() { }
+        private FixedLocalizableString()
+        {
+
+        }
 
         /// <summary>
         /// Creates a new instance of <see cref="FixedLocalizableString"/>.

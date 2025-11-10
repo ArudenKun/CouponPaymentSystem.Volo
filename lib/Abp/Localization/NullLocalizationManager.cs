@@ -12,23 +12,16 @@ namespace Abp.Localization
         /// </summary>
         public static NullLocalizationManager Instance { get; } = new NullLocalizationManager();
 
-        public LanguageInfo CurrentLanguage
-        {
-            get
-            {
-                return new LanguageInfo(
-                    CultureInfo.CurrentUICulture.Name,
-                    CultureInfo.CurrentUICulture.DisplayName
-                );
-            }
-        }
+        public LanguageInfo CurrentLanguage { get { return new LanguageInfo(CultureInfo.CurrentUICulture.Name, CultureInfo.CurrentUICulture.DisplayName); } }
 
         private readonly IReadOnlyList<LanguageInfo> _emptyLanguageArray = new LanguageInfo[0];
 
-        private readonly IReadOnlyList<ILocalizationSource> _emptyLocalizationSourceArray =
-            new ILocalizationSource[0];
+        private readonly IReadOnlyList<ILocalizationSource> _emptyLocalizationSourceArray = new ILocalizationSource[0];
 
-        private NullLocalizationManager() { }
+        private NullLocalizationManager()
+        {
+
+        }
 
         public IReadOnlyList<LanguageInfo> GetAllLanguages()
         {
