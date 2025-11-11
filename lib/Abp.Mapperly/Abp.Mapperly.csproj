@@ -1,0 +1,9 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;net48</TargetFrameworks>
+    <RootNamespace />
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Abp\Abp.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,18 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net472;net48</TargetFrameworks>
+    <RootNamespace />
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Castle.Windsor.Microsoft.DependencyInjection\Castle.Windsor.Microsoft.DependencyInjection.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="JetBrains.Annotations" />
-    <PackageReference Include="Newtonsoft.Json" />
-    <PackageReference Include="System.Collections.Immutable" />
+    <PackageReference Include="Autofac" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" />
+    <PackageReference Include="Autofac.Extras.DynamicProxy" />
+    <PackageReference Include="Castle.Core" />
+    <PackageReference Include="Castle.Core.AsyncInterceptor" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+    <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" />
+    <PackageReference Include="Microsoft.Extensions.Logging" />
+    <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" />
+    <PackageReference Include="Nito.AsyncEx.Context" />
     <PackageReference Include="System.Linq.Dynamic.Core" />
+    <PackageReference Include="System.Runtime.Loader" />
     <PackageReference Include="TimeZoneConverter" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Transactions" />
+    <Folder Include="Autofac\" />
   </ItemGroup>
 </Project>

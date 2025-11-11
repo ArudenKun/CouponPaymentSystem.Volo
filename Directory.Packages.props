@@ -4,24 +4,38 @@
     <CentralPackageTransitivePinningEnabled>false</CentralPackageTransitivePinningEnabled>
   </PropertyGroup>
   <ItemGroup>
-    <GlobalPackageReference Include="CSharpier.MsBuild" Version="1.1.2" />
+    <GlobalPackageReference Include="CSharpier.MsBuild" Version="1.2.1" />
     <GlobalPackageReference Include="Polyfill" Version="8.9.1" />
   </ItemGroup>
   <ItemGroup>
-    <PackageVersion Include="Autofac.Mvc5" Version="6.1.0" />
+    <PackageVersion Include="Autofac" Version="8.4.0" />
+    <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
+    <PackageVersion Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
     <PackageVersion Include="BundleTransformer.NUglify" Version="1.15.5" />
+    <PackageVersion Include="Castle.Core" Version="5.2.1" />
+    <PackageVersion Include="Castle.Core.AsyncInterceptor" Version="2.1.0" />
     <PackageVersion Include="ConfigureAwait.Fody" Version="3.3.2" />
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageVersion Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
     <PackageVersion Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform" Version="4.1.0" />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.CommandLine" Version="9.0.11" />
+    <PackageVersion
+      Include="Microsoft.Extensions.Configuration.EnvironmentVariables"
+      Version="9.0.11"
+    />
+    <PackageVersion Include="Microsoft.Extensions.Configuration.UserSecrets" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Hosting.Abstractions" Version="9.0.11" />
+    <PackageVersion Include="Microsoft.Extensions.Logging" Version="9.0.11" />
+    <PackageVersion
+      Include="Microsoft.Extensions.Options.ConfigurationExtensions"
+      Version="9.0.11"
+    />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.14.0" />
     <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
-    <PackageVersion Include="Volo.Abp.Auditing" Version="9.3.6" />
-    <PackageVersion Include="Volo.Abp.Authorization" Version="9.3.6" />
-    <PackageVersion Include="Volo.Abp.Autofac" Version="9.3.6" />
-    <PackageVersion Include="Volo.Abp.ExceptionHandling" Version="9.3.6" />
-    <PackageVersion Include="Volo.Abp.Http" Version="9.3.6" />
-    <PackageVersion Include="Volo.Abp.Validation" Version="9.3.6" />
-    <PackageVersion Include="Volo.Abp.VirtualFileSystem" Version="9.3.6" />
+    <PackageVersion Include="Nito.AsyncEx.Context" Version="5.1.2" />
+    <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.10" />
+    <PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
+    <PackageVersion Include="TimeZoneConverter" Version="7.2.0" />
   </ItemGroup>
 </Project>
