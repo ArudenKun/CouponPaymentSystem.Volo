@@ -1,4 +1,4 @@
-﻿using Abp;
+﻿namespace Abp;
 
 /// <summary>
 /// Implements <see cref="IGuidGenerator"/> by using <see cref="GuidPolyfill.CreateVersion7()"/>.
