@@ -61,6 +61,24 @@ public static class TypeHelper
         return obj != null && obj.GetType() == typeof(Func<TReturn>);
     }
 
+    public static bool IsPrimitiveExtendedIncludingNullable(Type type, bool includeEnums = false)
+    {
+        if (IsPrimitiveExtended(type, includeEnums))
+        {
+            return true;
+        }
+
+        if (
+            type.GetTypeInfo().IsGenericType
+            && type.GetGenericTypeDefinition() == typeof(Nullable<>)
+        )
+        {
+            return IsPrimitiveExtended(type.GenericTypeArguments[0], includeEnums);
+        }
+
+        return false;
+    }
+
     public static bool IsPrimitiveExtended(
         Type type,
         bool includeNullables = true,

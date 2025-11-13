@@ -21,21 +21,23 @@ public class ExceptionNotifier : IExceptionNotifier, ITransientDependency
     {
         Check.NotNull(context, nameof(context));
 
-        using var scope = ServiceScopeFactory.CreateScope();
-        var exceptionSubscribers = scope.ServiceProvider.GetServices<IExceptionSubscriber>();
-
-        foreach (var exceptionSubscriber in exceptionSubscribers)
+        using (var scope = ServiceScopeFactory.CreateScope())
         {
-            try
+            var exceptionSubscribers = scope.ServiceProvider.GetServices<IExceptionSubscriber>();
+
+            foreach (var exceptionSubscriber in exceptionSubscribers)
             {
-                await exceptionSubscriber.HandleAsync(context);
-            }
-            catch (Exception e)
-            {
-                Logger.LogWarning(
-                    $"Exception subscriber of type {exceptionSubscriber.GetType().AssemblyQualifiedName} has thrown an exception!"
-                );
-                Logger.LogException(e, LogLevel.Warning);
+                try
+                {
+                    await exceptionSubscriber.HandleAsync(context);
+                }
+                catch (Exception e)
+                {
+                    Logger.LogWarning(
+                        $"Exception subscriber of type {exceptionSubscriber.GetType().AssemblyQualifiedName} has thrown an exception!"
+                    );
+                    Logger.LogException(e, LogLevel.Warning);
+                }
             }
         }
     }

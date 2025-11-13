@@ -1,13 +1,12 @@
-namespace Abp.Application.Services.Dto
+namespace Abp.Application.Services.Dto;
+
+/// <summary>
+/// This interface is defined to standardize to request a limited result.
+/// </summary>
+public interface ILimitedResultRequest
 {
     /// <summary>
-    /// This interface is defined to standardize to request a limited result.
+    /// Max expected result count.
     /// </summary>
-    public interface ILimitedResultRequest
-    {
-        /// <summary>
-        /// Max expected result count.
-        /// </summary>
-        int MaxResultCount { get; set; }
-    }
+    int MaxResultCount { get; set; }
 }

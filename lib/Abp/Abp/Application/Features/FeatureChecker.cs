@@ -1,6 +1,5 @@
-﻿using System;
-using System.Threading.Tasks;
-using Abp.Dependency;
+﻿using Abp.Configuration.Startup;
+using Abp.DependencyInjection;
 using Abp.Runtime.Session;
 
 namespace Abp.Application.Features;
@@ -8,19 +7,19 @@ namespace Abp.Application.Features;
 /// <summary>
 /// Default implementation for <see cref="IFeatureChecker"/>.
 /// </summary>
-public class FeatureChecker : IFeatureChecker, ITransientDependency, IIocManagerAccessor
+public class FeatureChecker : IFeatureChecker, ITransientDependency, IServiceProviderAccessor
 {
     /// <summary>
     /// Reference to the current session.
     /// </summary>
-    public IAbpSession AbpSession { get; set; }
+    public IAbpSession AbpSession { get; }
 
     /// <summary>
     /// Reference to the store used to get feature values.
     /// </summary>
-    public IFeatureValueStore FeatureValueStore { get; set; }
+    public IFeatureValueStore FeatureValueStore { get; }
 
-    public IIocManager IocManager { get; set; }
+    public IServiceProvider ServiceProvider { get; }
 
     private readonly IFeatureManager _featureManager;
     private readonly IMultiTenancyConfig _multiTenancyConfig;
@@ -28,13 +27,19 @@ public class FeatureChecker : IFeatureChecker, ITransientDependency, IIocManager
     /// <summary>
     /// Creates a new <see cref="FeatureChecker"/> object.
     /// </summary>
-    public FeatureChecker(IFeatureManager featureManager, IMultiTenancyConfig multiTenancyConfig)
+    public FeatureChecker(
+        IFeatureManager featureManager,
+        IMultiTenancyConfig multiTenancyConfig,
+        IAbpSession abpSession,
+        IFeatureValueStore featureValueStore,
+        IServiceProvider serviceProvider
+    )
     {
         _featureManager = featureManager;
         _multiTenancyConfig = multiTenancyConfig;
-
-        FeatureValueStore = NullFeatureValueStore.Instance;
-        AbpSession = NullAbpSession.Instance;
+        AbpSession = abpSession;
+        FeatureValueStore = featureValueStore;
+        ServiceProvider = serviceProvider;
     }
 
     /// <inheritdoc/>
@@ -64,7 +69,7 @@ public class FeatureChecker : IFeatureChecker, ITransientDependency, IIocManager
     }
 
     /// <inheritdoc/>
-    public async Task<string> GetValueAsync(int tenantId, string name)
+    public async Task<string> GetValueAsync(Guid tenantId, string name)
     {
         var feature = _featureManager.Get(name);
         var value = await FeatureValueStore.GetValueOrNullAsync(tenantId, feature);
@@ -73,7 +78,7 @@ public class FeatureChecker : IFeatureChecker, ITransientDependency, IIocManager
     }
 
     /// <inheritdoc/>
-    public string GetValue(int tenantId, string name)
+    public string GetValue(Guid tenantId, string name)
     {
         var feature = _featureManager.Get(name);
         var value = FeatureValueStore.GetValueOrNull(tenantId, feature);
@@ -108,7 +113,7 @@ public class FeatureChecker : IFeatureChecker, ITransientDependency, IIocManager
     }
 
     /// <inheritdoc/>
-    public async Task<bool> IsEnabledAsync(int tenantId, string featureName)
+    public async Task<bool> IsEnabledAsync(Guid tenantId, string featureName)
     {
         return string.Equals(
             await GetValueAsync(tenantId, featureName),
@@ -118,7 +123,7 @@ public class FeatureChecker : IFeatureChecker, ITransientDependency, IIocManager
     }
 
     /// <inheritdoc/>
-    public bool IsEnabled(int tenantId, string featureName)
+    public bool IsEnabled(Guid tenantId, string featureName)
     {
         return string.Equals(
             GetValue(tenantId, featureName),

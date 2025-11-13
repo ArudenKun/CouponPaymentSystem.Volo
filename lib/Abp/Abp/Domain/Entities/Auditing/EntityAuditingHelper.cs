@@ -1,0 +1,209 @@
+﻿using System.Diagnostics.CodeAnalysis;
+using Abp.Configuration.Startup;
+using Abp.Domain.Uow;
+using Abp.MultiTenancy;
+using Abp.Timing;
+
+namespace Abp.Domain.Entities.Auditing;
+
+public static class EntityAuditingHelper
+{
+    public static void SetCreationAuditProperties(
+        IMultiTenancyConfig multiTenancyConfig,
+        object entityAsObj,
+        Guid? tenantId,
+        Guid? userId,
+        IReadOnlyList<AuditFieldConfiguration> auditFields
+    )
+    {
+        if (entityAsObj is not IHasCreationTime entityWithCreationTime)
+        {
+            //Object does not implement IHasCreationTime
+            return;
+        }
+
+        if (entityWithCreationTime.CreationTime == default)
+        {
+            entityWithCreationTime.CreationTime = Clock.Now;
+        }
+
+        if (entityAsObj is not ICreationAudited creationAudited)
+        {
+            //Object does not implement ICreationAudited
+            return;
+        }
+
+        if (!userId.HasValue)
+        {
+            //Unknown user
+            return;
+        }
+
+        if (creationAudited.CreatorUserId != null)
+        {
+            //CreatorUserId is already set
+            return;
+        }
+
+        if (multiTenancyConfig.IsEnabled)
+        {
+            if (
+                MultiTenancyHelper.IsMultiTenantEntity(creationAudited)
+                && !MultiTenancyHelper.IsTenantEntity(creationAudited, tenantId)
+            )
+            {
+                //A tenant entity is created by host or a different tenant
+                return;
+            }
+
+            if (tenantId.HasValue && MultiTenancyHelper.IsHostEntity(creationAudited))
+            {
+                //Tenant user created a host entity
+                return;
+            }
+        }
+
+        var creationUserIdFilter = auditFields.FirstOrDefault(e =>
+            e.FieldName == AbpAuditFields.CreatorUserId
+        );
+        if (creationUserIdFilter is { IsSavingEnabled: false })
+        {
+            return;
+        }
+
+        //Finally, set CreatorUserId!
+        creationAudited.CreatorUserId = userId;
+    }
+
+    public static void SetModificationAuditProperties(
+        IMultiTenancyConfig multiTenancyConfig,
+        object entityAsObj,
+        Guid? tenantId,
+        Guid? userId,
+        IReadOnlyList<AuditFieldConfiguration> auditFields
+    )
+    {
+        if (entityAsObj is IHasModificationTime)
+        {
+            var lastModificationTimeFilter = auditFields.FirstOrDefault(e =>
+                e.FieldName == AbpAuditFields.LastModificationTime
+            );
+            if (lastModificationTimeFilter == null || lastModificationTimeFilter.IsSavingEnabled)
+            {
+                entityAsObj.As<IHasModificationTime>().LastModificationTime = Clock.Now;
+            }
+        }
+
+        if (entityAsObj is not IModificationAudited)
+        {
+            //Entity does not implement IModificationAudited
+            return;
+        }
+
+        var lastModifierUserIdFilter = auditFields.FirstOrDefault(e =>
+            e.FieldName == AbpAuditFields.LastModifierUserId
+        );
+        if (lastModifierUserIdFilter is { IsSavingEnabled: false })
+        {
+            return;
+        }
+
+        var entity = entityAsObj.As<IModificationAudited>();
+
+        if (multiTenancyConfig.IsEnabled)
+        {
+            if (
+                MultiTenancyHelper.IsMultiTenantEntity(entity)
+                && !MultiTenancyHelper.IsTenantEntity(entity, tenantId)
+            )
+            {
+                //A tenant entity is modified by host or a different tenant
+                entity.LastModifierUserId = null;
+                return;
+            }
+
+            if (tenantId.HasValue && MultiTenancyHelper.IsHostEntity(entity))
+            {
+                //Tenant user modified a host entity
+                entity.LastModifierUserId = null;
+                return;
+            }
+        }
+
+        //Finally, set LastModifierUserId!
+        entity.LastModifierUserId = userId;
+    }
+
+    [SuppressMessage("ReSharper", "SuspiciousTypeConversion.Global")]
+    public static void SetDeletionAuditProperties(
+        object entityAsObj,
+        Guid? tenantId,
+        Guid? userId,
+        IReadOnlyList<AuditFieldConfiguration> auditFields
+    )
+    {
+        if (entityAsObj is IHasDeletionTime)
+        {
+            var entity = entityAsObj.As<IHasDeletionTime>();
+
+            if (entity.DeletionTime == null)
+            {
+                var deletionTimeFilter = auditFields.FirstOrDefault(e =>
+                    e.FieldName == AbpAuditFields.DeletionTime
+                );
+                if (deletionTimeFilter == null || deletionTimeFilter.IsSavingEnabled)
+                {
+                    entityAsObj.As<IHasDeletionTime>().DeletionTime = Clock.Now;
+                }
+            }
+        }
+
+        if (entityAsObj is IDeletionAudited)
+        {
+            var entity = entityAsObj.As<IDeletionAudited>();
+
+            if (entity.DeleterUserId != null)
+            {
+                return;
+            }
+
+            if (userId == null)
+            {
+                entity.DeleterUserId = null;
+                return;
+            }
+
+            var deleterUserIdFilter = auditFields.FirstOrDefault(e =>
+                e.FieldName == AbpAuditFields.DeleterUserId
+            );
+            if (deleterUserIdFilter != null && !deleterUserIdFilter.IsSavingEnabled)
+            {
+                return;
+            }
+
+            //Special check for multi-tenant entities
+            if (entity is IMayHaveTenant || entity is IMustHaveTenant)
+            {
+                //Sets LastModifierUserId only if current user is in same tenant/host with the given entity
+                if (
+                    (entity is IMayHaveTenant && entity.As<IMayHaveTenant>().TenantId == tenantId)
+                    || (
+                        entity is IMustHaveTenant
+                        && entity.As<IMustHaveTenant>().TenantId == tenantId
+                    )
+                )
+                {
+                    entity.DeleterUserId = userId;
+                }
+                else
+                {
+                    entity.DeleterUserId = null;
+                }
+            }
+            else
+            {
+                entity.DeleterUserId = userId;
+            }
+        }
+    }
+}

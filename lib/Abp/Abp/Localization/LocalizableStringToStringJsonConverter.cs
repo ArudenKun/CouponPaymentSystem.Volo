@@ -1,5 +1,5 @@
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Reflection;
+using Newtonsoft.Json;
 
 namespace Abp.Localization;
 
@@ -7,31 +7,34 @@ namespace Abp.Localization;
 /// This class can be used to serialize <see cref="ILocalizableString"/> to <see cref="string"/> during serialization.
 /// It does not work for deserialization.
 /// </summary>
-public class LocalizableStringToStringJsonConverter : JsonConverter<ILocalizableString>
+public class LocalizableStringToStringJsonConverter : JsonConverter
 {
-    public override ILocalizableString Read(
-        ref Utf8JsonReader reader,
-        Type typeToConvert,
-        JsonSerializerOptions options
-    )
-    {
-        // Deserialization is not supported
-        throw new NotSupportedException("Deserialization of ILocalizableString is not supported.");
-    }
-
-    public override void Write(
-        Utf8JsonWriter writer,
-        ILocalizableString? value,
-        JsonSerializerOptions options
-    )
+    public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
     {
         if (value == null)
         {
-            writer.WriteNullValue();
+            writer.WriteNull();
             return;
         }
 
-        var localizedText = value.Localize(new LocalizationContext(LocalizationHelper.Manager));
-        writer.WriteStringValue(localizedText);
+        var localizableString = (ILocalizableString)value;
+        writer.WriteValue(
+            localizableString.Localize(new LocalizationContext(LocalizationHelper.Manager))
+        );
+    }
+
+    public override object ReadJson(
+        JsonReader reader,
+        Type objectType,
+        object existingValue,
+        JsonSerializer serializer
+    )
+    {
+        throw new NotImplementedException();
+    }
+
+    public override bool CanConvert(Type objectType)
+    {
+        return typeof(ILocalizableString).GetTypeInfo().IsAssignableFrom(objectType);
     }
 }

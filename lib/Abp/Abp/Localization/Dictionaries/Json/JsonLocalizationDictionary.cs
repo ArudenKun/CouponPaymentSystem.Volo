@@ -1,4 +1,6 @@
 ﻿using System.Globalization;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace Abp.Localization.Dictionaries.Json;
 

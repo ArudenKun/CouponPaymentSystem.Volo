@@ -131,17 +131,12 @@ public class UserIdentifier : IUserIdentifier
         return hash;
     }
 
-    public static bool operator ==(UserIdentifier left, UserIdentifier right)
+    public static bool operator ==(UserIdentifier? left, UserIdentifier? right)
     {
-        if (Equals(left, null))
-        {
-            return Equals(right, null);
-        }
-
-        return left.Equals(right);
+        return left?.Equals(right) ?? Equals(right, null);
     }
 
-    public static bool operator !=(UserIdentifier left, UserIdentifier right)
+    public static bool operator !=(UserIdentifier? left, UserIdentifier? right)
     {
         return !(left == right);
     }

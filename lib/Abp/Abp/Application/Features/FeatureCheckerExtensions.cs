@@ -1,11 +1,7 @@
-using System.Linq;
-using System.Threading.Tasks;
 using Abp.Authorization;
-using Abp.Collections.Extensions;
-using Abp.Dependency;
+using Abp.DependencyInjection;
 using Abp.Localization;
-using Abp.Runtime.Session;
-using Abp.Threading;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Application.Features;
 
@@ -105,7 +101,7 @@ public static class FeatureCheckerExtensions
     /// <param name="featureNames">Names of the features</param>
     public static async Task<bool> IsEnabledAsync(
         this IFeatureChecker featureChecker,
-        int tenantId,
+        Guid tenantId,
         bool requiresAll,
         params string[] featureNames
     )
@@ -148,7 +144,7 @@ public static class FeatureCheckerExtensions
     /// <param name="featureNames">Names of the features</param>
     public static bool IsEnabled(
         this IFeatureChecker featureChecker,
-        int tenantId,
+        Guid tenantId,
         bool requiresAll,
         params string[] featureNames
     )
@@ -356,7 +352,7 @@ public static class FeatureCheckerExtensions
     /// <param name="featureNames">Names of the features</param>
     public static async Task CheckEnabledAsync(
         this IFeatureChecker featureChecker,
-        int tenantId,
+        Guid tenantId,
         bool requiresAll,
         params string[] featureNames
     )
@@ -417,7 +413,7 @@ public static class FeatureCheckerExtensions
     /// <param name="featureNames">Names of the features</param>
     public static void CheckEnabled(
         this IFeatureChecker featureChecker,
-        int tenantId,
+        Guid tenantId,
         bool requiresAll,
         params string[] featureNames
     )
@@ -471,16 +467,14 @@ public static class FeatureCheckerExtensions
 
     public static string L(IFeatureChecker featureChecker, string name, string defaultValue)
     {
-        if (!(featureChecker is IIocManagerAccessor))
+        if (!(featureChecker is IServiceProviderAccessor serviceProviderAccessor))
         {
             return defaultValue;
         }
 
-        var iocManager = (featureChecker as IIocManagerAccessor).IocManager;
-        using (var localizationManager = iocManager.ResolveAsDisposable<ILocalizationManager>())
-        {
-            return localizationManager.Object.GetString(AbpConsts.LocalizationSourceName, name);
-        }
+        using var scope = serviceProviderAccessor.ServiceProvider.CreateScope();
+        var localizationManager = scope.ServiceProvider.GetRequiredService<ILocalizationManager>();
+        return localizationManager.GetString(AbpConsts.LocalizationSourceName, name);
     }
 
     public static string[] LocalizeFeatureNames(
@@ -488,26 +482,22 @@ public static class FeatureCheckerExtensions
         string[] featureNames
     )
     {
-        if (!(featureChecker is IIocManagerAccessor))
+        if (!(featureChecker is IServiceProviderAccessor serviceProviderAccessor))
         {
             return featureNames;
         }
 
-        var iocManager = (featureChecker as IIocManagerAccessor).IocManager;
-        using (var localizationContext = iocManager.ResolveAsDisposable<ILocalizationContext>())
-        {
-            using (var featureManager = iocManager.ResolveAsDisposable<IFeatureManager>())
+        using var scope = serviceProviderAccessor.ServiceProvider.CreateScope();
+        var localizationContext = scope.ServiceProvider.GetRequiredService<ILocalizationContext>();
+        var featureManager = scope.ServiceProvider.GetRequiredService<IFeatureManager>();
+        return featureNames
+            .Select(featureName =>
             {
-                return featureNames
-                    .Select(featureName =>
-                    {
-                        var feature = featureManager.Object.GetOrNull(featureName);
-                        return feature?.DisplayName == null
-                            ? featureName
-                            : feature.DisplayName.Localize(localizationContext.Object);
-                    })
-                    .ToArray();
-            }
-        }
+                var feature = featureManager.GetOrNull(featureName);
+                return feature?.DisplayName == null
+                    ? featureName
+                    : feature.DisplayName.Localize(localizationContext);
+            })
+            .ToArray();
     }
 }

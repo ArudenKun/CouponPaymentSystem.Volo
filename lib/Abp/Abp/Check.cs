@@ -1,13 +1,15 @@
 ﻿using System.Diagnostics;
+using JetBrains.Annotations;
 
 namespace Abp;
 
 [DebuggerStepThrough]
 public static class Check
 {
+    [ContractAnnotation("value:null => halt")]
     public static T NotNull<T>(
         [System.Diagnostics.CodeAnalysis.NotNull] T? value,
-        string parameterName
+        [InvokerParameterName] string parameterName
     )
     {
         if (value == null)
@@ -18,9 +20,10 @@ public static class Check
         return value;
     }
 
+    [ContractAnnotation("value:null => halt")]
     public static T NotNull<T>(
         [System.Diagnostics.CodeAnalysis.NotNull] T? value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         string message
     )
     {
@@ -32,9 +35,10 @@ public static class Check
         return value;
     }
 
+    [ContractAnnotation("value:null => halt")]
     public static string NotNull(
         [System.Diagnostics.CodeAnalysis.NotNull] string? value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         int maxLength = int.MaxValue,
         int minLength = 0
     )
@@ -63,9 +67,10 @@ public static class Check
         return value;
     }
 
+    [ContractAnnotation("value:null => halt")]
     public static string NotNullOrWhiteSpace(
         [System.Diagnostics.CodeAnalysis.NotNull] string? value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         int maxLength = int.MaxValue,
         int minLength = 0
     )
@@ -97,9 +102,10 @@ public static class Check
         return value;
     }
 
+    [ContractAnnotation("value:null => halt")]
     public static string NotNullOrEmpty(
         [System.Diagnostics.CodeAnalysis.NotNull] string? value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         int maxLength = int.MaxValue,
         int minLength = 0
     )
@@ -131,9 +137,10 @@ public static class Check
         return value;
     }
 
+    [ContractAnnotation("value:null => halt")]
     public static ICollection<T> NotNullOrEmpty<T>(
         [System.Diagnostics.CodeAnalysis.NotNull] ICollection<T>? value,
-        string parameterName
+        [InvokerParameterName] string parameterName
     )
     {
         if (value == null || value.Count <= 0)
@@ -147,7 +154,11 @@ public static class Check
         return value;
     }
 
-    public static Type AssignableTo<TBaseType>(Type type, string parameterName)
+    [ContractAnnotation("type:null => halt")]
+    public static Type AssignableTo<TBaseType>(
+        Type type,
+        [InvokerParameterName] string parameterName
+    )
     {
         NotNull(type, parameterName);
 
@@ -163,7 +174,7 @@ public static class Check
 
     public static string? Length(
         string? value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         int maxLength,
         int minLength = 0
     )
@@ -198,7 +209,7 @@ public static class Check
         return value;
     }
 
-    public static Int16 Positive(Int16 value, string parameterName)
+    public static Int16 Positive(Int16 value, [InvokerParameterName] string parameterName)
     {
         if (value == 0)
         {
@@ -211,7 +222,7 @@ public static class Check
         return value;
     }
 
-    public static Int32 Positive(Int32 value, string parameterName)
+    public static Int32 Positive(Int32 value, [InvokerParameterName] string parameterName)
     {
         if (value == 0)
         {
@@ -224,7 +235,7 @@ public static class Check
         return value;
     }
 
-    public static Int64 Positive(Int64 value, string parameterName)
+    public static Int64 Positive(Int64 value, [InvokerParameterName] string parameterName)
     {
         if (value == 0)
         {
@@ -237,7 +248,7 @@ public static class Check
         return value;
     }
 
-    public static float Positive(float value, string parameterName)
+    public static float Positive(float value, [InvokerParameterName] string parameterName)
     {
         if (value == 0)
         {
@@ -250,7 +261,7 @@ public static class Check
         return value;
     }
 
-    public static double Positive(double value, string parameterName)
+    public static double Positive(double value, [InvokerParameterName] string parameterName)
     {
         if (value == 0)
         {
@@ -263,7 +274,7 @@ public static class Check
         return value;
     }
 
-    public static decimal Positive(decimal value, string parameterName)
+    public static decimal Positive(decimal value, [InvokerParameterName] string parameterName)
     {
         if (value == 0)
         {
@@ -278,7 +289,7 @@ public static class Check
 
     public static Int16 Range(
         Int16 value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         Int16 minimumValue,
         Int16 maximumValue = Int16.MaxValue
     )
@@ -295,7 +306,7 @@ public static class Check
 
     public static Int32 Range(
         Int32 value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         Int32 minimumValue,
         Int32 maximumValue = Int32.MaxValue
     )
@@ -312,7 +323,7 @@ public static class Check
 
     public static Int64 Range(
         Int64 value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         Int64 minimumValue,
         Int64 maximumValue = Int64.MaxValue
     )
@@ -329,7 +340,7 @@ public static class Check
 
     public static float Range(
         float value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         float minimumValue,
         float maximumValue = float.MaxValue
     )
@@ -345,7 +356,7 @@ public static class Check
 
     public static double Range(
         double value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         double minimumValue,
         double maximumValue = double.MaxValue
     )
@@ -362,7 +373,7 @@ public static class Check
 
     public static decimal Range(
         decimal value,
-        string parameterName,
+        [InvokerParameterName] string parameterName,
         decimal minimumValue,
         decimal maximumValue = decimal.MaxValue
     )
@@ -379,7 +390,7 @@ public static class Check
 
     public static T NotDefaultOrNull<T>(
         [System.Diagnostics.CodeAnalysis.NotNull] T? value,
-        string parameterName
+        [InvokerParameterName] string parameterName
     )
         where T : struct
     {

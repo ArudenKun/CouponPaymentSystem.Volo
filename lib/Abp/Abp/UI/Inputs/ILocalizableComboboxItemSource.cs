@@ -1,9 +1,6 @@
-using System.Collections.Generic;
+namespace Abp.UI.Inputs;
 
-namespace Abp.UI.Inputs
+public interface ILocalizableComboboxItemSource
 {
-    public interface ILocalizableComboboxItemSource
-    {
-        ICollection<ILocalizableComboboxItem> Items { get; }
-    }
+    ICollection<ILocalizableComboboxItem> Items { get; }
 }

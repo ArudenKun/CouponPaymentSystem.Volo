@@ -1,3 +1,5 @@
+using Abp.Configuration;
+
 namespace Abp.Localization;
 
 public class LocalizationSettingProvider : SettingProvider

@@ -1,13 +1,12 @@
-namespace Abp.Application.Services.Dto
+namespace Abp.Application.Services.Dto;
+
+/// <summary>
+/// This interface is defined to standardize to set "Total Count of Items" to a DTO for long type.
+/// </summary>
+public interface IHasLongTotalCount
 {
     /// <summary>
-    /// This interface is defined to standardize to set "Total Count of Items" to a DTO for long type.
+    /// Total count of Items.
     /// </summary>
-    public interface IHasLongTotalCount
-    {
-        /// <summary>
-        /// Total count of Items.
-        /// </summary>
-        long TotalCount { get; set; }
-    }
+    long TotalCount { get; set; }
 }

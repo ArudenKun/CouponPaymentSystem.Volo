@@ -4,6 +4,8 @@ using Microsoft.Extensions.Options;
 
 namespace Abp;
 
+/* This code is taken from jhtodd/SequentialGuid https://github.com/jhtodd/SequentialGuid/blob/master/SequentialGuid/Classes/SequentialGuid.cs */
+
 /// <summary>
 /// Implements <see cref="IGuidGenerator"/> by creating sequential Guids.
 /// Use <see cref="AbpSequentialGuidGeneratorOptions"/> to configure.

@@ -1,5 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Modularity;
@@ -8,11 +7,11 @@ public class ServiceConfigurationContext
 {
     public IServiceCollection Services { get; }
 
-    [field: AllowNull, MaybeNull]
     public IConfiguration Configuration
     {
-        get { return field ??= Services.GetConfiguration(); }
+        get { return _configuration ??= Services.GetConfiguration(); }
     }
+    private IConfiguration? _configuration;
 
     public IDictionary<string, object?> Items { get; }
 

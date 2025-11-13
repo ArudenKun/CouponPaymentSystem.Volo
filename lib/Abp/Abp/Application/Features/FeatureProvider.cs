@@ -1,4 +1,4 @@
-using Abp.Dependency;
+using Abp.DependencyInjection;
 
 namespace Abp.Application.Features;
 

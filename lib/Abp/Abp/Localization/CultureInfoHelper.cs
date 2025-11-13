@@ -1,10 +1,11 @@
 ﻿using System.Globalization;
+using JetBrains.Annotations;
 
 namespace Abp.Localization;
 
 public static class CultureInfoHelper
 {
-    public static IDisposable Use(string culture, string? uiCulture = null)
+    public static IDisposable Use([NotNull] string culture, string uiCulture = null)
     {
         Check.NotNull(culture, nameof(culture));
 
@@ -14,7 +15,7 @@ public static class CultureInfoHelper
         );
     }
 
-    public static IDisposable Use(CultureInfo culture, CultureInfo? uiCulture = null)
+    public static IDisposable Use([NotNull] CultureInfo culture, CultureInfo uiCulture = null)
     {
         Check.NotNull(culture, nameof(culture));
 

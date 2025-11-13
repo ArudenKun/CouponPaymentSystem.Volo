@@ -250,7 +250,7 @@ public static class ReflectionHelper
                         BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy
                     )
                     .Where(x => x.IsLiteral && !x.IsInitOnly)
-                    .Select(x => x.GetValue(null)!.ToString()!)
+                    .Select(x => x.GetValue(null)!.ToString())
             );
 
             var nestedTypes = targetType.GetNestedTypes(BindingFlags.Public);
@@ -264,5 +264,88 @@ public static class ReflectionHelper
         Recursively(publicConstants, type, 1);
 
         return publicConstants.ToArray();
+    }
+
+    /// <summary>
+    /// Gets a list of attributes defined for a class member and type including inherited attributes
+    /// </summary>
+    /// <param name="memberInfo">MemberInfo</param>
+    /// <param name="type">Type</param>
+    /// <param name="inherit">Inherit attribute from base classes</param>
+    public static List<object> GetAttributesOfMemberAndType(
+        MemberInfo memberInfo,
+        Type type,
+        bool inherit = true
+    )
+    {
+        var attributeList = new List<object>();
+        attributeList.AddRange(memberInfo.GetCustomAttributes(inherit));
+        attributeList.AddRange(type.GetTypeInfo().GetCustomAttributes(inherit));
+        return attributeList;
+    }
+
+    /// <summary>
+    /// Gets a list of attributes defined for a class member and type including inherited attributes.
+    /// </summary>
+    /// <typeparam name="TAttribute">Type of the attribute</typeparam>
+    /// <param name="memberInfo">MemberInfo</param>
+    /// <param name="type">Type</param>
+    /// <param name="inherit">Inherit attribute from base classes</param>
+    public static List<TAttribute> GetAttributesOfMemberAndType<TAttribute>(
+        MemberInfo memberInfo,
+        Type type,
+        bool inherit = true
+    )
+        where TAttribute : Attribute
+    {
+        var attributeList = new List<TAttribute>();
+
+        if (memberInfo.IsDefined(typeof(TAttribute), inherit))
+        {
+            attributeList.AddRange(
+                memberInfo.GetCustomAttributes(typeof(TAttribute), inherit).Cast<TAttribute>()
+            );
+        }
+
+        if (type.GetTypeInfo().IsDefined(typeof(TAttribute), inherit))
+        {
+            attributeList.AddRange(
+                type.GetTypeInfo()
+                    .GetCustomAttributes(typeof(TAttribute), inherit)
+                    .Cast<TAttribute>()
+            );
+        }
+
+        return attributeList;
+    }
+
+    internal static bool IsPropertyGetterSetterMethod(MethodInfo method, Type type)
+    {
+        if (!method.IsSpecialName)
+        {
+            return false;
+        }
+
+        if (method.Name.Length < 5)
+        {
+            return false;
+        }
+
+        return type.GetProperty(
+                method.Name.Substring(4),
+                BindingFlags.Instance | BindingFlags.Static | BindingFlags.NonPublic
+            ) != null;
+    }
+
+    internal static async Task<object?> InvokeAsync(
+        MethodInfo method,
+        object obj,
+        params object[] parameters
+    )
+    {
+        var task = (Task)method.Invoke(obj, parameters);
+        await task;
+        var resultProperty = task.GetType().GetProperty("Result");
+        return resultProperty?.GetValue(task);
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System.Collections.Immutable;
 using Abp.Localization;
+using Abp.UI.Inputs;
+using JetBrains.Annotations;
 
 namespace Abp.Application.Features;
 
@@ -7,6 +9,7 @@ namespace Abp.Application.Features;
 /// Defines a feature of the application. A <see cref="Feature"/> can be used in a multi-tenant application
 /// to enable or disable some application features depending on editions and tenants.
 /// </summary>
+[PublicAPI]
 public class Feature
 {
     /// <summary>
@@ -15,7 +18,7 @@ public class Feature
     /// This is a shortcut for the <see cref="Attributes"/> dictionary.
     /// </summary>
     /// <param name="key">Key</param>
-    public object this[string key]
+    public object? this[string key]
     {
         get => Attributes.GetOrDefault(key);
         set => Attributes[key] = value;
@@ -25,13 +28,13 @@ public class Feature
     /// Arbitrary objects related to this object.
     /// These objects must be serializable.
     /// </summary>
-    public IDictionary<string, object> Attributes { get; private set; }
+    public IDictionary<string, object?> Attributes { get; private set; }
 
     /// <summary>
     /// Parent of this feature, if one exists.
     /// If set, this feature can be enabled only if the parent is enabled.
     /// </summary>
-    public Feature Parent { get; private set; }
+    public Feature? Parent { get; private set; }
 
     /// <summary>
     /// Unique name of the feature.
@@ -42,13 +45,13 @@ public class Feature
     /// Display name of this feature.
     /// This can be used to show features on the UI.
     /// </summary>
-    public ILocalizableString DisplayName { get; set; }
+    public ILocalizableString? DisplayName { get; set; }
 
     /// <summary>
     /// A brief description for this feature.
     /// This can be used to show this feature's description on the UI.
     /// </summary>
-    public ILocalizableString Description { get; set; }
+    public ILocalizableString? Description { get; set; }
 
     /// <summary>
     /// Input type.
@@ -87,13 +90,13 @@ public class Feature
     public Feature(
         string name,
         string defaultValue,
-        ILocalizableString displayName = null,
-        ILocalizableString description = null,
+        ILocalizableString? displayName = null,
+        ILocalizableString? description = null,
         FeatureScopes scope = FeatureScopes.All,
-        IInputType inputType = null
+        IInputType? inputType = null
     )
     {
-        Name = name ?? throw new ArgumentNullException("name");
+        Name = name ?? throw new ArgumentNullException(nameof(name));
         DisplayName = displayName;
         Description = description;
         Scope = scope;
@@ -101,7 +104,7 @@ public class Feature
         InputType = inputType ?? new CheckboxInputType();
 
         _children = new List<Feature>();
-        Attributes = new Dictionary<string, object>();
+        Attributes = new Dictionary<string, object?>();
     }
 
     /// <summary>
@@ -111,10 +114,10 @@ public class Feature
     public Feature CreateChildFeature(
         string name,
         string defaultValue,
-        ILocalizableString displayName = null,
-        ILocalizableString description = null,
+        ILocalizableString? displayName = null,
+        ILocalizableString? description = null,
         FeatureScopes scope = FeatureScopes.All,
-        IInputType inputType = null
+        IInputType? inputType = null
     )
     {
         var feature = new Feature(name, defaultValue, displayName, description, scope, inputType)
@@ -134,6 +137,6 @@ public class Feature
 
     public override string ToString()
     {
-        return string.Format("[Feature: {0}]", Name);
+        return $"[Feature: {Name}]";
     }
 }

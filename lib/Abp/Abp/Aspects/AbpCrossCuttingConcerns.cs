@@ -2,8 +2,6 @@
 
 public static class AbpCrossCuttingConcerns
 {
-    //TODO: Move these constants to their own assemblies!
-
     public const string Auditing = "AbpAuditing";
     public const string Validation = "AbpValidation";
     public const string UnitOfWork = "AbpUnitOfWork";
@@ -46,7 +44,7 @@ public static class AbpCrossCuttingConcerns
         }
     }
 
-    public static bool IsApplied(object obj, string concern)
+    public static bool IsApplied(object? obj, string concern)
     {
         if (obj == null)
         {

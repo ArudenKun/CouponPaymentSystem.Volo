@@ -1,4 +1,5 @@
 using System.Reflection;
+using JetBrains.Annotations;
 
 namespace Abp.Threading;
 
@@ -124,7 +125,7 @@ public static class InternalAsyncHelper
                 BindingFlags.Public | BindingFlags.Static
             )!
             .MakeGenericMethod(taskReturnType)
-            .Invoke(null, [actualReturnValue, finalAction])!;
+            .Invoke(null, new object[] { actualReturnValue, finalAction })!;
     }
 
     public static async Task<T> AwaitTaskWithPostActionAndFinallyAndGetResult<T>(
@@ -166,7 +167,7 @@ public static class InternalAsyncHelper
                 BindingFlags.Public | BindingFlags.Static
             )!
             .MakeGenericMethod(taskReturnType)
-            .Invoke(null, [actualReturnValue, action, finalAction])!;
+            .Invoke(null, new object[] { actualReturnValue, action, finalAction })!;
     }
 
     public static async Task<T> AwaitTaskWithPreActionAndPostActionAndFinallyAndGetResult<T>(
@@ -229,9 +230,10 @@ public static class InternalAsyncHelper
                 BindingFlags.Public | BindingFlags.Static
             )!
             .MakeGenericMethod(taskReturnType)
-            .Invoke(null, [returnFunc, preAction, postAction, finalAction])!;
+            .Invoke(null, new object?[] { returnFunc, preAction, postAction, finalAction })!;
     }
 
+    [UsedImplicitly]
     private static Func<Task<T>> ConvertFuncOfObjectToFuncOfTask<T>(Func<object> actualReturnValue)
     {
         return () => (Task<T>)actualReturnValue();

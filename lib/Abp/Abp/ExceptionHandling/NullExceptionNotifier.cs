@@ -2,7 +2,7 @@
 
 public class NullExceptionNotifier : IExceptionNotifier
 {
-    public static NullExceptionNotifier Instance { get; } = new();
+    public static NullExceptionNotifier Instance { get; } = new NullExceptionNotifier();
 
     private NullExceptionNotifier() { }
 

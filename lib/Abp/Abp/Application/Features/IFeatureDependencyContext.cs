@@ -1,5 +1,3 @@
-using Abp.Dependency;
-
 namespace Abp.Application.Features;
 
 /// <summary>
@@ -11,15 +9,15 @@ public interface IFeatureDependencyContext
     /// Tenant id which requires the feature.
     /// Null for current tenant.
     /// </summary>
-    int? TenantId { get; }
+    Guid? TenantId { get; }
 
     /// <summary>
-    /// Gets the <see cref="IIocResolver"/>.
+    /// Gets the <see cref="IServiceProvider"/>.
     /// </summary>
     /// <value>
     /// The ioc resolver.
     /// </value>
-    IIocResolver IocResolver { get; }
+    IServiceProvider ServiceProvider { get; }
 
     /// <summary>
     /// Gets the <see cref="IFeatureChecker"/>.

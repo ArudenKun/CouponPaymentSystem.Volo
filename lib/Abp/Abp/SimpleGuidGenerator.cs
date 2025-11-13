@@ -1,14 +1,14 @@
 ﻿namespace Abp;
 
 /// <summary>
-/// Implements <see cref="IGuidGenerator"/> by using <see cref="GuidPolyfill.CreateVersion7()"/>.
+/// Implements <see cref="IGuidGenerator"/> by using <see cref="Guid.NewGuid"/>.
 /// </summary>
 public class SimpleGuidGenerator : IGuidGenerator
 {
-    public static SimpleGuidGenerator Instance { get; } = new();
+    public static SimpleGuidGenerator Instance { get; } = new SimpleGuidGenerator();
 
     public virtual Guid Create()
     {
-        return GuidPolyfill.CreateVersion7();
+        return Guid.NewGuid();
     }
 }

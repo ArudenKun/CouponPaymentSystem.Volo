@@ -3,7 +3,7 @@ using Abp.DependencyInjection;
 
 namespace Abp.Localization;
 
-internal class LanguageManager : ILanguageManager, ITransientDependency
+public class LanguageManager : ILanguageManager, ITransientDependency
 {
     public LanguageInfo CurrentLanguage => GetCurrentLanguage();
 

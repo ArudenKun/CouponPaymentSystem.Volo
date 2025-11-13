@@ -1,5 +1,4 @@
-﻿using System.Threading.Tasks;
-using Abp.Runtime.Session;
+﻿using Abp.Runtime.Session;
 
 namespace Abp.Application.Features;
 
@@ -10,7 +9,7 @@ public interface IFeatureChecker
 {
     /// <summary>
     /// Gets the value of a feature by its name.
-    /// This is a shortcut for <see cref="GetValueAsync(int, string)"/> that uses <see cref="IAbpSession.TenantId"/> as tenantId.
+    /// This is a shortcut for <see cref="GetValueAsync(Guid, string)"/> that uses <see cref="IAbpSession.TenantId"/> as tenantId.
     /// Note: This method should only be used if a TenantId can be obtained from the session.
     /// </summary>
     /// <param name="name">Unique feature name</param>
@@ -19,7 +18,7 @@ public interface IFeatureChecker
 
     /// <summary>
     /// Gets the value of a feature by its name.
-    /// This is a shortcut for <see cref="GetValue(int, string)"/> that uses <see cref="IAbpSession.TenantId"/> as tenantId.
+    /// This is a shortcut for <see cref="GetValue(Guid, string)"/> that uses <see cref="IAbpSession.TenantId"/> as tenantId.
     /// Note: This method should only be used if a TenantId can be obtained from the session.
     /// </summary>
     /// <param name="name">Unique feature name</param>
@@ -32,7 +31,7 @@ public interface IFeatureChecker
     /// <param name="tenantId">Tenant's Id</param>
     /// <param name="name">Unique feature name</param>
     /// <returns>Feature's current value</returns>
-    Task<string> GetValueAsync(int tenantId, string name);
+    Task<string> GetValueAsync(Guid tenantId, string name);
 
     /// <summary>
     /// Gets the value of a feature for a tenant by the feature's name.
@@ -40,13 +39,13 @@ public interface IFeatureChecker
     /// <param name="tenantId">Tenant's Id</param>
     /// <param name="name">Unique feature name</param>
     /// <returns>Feature's current value</returns>
-    string GetValue(int tenantId, string name);
+    string GetValue(Guid tenantId, string name);
 
     /// <summary>
     /// Checks if a given feature is enabled.
     /// This should be used for boolean-value features.
     ///
-    /// This is a shortcut for <see cref="IsEnabledAsync(int, string)"/> that uses <see cref="IAbpSession.TenantId"/>.
+    /// This is a shortcut for <see cref="IsEnabledAsync(Guid, string)"/> that uses <see cref="IAbpSession.TenantId"/>.
     /// Note: This method should be used only if the TenantId can be obtained from the session.
     /// </summary>
     /// <param name="featureName">Unique feature name</param>
@@ -57,7 +56,7 @@ public interface IFeatureChecker
     /// Checks if a given feature is enabled.
     /// This should be used for boolean-value features.
     ///
-    /// This is a shortcut for <see cref="IsEnabled(int, string)"/> that uses <see cref="IAbpSession.TenantId"/>.
+    /// This is a shortcut for <see cref="IsEnabled(Guid, string)"/> that uses <see cref="IAbpSession.TenantId"/>.
     /// Note: This method should be used only if the TenantId can be obtained from the session.
     /// </summary>
     /// <param name="featureName">Unique feature name</param>
@@ -71,7 +70,7 @@ public interface IFeatureChecker
     /// <param name="tenantId">Tenant's Id</param>
     /// <param name="featureName">Unique feature name</param>
     /// <returns>True, if the current feature's value is "true".</returns>
-    Task<bool> IsEnabledAsync(int tenantId, string featureName);
+    Task<bool> IsEnabledAsync(Guid tenantId, string featureName);
 
     /// <summary>
     /// Checks if a given feature is enabled.
@@ -80,5 +79,5 @@ public interface IFeatureChecker
     /// <param name="tenantId">Tenant's Id</param>
     /// <param name="featureName">Unique feature name</param>
     /// <returns>True, if the current feature's value is "true".</returns>
-    bool IsEnabled(int tenantId, string featureName);
+    bool IsEnabled(Guid tenantId, string featureName);
 }

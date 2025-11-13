@@ -1,7 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using Abp.Dependency;
+﻿using System.Collections.Immutable;
+using Abp.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Application.Features;
 
@@ -10,17 +9,20 @@ namespace Abp.Application.Features;
 /// </summary>
 internal class FeatureManager : FeatureDefinitionContextBase, IFeatureManager, ISingletonDependency
 {
-    private readonly IIocManager _iocManager;
+    private readonly IServiceScopeFactory _serviceScopeFactory;
     private readonly IFeatureConfiguration _featureConfiguration;
 
     /// <summary>
     /// Creates a new <see cref="FeatureManager"/> object
     /// </summary>
-    /// <param name="iocManager">IOC Manager</param>
+    /// <param name="serviceScopeFactory">IOC Manager</param>
     /// <param name="featureConfiguration">Feature configuration</param>
-    public FeatureManager(IIocManager iocManager, IFeatureConfiguration featureConfiguration)
+    public FeatureManager(
+        IServiceScopeFactory serviceScopeFactory,
+        IFeatureConfiguration featureConfiguration
+    )
     {
-        _iocManager = iocManager;
+        _serviceScopeFactory = serviceScopeFactory;
         _featureConfiguration = featureConfiguration;
     }
 
@@ -31,10 +33,9 @@ internal class FeatureManager : FeatureDefinitionContextBase, IFeatureManager, I
     {
         foreach (var providerType in _featureConfiguration.Providers)
         {
-            using (var provider = CreateProvider(providerType))
-            {
-                provider.Object.SetFeatures(this);
-            }
+            using var scope = _serviceScopeFactory.CreateScope();
+            var provider = (FeatureProvider)scope.ServiceProvider.GetRequiredService(providerType);
+            provider.SetFeatures(this);
         }
 
         Features.AddAllFeatures();
@@ -61,10 +62,5 @@ internal class FeatureManager : FeatureDefinitionContextBase, IFeatureManager, I
     public IReadOnlyList<Feature> GetAll()
     {
         return Features.Values.ToImmutableList();
-    }
-
-    private IDisposableDependencyObjectWrapper<FeatureProvider> CreateProvider(Type providerType)
-    {
-        return _iocManager.ResolveAsDisposable<FeatureProvider>(providerType);
     }
 }

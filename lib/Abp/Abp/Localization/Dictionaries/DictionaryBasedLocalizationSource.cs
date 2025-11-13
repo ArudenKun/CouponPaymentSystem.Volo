@@ -1,5 +1,6 @@
 using System.Collections.Immutable;
 using System.Globalization;
+using Abp.Configuration.Startup;
 using Castle.Core.Logging;
 
 namespace Abp.Localization.Dictionaries;

@@ -1,4 +1,3 @@
-using Abp.Collections.Extensions;
 using Abp.Localization;
 using Abp.UI.Inputs;
 
@@ -54,7 +53,7 @@ public abstract class FeatureDefinitionContextBase : IFeatureDefinitionContext
     /// <returns>
     ///   <see cref="Feature" /> object or null
     /// </returns>
-    public Feature GetOrNull(string name)
+    public Feature? GetOrNull(string name)
     {
         return Features.GetOrDefault(name);
     }

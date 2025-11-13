@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
+﻿namespace Abp.Application.Services;
 
-namespace Abp.Application.Services
+public interface IAvoidDuplicateCrossCuttingConcerns
 {
-    public interface IAvoidDuplicateCrossCuttingConcerns
-    {
-        List<string> AppliedCrossCuttingConcerns { get; }
-    }
+    List<string> AppliedCrossCuttingConcerns { get; }
 }

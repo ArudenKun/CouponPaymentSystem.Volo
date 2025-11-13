@@ -54,12 +54,10 @@ public abstract class AbpApplicationBase : IAbpApplication
         services.AddCoreServices();
         services.AddCoreAbpServices(this, options);
 
-        // ReSharper disable once VirtualMemberCallInConstructor
         Modules = LoadModules(services, options);
 
         if (!options.SkipConfigureServices)
         {
-            // ReSharper disable once VirtualMemberCallInConstructor
             ConfigureServices();
         }
     }
@@ -94,6 +92,7 @@ public abstract class AbpApplicationBase : IAbpApplication
         ServiceProvider = serviceProvider;
         ServiceProvider.GetRequiredService<ObjectAccessor<IServiceProvider>>().Value =
             ServiceProvider;
+        AbpLocator.Instance.ConfigureServices(ServiceProvider);
     }
 
     protected virtual async Task InitializeModulesAsync()

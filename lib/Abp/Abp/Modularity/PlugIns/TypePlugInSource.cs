@@ -6,7 +6,7 @@ public class TypePlugInSource : IPlugInSource
 
     public TypePlugInSource(params Type[]? moduleTypes)
     {
-        _moduleTypes = moduleTypes ?? [];
+        _moduleTypes = moduleTypes ?? new Type[0];
     }
 
     public Type[] GetModules()

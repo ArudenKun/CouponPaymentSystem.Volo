@@ -75,7 +75,7 @@ public abstract class ConventionalRegistrarBase : IConventionalRegistrar
     )
     {
         var exposeActions = services.GetExposingActionList();
-        if (Enumerable.Any<Action<IOnServiceExposingContext>>(exposeActions))
+        if (exposeActions.Any())
         {
             var args = new OnServiceExposingContext(implementationType, serviceTypes);
             foreach (var action in exposeActions)

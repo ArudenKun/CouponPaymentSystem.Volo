@@ -3,4 +3,11 @@
 public class ServiceRegistrationActionList : List<Action<IOnServiceRegistredContext>>
 {
     public bool IsClassInterceptorsDisabled { get; set; }
+
+    public IClassInterceptorsSelectorList DisabledClassInterceptorsSelectors { get; }
+
+    public ServiceRegistrationActionList()
+    {
+        DisabledClassInterceptorsSelectors = new ClassInterceptorsSelectorList();
+    }
 }

@@ -1,13 +1,12 @@
-namespace Abp.Application.Services.Dto
+namespace Abp.Application.Services.Dto;
+
+/// <summary>
+/// This interface is defined to standardize to set "Total Count of Items" to a DTO.
+/// </summary>
+public interface IHasTotalCount
 {
     /// <summary>
-    /// This interface is defined to standardize to set "Total Count of Items" to a DTO.
+    /// Total count of Items.
     /// </summary>
-    public interface IHasTotalCount
-    {
-        /// <summary>
-        /// Total count of Items.
-        /// </summary>
-        int TotalCount { get; set; }
-    }
+    int TotalCount { get; set; }
 }

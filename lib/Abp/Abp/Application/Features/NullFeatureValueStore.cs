@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Abp.Application.Features;
+﻿namespace Abp.Application.Features;
 
 /// <summary>
 /// Null pattern (default) implementation of <see cref="IFeatureValueStore"/>.
@@ -12,17 +10,17 @@ public class NullFeatureValueStore : IFeatureValueStore
     /// <summary>
     /// Gets the singleton instance.
     /// </summary>
-    public static NullFeatureValueStore Instance { get; } = new NullFeatureValueStore();
+    public static NullFeatureValueStore Instance { get; } = new();
 
     /// <inheritdoc/>
-    public Task<string> GetValueOrNullAsync(int tenantId, Feature feature)
+    public Task<string?> GetValueOrNullAsync(Guid tenantId, Feature feature)
     {
-        return Task.FromResult((string)null);
+        return Task.FromResult<string?>(null);
     }
 
     /// <inheritdoc/>
-    public string GetValueOrNull(int tenantId, Feature feature)
+    public string? GetValueOrNull(Guid tenantId, Feature feature)
     {
-        return (string)null;
+        return null;
     }
 }

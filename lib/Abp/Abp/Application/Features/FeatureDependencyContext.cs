@@ -1,4 +1,4 @@
-using Abp.Dependency;
+using Abp.DependencyInjection;
 
 namespace Abp.Application.Features;
 
@@ -7,20 +7,23 @@ namespace Abp.Application.Features;
 /// </summary>
 public class FeatureDependencyContext : IFeatureDependencyContext, ITransientDependency
 {
-    public int? TenantId { get; set; }
+    public Guid? TenantId { get; set; }
 
     /// <inheritdoc/>
-    public IIocResolver IocResolver { get; private set; }
+    public IServiceProvider ServiceProvider { get; }
 
     /// <inheritdoc/>
-    public IFeatureChecker FeatureChecker { get; private set; }
+    public IFeatureChecker FeatureChecker { get; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="FeatureDependencyContext"/> class.
     /// </summary>
-    public FeatureDependencyContext(IIocResolver iocResolver, IFeatureChecker featureChecker)
+    public FeatureDependencyContext(
+        IServiceProvider serviceProvider,
+        IFeatureChecker featureChecker
+    )
     {
-        IocResolver = iocResolver;
+        ServiceProvider = serviceProvider;
         FeatureChecker = featureChecker;
     }
 }

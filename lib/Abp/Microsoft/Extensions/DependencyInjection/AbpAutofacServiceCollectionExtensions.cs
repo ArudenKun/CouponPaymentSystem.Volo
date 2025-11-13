@@ -1,5 +1,4 @@
 ﻿using Abp;
-using Abp.DependencyInjection;
 using Autofac;
 
 namespace Microsoft.Extensions.DependencyInjection;
@@ -27,23 +26,23 @@ public static class AbpAutofacServiceCollectionExtensions
         return services.BuildServiceProviderFromFactory(builderAction);
     }
 
-    public static AbpAutofacServiceProviderFactory AddAutofacServiceProviderFactory(
-        this IServiceCollection services
-    )
-    {
-        return services.AddAutofacServiceProviderFactory(new ContainerBuilder());
-    }
-
-    public static AbpAutofacServiceProviderFactory AddAutofacServiceProviderFactory(
-        this IServiceCollection services,
-        ContainerBuilder containerBuilder
-    )
-    {
-        var factory = new AbpAutofacServiceProviderFactory(containerBuilder);
-
-        services.AddObjectAccessor(containerBuilder);
-        services.AddSingleton((IServiceProviderFactory<ContainerBuilder>)factory);
-
-        return factory;
-    }
+    // public static AbpAutofacServiceProviderFactory AddAutofacServiceProviderFactory(
+    //     this IServiceCollection services
+    // )
+    // {
+    //     return services.AddAutofacServiceProviderFactory(new ContainerBuilder());
+    // }
+    //
+    // public static AbpAutofacServiceProviderFactory AddAutofacServiceProviderFactory(
+    //     this IServiceCollection services,
+    //     ContainerBuilder containerBuilder
+    // )
+    // {
+    //     var factory = new AbpAutofacServiceProviderFactory(containerBuilder);
+    //
+    //     services.AddObjectAccessor(containerBuilder);
+    //     services.AddSingleton((IServiceProviderFactory<ContainerBuilder>)factory);
+    //
+    //     return factory;
+    // }
 }

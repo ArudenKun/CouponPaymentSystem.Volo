@@ -1,4 +1,5 @@
 using System.Globalization;
+using Abp.Configuration.Startup;
 
 namespace Abp.Localization.Sources;
 
@@ -12,10 +13,7 @@ internal class NullLocalizationSource : ILocalizationSource
     /// </summary>
     public static NullLocalizationSource Instance { get; } = new NullLocalizationSource();
 
-    public string Name
-    {
-        get { return null; }
-    }
+    public string Name => null;
 
     private readonly IReadOnlyList<LocalizedString> _emptyStringArray = new LocalizedString[0];
 

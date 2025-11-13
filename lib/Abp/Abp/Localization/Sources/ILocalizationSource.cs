@@ -1,4 +1,5 @@
 using System.Globalization;
+using Abp.Configuration.Startup;
 
 namespace Abp.Localization.Sources;
 

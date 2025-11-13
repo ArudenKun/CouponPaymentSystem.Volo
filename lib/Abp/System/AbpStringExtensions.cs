@@ -271,14 +271,6 @@ public static class AbpStringExtensions
     }
 
     /// <summary>
-    /// Uses string.Split method to split given string by given separator.
-    /// </summary>
-    public static string[] Split(this string str, string separator, StringSplitOptions options)
-    {
-        return str.Split(new[] { separator }, options);
-    }
-
-    /// <summary>
     /// Uses string.Split method to split given string by <see cref="Environment.NewLine"/>.
     /// </summary>
     public static string[] SplitToLines(this string str)

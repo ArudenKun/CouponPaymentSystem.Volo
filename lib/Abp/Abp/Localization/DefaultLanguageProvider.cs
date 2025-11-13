@@ -1,25 +1,25 @@
 using System.Collections.Immutable;
+using Abp.Configuration.Startup;
 using Abp.DependencyInjection;
-using Microsoft.Extensions.Options;
 
 namespace Abp.Localization;
 
-internal class DefaultLanguageProvider : ILanguageProvider, ITransientDependency
+public class DefaultLanguageProvider : ILanguageProvider, ITransientDependency
 {
-    private readonly AbpLocalizationOptions _options;
+    private readonly ILocalizationConfiguration _configuration;
 
-    public DefaultLanguageProvider(IOptions<AbpLocalizationOptions> options)
+    public DefaultLanguageProvider(ILocalizationConfiguration configuration)
     {
-        _options = options.Value;
+        _configuration = configuration;
     }
 
     public IReadOnlyList<LanguageInfo> GetLanguages()
     {
-        return _options.Languages.ToImmutableList();
+        return _configuration.Languages.ToImmutableList();
     }
 
     public IReadOnlyList<LanguageInfo> GetActiveLanguages()
     {
-        return _options.Languages.Where(l => !l.IsDisabled).ToImmutableList();
+        return _configuration.Languages.Where(l => !l.IsDisabled).ToImmutableList();
     }
 }

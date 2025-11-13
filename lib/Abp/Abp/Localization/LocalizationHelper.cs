@@ -1,4 +1,5 @@
 using System.Globalization;
+using Abp.DependencyInjection;
 using Abp.Localization.Sources;
 
 namespace Abp.Localization;
@@ -13,19 +14,15 @@ public static class LocalizationHelper
     /// Inject and use <see cref="ILocalizationManager"/>
     /// wherever it's possible, instead of this shortcut.
     /// </summary>
-    public static ILocalizationManager Manager
-    {
-        get { return LocalizationManager.Value; }
-    }
+    public static ILocalizationManager Manager => LocalizationManager.Value;
 
     private static readonly Lazy<ILocalizationManager> LocalizationManager;
 
     static LocalizationHelper()
     {
         LocalizationManager = new Lazy<ILocalizationManager>(() =>
-            IocManager.Instance.IsRegistered<ILocalizationManager>()
-                ? IocManager.Instance.Resolve<ILocalizationManager>()
-                : NullLocalizationManager.Instance
+            AbpLocator.Instance.GetService<ILocalizationManager>()
+            ?? NullLocalizationManager.Instance
         );
     }
 

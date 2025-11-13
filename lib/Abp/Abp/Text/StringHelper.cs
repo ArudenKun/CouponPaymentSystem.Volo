@@ -2,7 +2,7 @@
 
 namespace Abp.Text;
 
-public static class StringHelper
+public class StringHelper
 {
     /// <summary>
     /// Converts a byte[] to string without BOM (byte order mark).

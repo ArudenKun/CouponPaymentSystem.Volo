@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-
-namespace Abp.Application.Features;
+﻿namespace Abp.Application.Features;
 
 /// <summary>
 /// Most simple implementation of <see cref="IFeatureDependency"/>.

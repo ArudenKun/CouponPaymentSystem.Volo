@@ -1,58 +1,47 @@
-using System;
+namespace Abp.Application.Services.Dto;
 
-namespace Abp.Application.Services.Dto
+/// <summary>
+/// A shortcut of <see cref="EntityDto{TPrimaryKey}"/> for most used primary key type (<see cref="int"/>).
+/// </summary>
+[Serializable]
+public class EntityDto : EntityDto<int>, IEntityDto
 {
     /// <summary>
-    /// A shortcut of <see cref="EntityDto{TPrimaryKey}"/> for most used primary key type (<see cref="int"/>).
+    /// Creates a new <see cref="EntityDto"/> object.
     /// </summary>
-    [Serializable]
-    public class EntityDto : EntityDto<int>, IEntityDto
-    {
-        /// <summary>
-        /// Creates a new <see cref="EntityDto"/> object.
-        /// </summary>
-        public EntityDto()
-        {
-
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="EntityDto"/> object.
-        /// </summary>
-        /// <param name="id">Id of the entity</param>
-        public EntityDto(int id)
-            : base(id)
-        {
-        }
-    }
+    public EntityDto() { }
 
     /// <summary>
-    /// Implements common properties for entity based DTOs.
+    /// Creates a new <see cref="EntityDto"/> object.
     /// </summary>
-    /// <typeparam name="TPrimaryKey">Type of the primary key</typeparam>
-    [Serializable]
-    public class EntityDto<TPrimaryKey> : IEntityDto<TPrimaryKey>
+    /// <param name="id">Id of the entity</param>
+    public EntityDto(int id)
+        : base(id) { }
+}
+
+/// <summary>
+/// Implements common properties for entity based DTOs.
+/// </summary>
+/// <typeparam name="TPrimaryKey">Type of the primary key</typeparam>
+[Serializable]
+public class EntityDto<TPrimaryKey> : IEntityDto<TPrimaryKey>
+{
+    /// <summary>
+    /// Id of the entity.
+    /// </summary>
+    public TPrimaryKey Id { get; set; }
+
+    /// <summary>
+    /// Creates a new <see cref="EntityDto{TPrimaryKey}"/> object.
+    /// </summary>
+    public EntityDto() { }
+
+    /// <summary>
+    /// Creates a new <see cref="EntityDto{TPrimaryKey}"/> object.
+    /// </summary>
+    /// <param name="id">Id of the entity</param>
+    public EntityDto(TPrimaryKey id)
     {
-        /// <summary>
-        /// Id of the entity.
-        /// </summary>
-        public TPrimaryKey Id { get; set; }
-
-        /// <summary>
-        /// Creates a new <see cref="EntityDto{TPrimaryKey}"/> object.
-        /// </summary>
-        public EntityDto()
-        {
-
-        }
-
-        /// <summary>
-        /// Creates a new <see cref="EntityDto{TPrimaryKey}"/> object.
-        /// </summary>
-        /// <param name="id">Id of the entity</param>
-        public EntityDto(TPrimaryKey id)
-        {
-            Id = id;
-        }
+        Id = id;
     }
 }

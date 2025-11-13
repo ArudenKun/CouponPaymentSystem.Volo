@@ -1,13 +1,10 @@
-using System;
+namespace Abp.Application.Services.Dto;
 
-namespace Abp.Application.Services.Dto
+/// <summary>
+/// Simply implements <see cref="IPagedAndSortedResultRequest"/>.
+/// </summary>
+[Serializable]
+public class PagedAndSortedResultRequestDto : PagedResultRequestDto, IPagedAndSortedResultRequest
 {
-    /// <summary>
-    /// Simply implements <see cref="IPagedAndSortedResultRequest"/>.
-    /// </summary>
-    [Serializable]
-    public class PagedAndSortedResultRequestDto : PagedResultRequestDto, IPagedAndSortedResultRequest
-    {
-        public virtual string Sorting { get; set; }
-    }
+    public virtual string Sorting { get; set; }
 }

@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Immutable;
 using System.Globalization;
 using System.Resources;
+using Abp.Configuration.Startup;
 using Castle.Core.Logging;
 
 namespace Abp.Localization.Sources.Resource;

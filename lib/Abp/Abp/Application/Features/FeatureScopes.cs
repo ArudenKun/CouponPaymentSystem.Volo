@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Abp.Application.Features;
+﻿namespace Abp.Application.Features;
 
 /// <summary>
 /// Scopes of a <see cref="Feature"/>.

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Abp.Application.Features;
+﻿namespace Abp.Application.Features;
 
 /// <summary>
 /// Feature manager.
@@ -17,7 +15,7 @@ public interface IFeatureManager
     /// Gets the <see cref="Feature"/> by a specified name or returns null if it can not be found.
     /// </summary>
     /// <param name="name">The name.</param>
-    Feature GetOrNull(string name);
+    Feature? GetOrNull(string name);
 
     /// <summary>
     /// Gets all <see cref="Feature"/>s.

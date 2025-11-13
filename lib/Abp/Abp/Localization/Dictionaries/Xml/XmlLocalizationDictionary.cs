@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using System.Xml;
+using Abp.Xml.Extensions;
 
 namespace Abp.Localization.Dictionaries.Xml;
 
