@@ -1,4 +1,6 @@
-﻿namespace Abp.Configuration.Startup;
+﻿using Abp.Events.Bus;
+
+namespace Abp.Configuration.Startup;
 
 /// <summary>
 /// Used to configure <see cref="IEventBus"/>.

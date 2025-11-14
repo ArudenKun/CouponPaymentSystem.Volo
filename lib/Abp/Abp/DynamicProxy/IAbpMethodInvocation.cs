@@ -4,7 +4,7 @@ namespace Abp.DynamicProxy;
 
 public interface IAbpMethodInvocation
 {
-    object?[] Arguments { get; }
+    object[] Arguments { get; }
 
     IReadOnlyDictionary<string, object?> ArgumentsDictionary { get; }
 

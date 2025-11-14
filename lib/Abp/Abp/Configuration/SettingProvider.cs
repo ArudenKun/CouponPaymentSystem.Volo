@@ -1,4 +1,6 @@
-﻿namespace Abp.Configuration;
+﻿using Abp.DependencyInjection;
+
+namespace Abp.Configuration;
 
 /// <summary>
 /// Inherit this class to define settings for a module/application.

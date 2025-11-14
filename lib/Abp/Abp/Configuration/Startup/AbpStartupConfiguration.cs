@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Features;
+using Abp.Events.Bus;
 using Abp.Runtime.Caching.Configuration;
 using Abp.Webhooks;
 

@@ -19,9 +19,12 @@ internal class NullLocalizationSource : ILocalizationSource
 
     private NullLocalizationSource() { }
 
-    public void Initialize(ILocalizationConfiguration configuration, IIocResolver iocResolver) { }
+    public void Initialize(
+        ILocalizationConfiguration configuration,
+        IServiceProvider serviceProvider
+    ) { }
 
-    public string FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
+    public string? FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
     {
         return null;
     }
@@ -36,12 +39,12 @@ internal class NullLocalizationSource : ILocalizationSource
         return name;
     }
 
-    public string GetStringOrNull(string name, bool tryDefaults = true)
+    public string? GetStringOrNull(string name, bool tryDefaults = true)
     {
         return null;
     }
 
-    public string GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
+    public string? GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
     {
         return null;
     }

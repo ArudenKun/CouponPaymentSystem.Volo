@@ -5,12 +5,15 @@
   </PropertyGroup>
   <ItemGroup>
     <GlobalPackageReference Include="CSharpier.MsBuild" Version="1.2.1" />
-    <GlobalPackageReference Include="Polyfill" Version="9.0.1" />
+    <GlobalPackageReference Include="Polyfill" Version="9.0.2" />
   </ItemGroup>
   <ItemGroup>
     <PackageVersion Include="Autofac" Version="8.4.0" />
     <PackageVersion Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageVersion Include="Autofac.Extras.DynamicProxy" Version="7.1.0" />
+    <PackageVersion Include="Autofac.Mvc5" Version="6.1.0" />
+    <PackageVersion Include="Autofac.Mvc5.Owin" Version="6.1.0" />
+    <PackageVersion Include="Autofac.Owin" Version="7.1.0" />
     <PackageVersion Include="BundleTransformer.NUglify" Version="1.15.5" />
     <PackageVersion Include="Castle.Core" Version="5.2.1" />
     <PackageVersion Include="Castle.Core.AsyncInterceptor" Version="2.1.0" />
@@ -32,11 +35,19 @@
       Version="10.0.0"
     />
     <PackageVersion Include="Microsoft.Net.Compilers.Toolset" Version="4.14.0" />
+    <PackageVersion Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" />
+    <PackageVersion Include="Microsoft.Owin.StaticFiles" Version="4.2.3" />
     <PackageVersion Include="Microsoft.Web.LibraryManager.Build" Version="3.0.71" />
     <PackageVersion Include="Newtonsoft.Json" Version="13.0.4" />
     <PackageVersion Include="Nito.AsyncEx.Context" Version="5.1.2" />
     <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.10" />
     <PackageVersion Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageVersion Include="TimeZoneConverter" Version="7.2.0" />
+    <PackageVersion Include="Volo.Abp.Auditing" Version="9.3.6" />
+    <PackageVersion Include="Volo.Abp.Authorization" Version="9.3.6" />
+    <PackageVersion Include="Volo.Abp.Autofac" Version="9.3.6" />
+    <PackageVersion Include="Volo.Abp.ExceptionHandling" Version="9.3.6" />
+    <PackageVersion Include="Volo.Abp.Http" Version="9.3.6" />
+    <PackageVersion Include="Volo.Abp.Validation" Version="9.3.6" />
   </ItemGroup>
 </Project>

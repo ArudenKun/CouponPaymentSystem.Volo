@@ -1,5 +1,6 @@
 ﻿using System.Collections.Concurrent;
 using System.Collections.Immutable;
+using Abp.DependencyInjection;
 using Abp.Runtime.Caching.Configuration;
 
 namespace Abp.Runtime.Caching;

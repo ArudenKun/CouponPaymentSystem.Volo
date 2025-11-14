@@ -1,4 +1,5 @@
 ﻿using Abp.Configuration.Startup;
+using Abp.DependencyInjection;
 using Abp.Runtime.Security;
 
 namespace Abp.Configuration;

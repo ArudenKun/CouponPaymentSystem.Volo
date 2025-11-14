@@ -1,3 +1,5 @@
+using Abp.DependencyInjection;
+
 namespace Abp.Events.Bus.Handlers.Internals;
 
 /// <summary>

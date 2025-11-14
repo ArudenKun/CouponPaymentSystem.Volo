@@ -6,7 +6,7 @@
 /// </summary>
 public interface ILocalizationDictionaryProvider
 {
-    ILocalizationDictionary DefaultDictionary { get; }
+    ILocalizationDictionary? DefaultDictionary { get; }
 
     IDictionary<string, ILocalizationDictionary> Dictionaries { get; }
 

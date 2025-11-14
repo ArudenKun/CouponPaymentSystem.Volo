@@ -1,4 +1,6 @@
 ﻿using Abp.Authorization;
+using Abp.Domain.Services;
+using Abp.Domain.Uow;
 using Abp.Webhooks.Extensions;
 
 namespace Abp.Webhooks;

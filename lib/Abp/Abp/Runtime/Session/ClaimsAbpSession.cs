@@ -1,4 +1,6 @@
 using Abp.Configuration.Startup;
+using Abp.DependencyInjection;
+using Abp.MultiTenancy;
 using Abp.Runtime.Security;
 
 namespace Abp.Runtime.Session;
@@ -8,7 +10,7 @@ namespace Abp.Runtime.Session;
 /// </summary>
 public class ClaimsAbpSession : AbpSessionBase, ISingletonDependency
 {
-    public override long? UserId
+    public override Guid? UserId
     {
         get
         {
@@ -67,7 +69,7 @@ public class ClaimsAbpSession : AbpSessionBase, ISingletonDependency
         }
     }
 
-    public override long? ImpersonatorUserId
+    public override Guid? ImpersonatorUserId
     {
         get
         {

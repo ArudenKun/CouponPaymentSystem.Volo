@@ -9,9 +9,12 @@ public static class ServiceProviderDisposeExtensions
         public IDisposableDependencyServiceWrapper<TService> GetRequiredServiceAsDisposable<TService>(
             Type serviceType
         )
-            where TService : notnull =>
-            (IDisposableDependencyServiceWrapper<TService>)
-                GetRequiredServiceAsDisposable(serviceProvider, serviceType);
+            where TService : notnull
+        {
+            return new DisposableDependencyServiceWrapper<TService>(
+                serviceProvider.GetRequiredService<IServiceScopeFactory>()
+            );
+        }
 
         public IDisposableDependencyServiceWrapper<T> GetRequiredServiceAsDisposable<T>()
             where T : notnull

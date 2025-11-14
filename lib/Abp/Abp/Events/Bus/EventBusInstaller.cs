@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using System.ComponentModel;
+using System.Reflection;
 using Abp.Configuration.Startup;
 using Abp.Events.Bus.Factories;
 using Abp.Events.Bus.Handlers;

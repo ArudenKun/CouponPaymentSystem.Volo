@@ -1,4 +1,5 @@
 using System.Configuration;
+using Abp.Threading;
 
 namespace Abp.Configuration;
 

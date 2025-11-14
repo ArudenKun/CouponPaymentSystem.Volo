@@ -4,11 +4,11 @@ namespace Abp.Runtime.Validation.Interception;
 
 public class CustomValidator : IMethodParameterValidator
 {
-    private readonly IIocResolver _iocResolver;
+    private readonly IServiceProvider _serviceProvider;
 
-    public CustomValidator(IIocResolver iocResolver)
+    public CustomValidator(IServiceProvider serviceProvider)
     {
-        _iocResolver = iocResolver;
+        _serviceProvider = serviceProvider;
     }
 
     public IReadOnlyList<ValidationResult> Validate(object validatingObject)
@@ -17,7 +17,7 @@ public class CustomValidator : IMethodParameterValidator
 
         if (validatingObject is ICustomValidate customValidateObject)
         {
-            var context = new CustomValidationContext(validationErrors, _iocResolver);
+            var context = new CustomValidationContext(validationErrors, _serviceProvider);
             customValidateObject.AddValidationErrors(context);
         }
 

@@ -20,7 +20,7 @@ public class LocalizedString
     /// <summary>
     /// Value for the <see cref="Name"/>.
     /// </summary>
-    public string Value { get; private set; }
+    public string? Value { get; private set; }
 
     /// <summary>
     /// Creates a localized string instance.
@@ -28,7 +28,7 @@ public class LocalizedString
     /// <param name="cultureInfo">Culture info for this string</param>
     /// <param name="name">Unique Name of the string</param>
     /// <param name="value">Value for the <paramref name="name"/></param>
-    public LocalizedString(string name, string value, CultureInfo cultureInfo)
+    public LocalizedString(string name, string? value, CultureInfo cultureInfo)
     {
         Name = name;
         Value = value;

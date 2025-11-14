@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using Abp.Configuration.Startup;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Abp.Localization;
 
@@ -11,7 +11,7 @@ public static class LocalizationSourceHelper
         string sourceName,
         string name,
         CultureInfo culture,
-        ILogger logger = null
+        ILogger? logger = null
     )
     {
         var exceptionMessage = $"Can not find '{name}' in localization source '{sourceName}'!";
@@ -23,7 +23,7 @@ public static class LocalizationSourceHelper
 
         if (configuration.LogWarnMessageIfNotFound)
         {
-            (logger ?? LogHelper.Logger).Warn(exceptionMessage);
+            logger?.LogWarning(exceptionMessage);
         }
 
         var notFoundText = configuration.HumanizeTextIfNotFound
@@ -38,7 +38,7 @@ public static class LocalizationSourceHelper
         string sourceName,
         List<string> names,
         CultureInfo culture,
-        ILogger logger = null
+        ILogger? logger = null
     )
     {
         var exceptionMessage =
@@ -51,7 +51,7 @@ public static class LocalizationSourceHelper
 
         if (configuration.LogWarnMessageIfNotFound)
         {
-            (logger ?? LogHelper.Logger).Warn(exceptionMessage);
+            logger?.LogWarning(exceptionMessage);
         }
 
         var notFoundText = configuration.HumanizeTextIfNotFound

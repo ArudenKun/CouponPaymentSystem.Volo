@@ -1,6 +1,7 @@
 using System;
 using Abp.Configuration;
 using Abp.Dependency;
+using Abp.DependencyInjection;
 
 namespace Abp.Timing.Timezone;
 

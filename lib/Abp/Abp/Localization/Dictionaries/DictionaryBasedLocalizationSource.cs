@@ -1,7 +1,9 @@
 using System.Collections.Immutable;
 using System.Globalization;
 using Abp.Configuration.Startup;
-using Castle.Core.Logging;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Abp.Localization.Dictionaries;
 
@@ -18,9 +20,9 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
 
     public ILocalizationDictionaryProvider DictionaryProvider { get; }
 
-    protected ILocalizationConfiguration LocalizationConfiguration { get; private set; }
+    protected ILocalizationConfiguration LocalizationConfiguration { get; private set; } = default!;
 
-    private ILogger _logger;
+    private ILogger _logger = default!;
 
     /// <summary>
     ///
@@ -42,22 +44,21 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
     /// <inheritdoc/>
     public virtual void Initialize(
         ILocalizationConfiguration configuration,
-        IIocResolver iocResolver
+        IServiceProvider serviceProvider
     )
     {
         LocalizationConfiguration = configuration;
 
-        _logger = iocResolver.IsRegistered(typeof(ILoggerFactory))
-            ? iocResolver
-                .Resolve<ILoggerFactory>()
-                .Create(typeof(DictionaryBasedLocalizationSource))
-            : NullLogger.Instance;
+        _logger =
+            serviceProvider
+                .GetService<ILoggerFactory>()
+                ?.CreateLogger(nameof(DictionaryBasedLocalizationSource)) ?? NullLogger.Instance;
 
         DictionaryProvider.Initialize(Name);
     }
 
     /// <inheritdoc/>
-    public string FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
+    public string? FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
     {
         var cultureName = culture.Name;
         var dictionaries = DictionaryProvider.Dictionaries;
@@ -125,12 +126,12 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
         return value;
     }
 
-    public string GetStringOrNull(string name, bool tryDefaults = true)
+    public string? GetStringOrNull(string name, bool tryDefaults = true)
     {
         return GetStringOrNull(name, CultureInfo.CurrentUICulture, tryDefaults);
     }
 
-    public string GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
+    public string? GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
     {
         var cultureName = culture.Name;
         var dictionaries = DictionaryProvider.Dictionaries;
@@ -196,14 +197,15 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
             );
         }
 
-        return values.Select(x => x.Value).ToList();
+        return values.Select(x => x.Value).Where(x => !x.IsNullOrEmpty()).ToList()!;
     }
 
     public List<string> GetStringsOrNull(List<string> names, bool tryDefaults = true)
     {
         return GetStringsInternal(names, CultureInfo.CurrentUICulture, tryDefaults)
             .Select(x => x.Value)
-            .ToList();
+            .Where(x => !x.IsNullOrEmpty())
+            .ToList()!;
     }
 
     public List<string> GetStringsOrNull(
@@ -212,7 +214,10 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
         bool tryDefaults = true
     )
     {
-        return GetStringsInternal(names, culture, tryDefaults).Select(x => x.Value).ToList();
+        return GetStringsInternal(names, culture, tryDefaults)
+            .Select(x => x.Value)
+            .Where(x => !x.IsNullOrEmpty())
+            .ToList()!;
     }
 
     private List<NameValue> GetStringsInternal(
@@ -227,8 +232,8 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
         //Try to get from original dictionary (with country code)
         if (dictionaries.TryGetValue(cultureName, out var originalDictionary))
         {
-            var strOriginal = originalDictionary.GetStringsOrNull(names);
-            if (!(strOriginal.IsNullOrEmpty()))
+            var strOriginal = originalDictionary.GetStringsOrEmpty(names);
+            if (!strOriginal.IsNullOrEmpty())
             {
                 return strOriginal.Select(x => new NameValue(x.Name, x.Value)).ToList();
             }
@@ -236,7 +241,7 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
 
         if (!includeDefaults)
         {
-            return null;
+            return [];
         }
 
         //Try to get from same language dictionary (without country code)
@@ -244,7 +249,7 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
         {
             if (dictionaries.TryGetValue(GetBaseCultureName(cultureName), out var langDictionary))
             {
-                var strLang = langDictionary.GetStringsOrNull(names);
+                var strLang = langDictionary.GetStringsOrEmpty(names);
                 if (!strLang.IsNullOrEmpty())
                 {
                     return strLang.Select(x => new NameValue(x.Name, x.Value)).ToList();
@@ -256,13 +261,13 @@ public class DictionaryBasedLocalizationSource : IDictionaryBasedLocalizationSou
         var defaultDictionary = DictionaryProvider.DefaultDictionary;
         if (defaultDictionary == null)
         {
-            return null;
+            return [];
         }
 
-        var strDefault = defaultDictionary.GetStringsOrNull(names);
+        var strDefault = defaultDictionary.GetStringsOrEmpty(names);
         if (strDefault.IsNullOrEmpty())
         {
-            return null;
+            return [];
         }
 
         return strDefault.Select(x => new NameValue(x.Name, x.Value)).ToList();

@@ -23,21 +23,21 @@ public interface ILocalizationDictionary
     /// </summary>
     /// <param name="value">Value to get key</param>
     /// <returns>The key or null</returns>
-    string TryGetKey(string value);
+    string? TryGetKey(string value);
 
     /// <summary>
     /// Gets a <see cref="LocalizedString"/> for given <paramref name="name"/>.
     /// </summary>
     /// <param name="name">Name (key) to get localized string</param>
     /// <returns>The localized string or null if not found in this dictionary</returns>
-    LocalizedString GetOrNull(string name);
+    LocalizedString? GetOrNull(string name);
 
     /// <summary>
     /// Gets a <see cref="LocalizedString"/> for given <paramref name="names"/>.
     /// </summary>
     /// <param name="names">Names (key) to get list of localized strings</param>
     /// <returns>The localized string or null if not found in this dictionary</returns>
-    IReadOnlyList<LocalizedString> GetStringsOrNull(List<string> names);
+    IReadOnlyList<LocalizedString> GetStringsOrEmpty(List<string> names);
 
     /// <summary>
     /// Gets a list of all strings in this dictionary.

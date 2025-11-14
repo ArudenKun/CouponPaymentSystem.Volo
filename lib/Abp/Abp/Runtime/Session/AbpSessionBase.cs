@@ -1,4 +1,5 @@
 using Abp.Configuration.Startup;
+using Abp.MultiTenancy;
 
 namespace Abp.Runtime.Session;
 
@@ -8,11 +9,11 @@ public abstract class AbpSessionBase : IAbpSession
 
     public IMultiTenancyConfig MultiTenancy { get; }
 
-    public abstract long? UserId { get; }
+    public abstract Guid? UserId { get; }
 
     public abstract Guid? TenantId { get; }
 
-    public abstract long? ImpersonatorUserId { get; }
+    public abstract Guid? ImpersonatorUserId { get; }
 
     public abstract Guid? ImpersonatorTenantId { get; }
 

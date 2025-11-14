@@ -8,7 +8,7 @@ public class NameValue : NameValue<string>
 {
     public NameValue() { }
 
-    public NameValue(string name, string value)
+    public NameValue(string name, string? value)
     {
         Name = name;
         Value = value;
@@ -29,7 +29,7 @@ public class NameValue<T>
     /// <summary>
     /// Value.
     /// </summary>
-    public T Value { get; set; } = default!;
+    public T? Value { get; set; }
 
     public NameValue() { }
 

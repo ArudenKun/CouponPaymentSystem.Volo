@@ -1,18 +1,19 @@
 ﻿using System.Threading;
 using Abp.Runtime.Remoting;
 
-namespace Abp.Threading
+namespace Abp.Threading;
+
+public class NullCancellationTokenProvider : CancellationTokenProviderBase
 {
-    public class NullCancellationTokenProvider : CancellationTokenProviderBase
-    {
-        public static NullCancellationTokenProvider Instance { get; } = new NullCancellationTokenProvider();
+    public static NullCancellationTokenProvider Instance { get; } =
+        new NullCancellationTokenProvider();
 
-        public override CancellationToken Token => CancellationToken.None;
+    public override CancellationToken Token => CancellationToken.None;
 
-        private NullCancellationTokenProvider()
+    private NullCancellationTokenProvider()
         : base(
-            new DataContextAmbientScopeProvider<CancellationTokenOverride>(new AsyncLocalAmbientDataContext()))
-        {
-        }
-    }
+            new DataContextAmbientScopeProvider<CancellationTokenOverride>(
+                new AsyncLocalAmbientDataContext()
+            )
+        ) { }
 }

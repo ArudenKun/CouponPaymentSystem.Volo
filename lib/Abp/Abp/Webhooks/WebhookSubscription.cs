@@ -1,4 +1,5 @@
 ﻿using Abp.Application.Services.Dto;
+using Abp.Domain.Entities;
 
 namespace Abp.Webhooks;
 

@@ -13,5 +13,5 @@ public interface IEventData
     /// <summary>
     /// The object which triggers the event (optional).
     /// </summary>
-    object EventSource { get; set; }
+    object? EventSource { get; set; }
 }

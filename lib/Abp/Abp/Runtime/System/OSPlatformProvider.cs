@@ -1,4 +1,5 @@
 ﻿using System.Runtime.InteropServices;
+using Abp.DependencyInjection;
 
 namespace Abp.Runtime.System;
 

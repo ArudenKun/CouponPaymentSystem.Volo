@@ -1,5 +1,4 @@
-using System.Linq;
-using Abp.Dependency;
+using Abp.DependencyInjection;
 
 namespace Abp.ObjectMapping;
 
@@ -8,7 +7,7 @@ public sealed class NullObjectMapper : IObjectMapper, ISingletonDependency
     /// <summary>
     /// Singleton instance.
     /// </summary>
-    public static NullObjectMapper Instance { get; } = new NullObjectMapper();
+    public static NullObjectMapper Instance { get; } = new();
 
     public TDestination Map<TDestination>(object source)
     {

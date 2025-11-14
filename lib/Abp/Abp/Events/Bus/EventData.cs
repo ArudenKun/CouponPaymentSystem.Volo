@@ -1,3 +1,5 @@
+using Abp.Timing;
+
 namespace Abp.Events.Bus;
 
 /// <summary>
@@ -14,7 +16,7 @@ public abstract class EventData : IEventData
     /// <summary>
     /// The object which triggers the event (optional).
     /// </summary>
-    public object EventSource { get; set; }
+    public object? EventSource { get; set; }
 
     /// <summary>
     /// Constructor.

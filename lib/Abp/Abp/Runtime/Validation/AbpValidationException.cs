@@ -1,5 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
+using Abp.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Abp.Runtime.Validation;
 
@@ -7,12 +9,12 @@ namespace Abp.Runtime.Validation;
 /// This exception type is used to throws validation exceptions.
 /// </summary>
 [Serializable]
-public class AbpValidationException : AbpException, IHasLogSeverity
+public class AbpValidationException : AbpException, IHasLogLevel
 {
     /// <summary>
     /// Default log severity
     /// </summary>
-    public static LogSeverity DefaultLogSeverity = LogSeverity.Warn;
+    public static LogLevel DefaultLogSeverity = LogLevel.Warning;
 
     /// <summary>
     /// Detailed list of validation errors for this exception.
@@ -23,7 +25,7 @@ public class AbpValidationException : AbpException, IHasLogSeverity
     /// Exception severity.
     /// Default: Warn.
     /// </summary>
-    public LogSeverity Severity { get; set; }
+    public LogLevel LogLevel { get; set; }
 
     /// <summary>
     /// Constructor.
@@ -31,7 +33,7 @@ public class AbpValidationException : AbpException, IHasLogSeverity
     public AbpValidationException()
     {
         ValidationErrors = new List<ValidationResult>();
-        Severity = DefaultLogSeverity;
+        LogLevel = DefaultLogSeverity;
     }
 
     /// <summary>
@@ -41,7 +43,7 @@ public class AbpValidationException : AbpException, IHasLogSeverity
         : base(serializationInfo, context)
     {
         ValidationErrors = new List<ValidationResult>();
-        Severity = DefaultLogSeverity;
+        LogLevel = DefaultLogSeverity;
     }
 
     /// <summary>
@@ -52,7 +54,7 @@ public class AbpValidationException : AbpException, IHasLogSeverity
         : base(message)
     {
         ValidationErrors = new List<ValidationResult>();
-        Severity = DefaultLogSeverity;
+        LogLevel = DefaultLogSeverity;
     }
 
     /// <summary>
@@ -64,7 +66,7 @@ public class AbpValidationException : AbpException, IHasLogSeverity
         : base(message)
     {
         ValidationErrors = validationErrors;
-        Severity = DefaultLogSeverity;
+        LogLevel = DefaultLogSeverity;
     }
 
     /// <summary>
@@ -76,6 +78,6 @@ public class AbpValidationException : AbpException, IHasLogSeverity
         : base(message, innerException)
     {
         ValidationErrors = new List<ValidationResult>();
-        Severity = DefaultLogSeverity;
+        LogLevel = DefaultLogSeverity;
     }
 }

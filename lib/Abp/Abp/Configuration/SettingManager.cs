@@ -1,5 +1,8 @@
 ﻿using System.Collections.Immutable;
 using Abp.Configuration.Startup;
+using Abp.DependencyInjection;
+using Abp.Domain.Uow;
+using Abp.MultiTenancy;
 using Abp.Runtime.Caching;
 using Abp.Runtime.Session;
 

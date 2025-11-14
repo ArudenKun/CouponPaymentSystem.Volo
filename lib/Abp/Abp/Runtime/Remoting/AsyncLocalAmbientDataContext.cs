@@ -1,4 +1,5 @@
 ﻿using System.Collections.Concurrent;
+using Abp.DependencyInjection;
 
 namespace Abp.Runtime.Remoting;
 

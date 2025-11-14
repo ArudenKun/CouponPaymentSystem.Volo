@@ -1,5 +1,6 @@
 ﻿using System.Collections.Immutable;
 using Abp.Configuration.Startup;
+using Abp.DependencyInjection;
 
 namespace Abp.Configuration;
 

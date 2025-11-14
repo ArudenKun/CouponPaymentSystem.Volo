@@ -2,32 +2,29 @@ using System.Collections.Immutable;
 using Abp.Configuration.Startup;
 using Abp.Localization.Dictionaries;
 using Abp.Localization.Sources;
-using Castle.Core.Logging;
+using Microsoft.Extensions.Logging;
 
 namespace Abp.Localization;
 
 internal class LocalizationManager : ILocalizationManager
 {
-    public ILogger Logger { get; set; }
-
-    private readonly ILanguageManager _languageManager;
     private readonly ILocalizationConfiguration _configuration;
-    private readonly IIocResolver _iocResolver;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IDictionary<string, ILocalizationSource> _sources;
+    private readonly ILogger<LocalizationManager> _logger;
 
     /// <summary>
     /// Constructor.
     /// </summary>
     public LocalizationManager(
-        ILanguageManager languageManager,
         ILocalizationConfiguration configuration,
-        IIocResolver iocResolver
+        IServiceProvider serviceProvider,
+        ILogger<LocalizationManager> logger
     )
     {
-        Logger = NullLogger.Instance;
-        _languageManager = languageManager;
         _configuration = configuration;
-        _iocResolver = iocResolver;
+        _serviceProvider = serviceProvider;
+        _logger = logger;
         _sources = new Dictionary<string, ILocalizationSource>();
     }
 
@@ -40,13 +37,11 @@ internal class LocalizationManager : ILocalizationManager
     {
         if (!_configuration.IsEnabled)
         {
-            Logger.Debug("Localization disabled.");
+            _logger.LogDebug("Localization disabled.");
             return;
         }
 
-        Logger.Debug(
-            string.Format("Initializing {0} localization sources.", _configuration.Sources.Count)
-        );
+        _logger.LogDebug("Initializing {0} localization sources.", _configuration.Sources.Count);
         foreach (var source in _configuration.Sources)
         {
             if (_sources.ContainsKey(source.Name))
@@ -59,18 +54,17 @@ internal class LocalizationManager : ILocalizationManager
             }
 
             _sources[source.Name] = source;
-            source.Initialize(_configuration, _iocResolver);
+            source.Initialize(_configuration, _serviceProvider);
 
             //Extending dictionaries
-            if (source is IDictionaryBasedLocalizationSource)
+            if (source is IDictionaryBasedLocalizationSource dictionaryBasedSource)
             {
-                var dictionaryBasedSource = source as IDictionaryBasedLocalizationSource;
                 var extensions = _configuration
                     .Sources.Extensions.Where(e => e.SourceName == source.Name)
                     .ToList();
                 foreach (var extension in extensions)
                 {
-                    extension.DictionaryProvider.Initialize(source.Name);
+                    extension.DictionaryProvider.Initialize(dictionaryBasedSource.Name);
                     foreach (
                         var extensionDictionary in extension.DictionaryProvider.Dictionaries.Values
                     )
@@ -80,7 +74,7 @@ internal class LocalizationManager : ILocalizationManager
                 }
             }
 
-            Logger.Debug("Initialized localization source: " + source.Name);
+            _logger.LogDebug("Initialized localization source: {Name}", source.Name);
         }
     }
 

@@ -1,4 +1,6 @@
-﻿using Abp.DependencyInjection;
+﻿using System.Transactions;
+using Abp.DependencyInjection;
+using Abp.Domain.Uow;
 using Microsoft.Extensions.Logging;
 
 namespace Abp.Webhooks.BackgroundWorker;

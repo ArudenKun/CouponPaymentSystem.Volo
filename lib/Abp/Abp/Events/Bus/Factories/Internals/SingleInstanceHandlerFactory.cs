@@ -1,3 +1,4 @@
+using Abp.DynamicProxy;
 using Abp.Events.Bus.Handlers;
 
 namespace Abp.Events.Bus.Factories.Internals;

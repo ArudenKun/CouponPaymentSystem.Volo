@@ -4,7 +4,7 @@ public abstract class LocalizationDictionaryProviderBase : ILocalizationDictiona
 {
     public string SourceName { get; private set; }
 
-    public ILocalizationDictionary DefaultDictionary { get; protected set; }
+    public ILocalizationDictionary? DefaultDictionary { get; protected set; }
 
     public IDictionary<string, ILocalizationDictionary> Dictionaries { get; private set; }
 

@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -338,6 +339,26 @@ public static class AbpStringExtensions
                 "[a-z][A-Z]",
                 m => m.Value[0] + " " + char.ToLowerInvariant(m.Value[1])
             );
+    }
+
+    /// <summary>
+    /// Converts given PascalCase/camelCase string to sentence (by splitting words by space).
+    /// Example: "ThisIsSampleSentence" is converted to "This is a sample sentence".
+    /// </summary>
+    /// <param name="str">String to convert.</param>
+    /// <param name="culture">An object that supplies culture-specific casing rules.</param>
+    public static string ToSentenceCase(this string str, CultureInfo culture)
+    {
+        if (string.IsNullOrWhiteSpace(str))
+        {
+            return str;
+        }
+
+        return Regex.Replace(
+            str,
+            "[a-z][A-Z]",
+            m => m.Value[0] + " " + char.ToLower(m.Value[1], culture)
+        );
     }
 
     /// <summary>

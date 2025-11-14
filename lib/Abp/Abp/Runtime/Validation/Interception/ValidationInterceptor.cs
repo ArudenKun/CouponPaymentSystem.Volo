@@ -1,92 +1,44 @@
 ﻿using Abp.Aspects;
-using Castle.DynamicProxy;
+using Abp.DependencyInjection;
+using Abp.DynamicProxy;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Runtime.Validation.Interception;
 
 /// <summary>
 /// This interceptor is used intercept method calls for classes which's methods must be validated.
 /// </summary>
-public class ValidationInterceptor : AbpInterceptorBase, ITransientDependency
+public class ValidationInterceptor : AbpInterceptor, ITransientDependency
 {
-    private readonly IIocResolver _iocResolver;
+    private readonly IServiceProvider _serviceProvider;
 
-    public ValidationInterceptor(IIocResolver iocResolver)
+    public ValidationInterceptor(IServiceProvider serviceProvider)
     {
-        _iocResolver = iocResolver;
+        _serviceProvider = serviceProvider;
     }
 
-    public override void InterceptSynchronous(IInvocation invocation)
+    public override async Task InterceptAsync(IAbpMethodInvocation invocation)
     {
         if (
             AbpCrossCuttingConcerns.IsApplied(
-                invocation.InvocationTarget,
+                invocation.TargetObject,
                 AbpCrossCuttingConcerns.Validation
             )
         )
         {
-            invocation.Proceed();
+            await invocation.ProceedAsync();
             return;
         }
 
-        using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
-        {
-            validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
-            validator.Object.Validate();
-        }
-
-        invocation.Proceed();
-    }
-
-    protected override async Task InternalInterceptAsynchronous(IInvocation invocation)
-    {
-        var proceedInfo = invocation.CaptureProceedInfo();
-
-        if (
-            AbpCrossCuttingConcerns.IsApplied(
-                invocation.InvocationTarget,
-                AbpCrossCuttingConcerns.Validation
-            )
+        using (
+            var validator =
+                _serviceProvider.GetRequiredServiceAsDisposable<MethodInvocationValidator>()
         )
         {
-            proceedInfo.Invoke();
-            await ((Task)invocation.ReturnValue);
-            return;
+            validator.Service.Initialize(invocation.Method, invocation.Arguments);
+            validator.Service.Validate();
         }
 
-        using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
-        {
-            validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
-            validator.Object.Validate();
-        }
-
-        proceedInfo.Invoke();
-        await ((Task)invocation.ReturnValue);
-    }
-
-    protected override async Task<TResult> InternalInterceptAsynchronous<TResult>(
-        IInvocation invocation
-    )
-    {
-        var proceedInfo = invocation.CaptureProceedInfo();
-
-        if (
-            AbpCrossCuttingConcerns.IsApplied(
-                invocation.InvocationTarget,
-                AbpCrossCuttingConcerns.Validation
-            )
-        )
-        {
-            proceedInfo.Invoke();
-            return await ((Task<TResult>)invocation.ReturnValue);
-        }
-
-        using (var validator = _iocResolver.ResolveAsDisposable<MethodInvocationValidator>())
-        {
-            validator.Object.Initialize(invocation.MethodInvocationTarget, invocation.Arguments);
-            validator.Object.Validate();
-        }
-
-        proceedInfo.Invoke();
-        return await ((Task<TResult>)invocation.ReturnValue);
+        await invocation.ProceedAsync();
     }
 }

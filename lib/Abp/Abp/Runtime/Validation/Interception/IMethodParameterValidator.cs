@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using Abp.DependencyInjection;
 
 namespace Abp.Runtime.Validation.Interception;
 

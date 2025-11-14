@@ -3,7 +3,10 @@ using System.Collections.Immutable;
 using System.Globalization;
 using System.Resources;
 using Abp.Configuration.Startup;
-using Castle.Core.Logging;
+using Abp.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Abp.Localization.Sources.Resource;
 
@@ -23,8 +26,8 @@ public class ResourceFileLocalizationSource : ILocalizationSource, ISingletonDep
     /// </summary>
     public ResourceManager ResourceManager { get; }
 
-    private ILogger _logger;
-    private ILocalizationConfiguration _configuration;
+    private ILogger _logger = default!;
+    private ILocalizationConfiguration _configuration = default!;
 
     /// <param name="name">Unique Name of the source</param>
     /// <param name="resourceManager">Reference to the <see cref="ResourceManager"/> object related to this localization source</param>
@@ -39,17 +42,18 @@ public class ResourceFileLocalizationSource : ILocalizationSource, ISingletonDep
     /// </summary>
     public virtual void Initialize(
         ILocalizationConfiguration configuration,
-        IIocResolver iocResolver
+        IServiceProvider serviceProvider
     )
     {
         _configuration = configuration;
 
-        _logger = iocResolver.IsRegistered(typeof(ILoggerFactory))
-            ? iocResolver.Resolve<ILoggerFactory>().Create(typeof(ResourceFileLocalizationSource))
-            : NullLogger.Instance;
+        _logger =
+            serviceProvider
+                .GetService<ILoggerFactory>()
+                ?.CreateLogger(typeof(ResourceFileLocalizationSource)) ?? NullLogger.Instance;
     }
 
-    public string FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
+    public string? FindKeyOrNull(string value, CultureInfo culture, bool tryDefaults = true)
     {
         var resource = ResourceManager
             .GetResourceSet(culture, true, tryDefaults)
@@ -81,13 +85,13 @@ public class ResourceFileLocalizationSource : ILocalizationSource, ISingletonDep
         return value;
     }
 
-    public string GetStringOrNull(string name, bool tryDefaults = true)
+    public string? GetStringOrNull(string name, bool tryDefaults = true)
     {
         //WARN: tryDefaults is not implemented!
         return ResourceManager.GetString(name);
     }
 
-    public string GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
+    public string? GetStringOrNull(string name, CultureInfo culture, bool tryDefaults = true)
     {
         //WARN: tryDefaults is not implemented!
         return ResourceManager.GetString(name, culture);
@@ -105,7 +109,7 @@ public class ResourceFileLocalizationSource : ILocalizationSource, ISingletonDep
             );
         }
 
-        return values.Select(x => x.Value).ToList();
+        return values.Select(x => x.Value).Where(x => !x.IsNullOrEmpty()).ToList()!;
     }
 
     public List<string> GetStrings(List<string> names, CultureInfo culture)
@@ -120,14 +124,15 @@ public class ResourceFileLocalizationSource : ILocalizationSource, ISingletonDep
             );
         }
 
-        return values.Select(x => x.Value).ToList();
+        return values.Select(x => x.Value).Where(x => !x.IsNullOrEmpty()).ToList()!;
     }
 
     public List<string> GetStringsOrNull(List<string> names, bool tryDefaults = true)
     {
-        return GetStringsInternal(names, CultureInfo.CurrentUICulture, tryDefaults)
+        return GetStringsInternal(names, CultureInfo.CurrentUICulture)
             .Select(x => x.Value)
-            .ToList();
+            .Where(x => !x.IsNullOrEmpty())
+            .ToList()!;
     }
 
     public List<string> GetStringsOrNull(
@@ -136,14 +141,13 @@ public class ResourceFileLocalizationSource : ILocalizationSource, ISingletonDep
         bool tryDefaults = true
     )
     {
-        return GetStringsInternal(names, culture, tryDefaults).Select(x => x.Value).ToList();
+        return GetStringsInternal(names, culture)
+            .Select(x => x.Value)
+            .Where(x => !x.IsNullOrEmpty())
+            .ToList()!;
     }
 
-    private List<NameValue> GetStringsInternal(
-        List<string> names,
-        CultureInfo culture,
-        bool tryDefaults = true
-    )
+    private List<NameValue> GetStringsInternal(List<string> names, CultureInfo culture)
     {
         //WARN: tryDefaults is not implemented!
         return names

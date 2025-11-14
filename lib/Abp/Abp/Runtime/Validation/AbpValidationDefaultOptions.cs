@@ -4,9 +4,7 @@ namespace Abp.Runtime.Validation;
 
 public class AbpValidationDefaultOptions : IAbpValidationDefaultOptions
 {
-    public static List<Func<Type, bool>> ConventionalValidationSelectorList = new List<
-        Func<Type, bool>
-    >
+    public static List<Func<Type, bool>> ConventionalValidationSelectorList = new()
     {
         type => typeof(IApplicationService).IsAssignableFrom(type),
     };

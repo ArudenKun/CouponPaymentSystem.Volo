@@ -1,5 +1,8 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Abp.Domain.Entities;
+using Abp.Domain.Entities.Auditing;
+using Abp.MultiTenancy;
 using Abp.Webhooks.Extensions;
 
 namespace Abp.Webhooks;
@@ -17,13 +20,13 @@ public class WebhookSubscriptionInfo : CreationAuditedEntity<Guid>, IPassivable
     /// Subscription webhook endpoint
     /// </summary>
     [Required]
-    public virtual string WebhookUri { get; set; }
+    public virtual string? WebhookUri { get; set; }
 
     /// <summary>
     /// Webhook secret
     /// </summary>
     [Required]
-    public virtual string Secret { get; set; }
+    public virtual string? Secret { get; set; }
 
     /// <summary>
     /// Is subscription active
@@ -40,7 +43,7 @@ public class WebhookSubscriptionInfo : CreationAuditedEntity<Guid>, IPassivable
     /// <see cref="WebhookSubscriptionInfoExtensions.RemoveAllSubscribedWebhooks"/> to change it.
     /// </para>
     /// </summary>
-    public virtual string Webhooks { get; set; }
+    public virtual string? Webhooks { get; set; }
 
     /// <summary>
     /// Gets a set of additional HTTP headers.That headers will be sent with the webhook. It contains webhook header dictionary as json
@@ -52,10 +55,11 @@ public class WebhookSubscriptionInfo : CreationAuditedEntity<Guid>, IPassivable
     /// <see cref="WebhookSubscriptionInfoExtensions.RemoveAllWebhookHeaders"/> to change it.
     /// </para>
     /// </summary>
-    public virtual string Headers { get; set; }
+    public virtual string? Headers { get; set; }
 
     public WebhookSubscriptionInfo()
     {
+        // ReSharper disable once VirtualMemberCallInConstructor
         IsActive = true;
     }
 }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Threading;
 
-namespace Abp.Threading
+namespace Abp.Threading;
+
+public interface ICancellationTokenProvider
 {
-    public interface ICancellationTokenProvider
-    {
-        CancellationToken Token { get; }
-        IDisposable Use(CancellationToken cancellationToken);
-    }
+    CancellationToken Token { get; }
+    IDisposable Use(CancellationToken cancellationToken);
 }

@@ -12,11 +12,11 @@ public class CustomValidationContext
     /// <summary>
     /// Can be used to resolve dependencies on validation.
     /// </summary>
-    public IIocResolver IocResolver { get; }
+    public IServiceProvider ServiceProvider { get; }
 
-    public CustomValidationContext(List<ValidationResult> results, IIocResolver iocResolver)
+    public CustomValidationContext(List<ValidationResult> results, IServiceProvider serviceProvider)
     {
         Results = results;
-        IocResolver = iocResolver;
+        ServiceProvider = serviceProvider;
     }
 }

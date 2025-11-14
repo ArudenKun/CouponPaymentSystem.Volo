@@ -3,7 +3,9 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Abp.Configuration.Startup;
+using Abp.DependencyInjection;
 using Abp.Reflection;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Runtime.Validation.Interception;
 
@@ -14,25 +16,25 @@ public class MethodInvocationValidator : ITransientDependency
 {
     private const int MaxRecursiveParameterValidationDepth = 8;
 
-    protected MethodInfo Method { get; private set; }
-    protected object[] ParameterValues { get; private set; }
-    protected ParameterInfo[] Parameters { get; private set; }
+    protected MethodInfo Method { get; private set; } = default!;
+    protected object[] ParameterValues { get; private set; } = default!;
+    protected ParameterInfo[] Parameters { get; private set; } = default!;
     protected List<ValidationResult> ValidationErrors { get; }
     protected List<IShouldNormalize> ObjectsToBeNormalized { get; }
 
     private readonly IValidationConfiguration _configuration;
-    private readonly IIocResolver _iocResolver;
+    private readonly IServiceProvider _serviceProvider;
 
     /// <summary>
     /// Creates a new <see cref="MethodInvocationValidator"/> instance.
     /// </summary>
     public MethodInvocationValidator(
         IValidationConfiguration configuration,
-        IIocResolver iocResolver
+        IServiceProvider serviceProvider
     )
     {
         _configuration = configuration;
-        _iocResolver = iocResolver;
+        _serviceProvider = serviceProvider;
 
         ValidationErrors = new List<ValidationResult>();
         ObjectsToBeNormalized = new List<IShouldNormalize>();
@@ -130,7 +132,7 @@ public class MethodInvocationValidator : ITransientDependency
     /// <param name="parameterValue">Value to validate</param>
     protected virtual void ValidateMethodParameter(
         ParameterInfo parameterInfo,
-        object parameterValue
+        object? parameterValue
     )
     {
         if (parameterValue == null)
@@ -158,7 +160,7 @@ public class MethodInvocationValidator : ITransientDependency
         ValidateObjectRecursively(parameterValue, 1);
     }
 
-    protected virtual void ValidateObjectRecursively(object validatingObject, int currentDepth)
+    protected virtual void ValidateObjectRecursively(object? validatingObject, int currentDepth)
     {
         if (currentDepth > MaxRecursiveParameterValidationDepth)
         {
@@ -198,9 +200,9 @@ public class MethodInvocationValidator : ITransientDependency
         }
 
         // Add list to be normalized later
-        if (validatingObject is IShouldNormalize)
+        if (validatingObject is IShouldNormalize normalize)
         {
-            ObjectsToBeNormalized.Add(validatingObject as IShouldNormalize);
+            ObjectsToBeNormalized.Add(normalize);
         }
 
         if (ShouldMakeDeepValidation(validatingObject))
@@ -226,15 +228,12 @@ public class MethodInvocationValidator : ITransientDependency
         {
             if (ShouldValidateUsingValidator(validatingObject, validatorType))
             {
-                using (
-                    var validator = _iocResolver.ResolveAsDisposable<IMethodParameterValidator>(
+                using var validator =
+                    _serviceProvider.GetRequiredServiceAsDisposable<IMethodParameterValidator>(
                         validatorType
-                    )
-                )
-                {
-                    var validationResults = validator.Object.Validate(validatingObject);
-                    ValidationErrors.AddRange(validationResults);
-                }
+                    );
+                var validationResults = validator.Service.Validate(validatingObject);
+                ValidationErrors.AddRange(validationResults);
             }
         }
     }

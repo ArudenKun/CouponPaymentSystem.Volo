@@ -1,8 +1,10 @@
-﻿namespace Abp.Runtime.Validation.Interception;
+﻿using Abp.DependencyInjection;
+
+namespace Abp.Runtime.Validation.Interception;
 
 internal static class ValidationInterceptorRegistrar
 {
-    public static void Initialize(IIocManager iocManager)
+    public static void Initialize(IOnServiceRegistredContext context)
     {
         iocManager.IocContainer.Kernel.ComponentRegistered += (key, handler) =>
         {

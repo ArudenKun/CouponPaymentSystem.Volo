@@ -1,3 +1,5 @@
+using System.Transactions;
+using Abp.DependencyInjection;
 using Abp.Domain.Uow;
 
 namespace Abp.Events.Bus.Entities;

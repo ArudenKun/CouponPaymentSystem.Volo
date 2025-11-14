@@ -15,6 +15,21 @@ public static class AbpCollectionExtensions
         return source == null || source.Count <= 0;
     }
 
+    public static bool IsNullOrEmpty<T>(this IEnumerable<T>? source)
+    {
+        if (source == null)
+            return true;
+
+        if (source is ICollection<T> collectionT)
+            return collectionT.Count == 0;
+
+        if (source is ICollection collection)
+            return collection.Count == 0;
+
+        using var enumerator = source.GetEnumerator();
+        return !enumerator.MoveNext();
+    }
+
     /// <summary>
     /// Adds an item to the collection if it's not already in the collection.
     /// </summary>

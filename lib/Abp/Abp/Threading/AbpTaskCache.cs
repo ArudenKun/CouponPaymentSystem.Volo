@@ -1,9 +1,8 @@
 ﻿using System.Threading.Tasks;
 
-namespace Abp.Threading
+namespace Abp.Threading;
+
+public static class AbpTaskCache
 {
-    public static class AbpTaskCache
-    {
-        public static Task CompletedTask { get; } = Task.FromResult(0);
-    }
+    public static Task CompletedTask { get; } = Task.FromResult(0);
 }

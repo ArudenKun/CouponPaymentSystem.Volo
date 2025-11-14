@@ -1,4 +1,5 @@
 using Abp.Localization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Abp.Runtime.Validation;
 
@@ -13,7 +14,8 @@ public static class CustomValidationContextExtensions
         string key
     )
     {
-        var localizationManager = validationContext.IocResolver.Resolve<ILocalizationManager>();
+        var localizationManager =
+            validationContext.ServiceProvider.GetRequiredService<ILocalizationManager>();
         var source = localizationManager.GetSource(sourceName);
         return source.GetString(key);
     }

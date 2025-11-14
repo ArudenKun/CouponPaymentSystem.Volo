@@ -36,20 +36,20 @@ public class LocalizationDictionary : ILocalizationDictionary, IEnumerable<Local
     }
 
     /// <inheritdoc/>
-    public virtual string TryGetKey(string value)
+    public virtual string? TryGetKey(string value)
     {
         var found = _dictionary.Values.FirstOrDefault(x => x.Value == value);
         return found?.Name;
     }
 
     /// <inheritdoc/>
-    public virtual LocalizedString GetOrNull(string name)
+    public virtual LocalizedString? GetOrNull(string name)
     {
         return _dictionary.TryGetValue(name, out var localizedString) ? localizedString : null;
     }
 
     /// <inheritdoc/>
-    public virtual IReadOnlyList<LocalizedString> GetStringsOrNull(List<string> names)
+    public virtual IReadOnlyList<LocalizedString> GetStringsOrEmpty(List<string> names)
     {
         return names
             .Select(name =>
