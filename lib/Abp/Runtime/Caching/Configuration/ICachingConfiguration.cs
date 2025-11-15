@@ -35,7 +35,7 @@ namespace Abp.Runtime.Caching.Configuration
         void ConfigureAll(Action<ICacheOptions> initAction);
 
         /// <summary>
-        /// Used to configure a specific cache. 
+        /// Used to configure a specific cache.
         /// </summary>
         /// <param name="cacheName">Cache name</param>
         /// <param name="initAction">

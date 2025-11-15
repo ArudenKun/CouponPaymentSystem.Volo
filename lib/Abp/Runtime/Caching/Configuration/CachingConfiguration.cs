@@ -16,7 +16,7 @@ namespace Abp.Runtime.Caching.Configuration
         }
 
         public MemoryCacheOptions MemoryCacheOptions { get; set; }
-        
+
         private readonly List<ICacheConfigurator> _configurators;
 
         public CachingConfiguration(IAbpStartupConfiguration abpConfiguration)

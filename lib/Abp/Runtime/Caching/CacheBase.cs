@@ -10,8 +10,7 @@ namespace Abp.Runtime.Caching
         /// Constructor.
         /// </summary>
         /// <param name="name"></param>
-        protected CacheBase(string name) : base(name)
-        {
-        }
+        protected CacheBase(string name)
+            : base(name) { }
     }
 }

@@ -13,7 +13,7 @@ namespace Abp.Runtime.Caching.Memory
     public class AbpMemoryCacheManager : CacheManagerBase<ICache>, ICacheManager
     {
         public ILogger Logger { get; set; }
-        
+
         /// <summary>
         /// Constructor.
         /// </summary>
@@ -25,9 +25,12 @@ namespace Abp.Runtime.Caching.Memory
 
         protected override ICache CreateCacheImplementation(string name)
         {
-            return new AbpMemoryCache(name, Configuration?.AbpConfiguration?.Caching?.MemoryCacheOptions)
+            return new AbpMemoryCache(
+                name,
+                Configuration?.AbpConfiguration?.Caching?.MemoryCacheOptions
+            )
             {
-                Logger = Logger
+                Logger = Logger,
             };
         }
 

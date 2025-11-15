@@ -1,9 +1,9 @@
-﻿using Abp.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using Abp.Json;
 using Abp.Reflection;
 
 namespace Abp.Runtime.Caching
@@ -13,8 +13,7 @@ namespace Abp.Runtime.Caching
     /// </summary>
     public class AbpCacheData
     {
-        public AbpCacheData(
-            string type, string payload)
+        public AbpCacheData(string type, string payload)
         {
             Type = type;
             Payload = payload;
@@ -24,14 +23,15 @@ namespace Abp.Runtime.Caching
 
         public string Type { get; set; }
 
-        public static AbpCacheData Deserialize(string serializedCacheData) => serializedCacheData.FromJsonString<AbpCacheData>();
+        public static AbpCacheData Deserialize(string serializedCacheData) =>
+            serializedCacheData.FromJsonString<AbpCacheData>();
 
         public static AbpCacheData Serialize(object obj, bool withAssemblyName = true)
         {
             return new AbpCacheData(
                 TypeHelper.SerializeType(obj.GetType(), withAssemblyName).ToString(),
-                obj.ToJsonString());
+                obj.ToJsonString()
+            );
         }
-        
     }
 }

@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using Abp.Data;
 using Abp.Threading.Extensions;
 using Castle.Core.Logging;
@@ -13,7 +13,10 @@ namespace Abp.Runtime.Caching
     /// Base class for caches with generic types, <see cref="AbpCacheBase{TKey, TValue}"/> and .
     /// It provides default implementation of <see cref="IAbpCache{TKey, TValue}"/>.
     /// </summary>
-    public abstract class AbpCacheBase<TKey, TValue> : AbpCacheBase, IAbpCache<TKey, TValue>, ICacheOptions
+    public abstract class AbpCacheBase<TKey, TValue>
+        : AbpCacheBase,
+            IAbpCache<TKey, TValue>,
+            ICacheOptions
     {
         public TimeSpan DefaultSlidingExpireTime { get; set; }
 
@@ -27,7 +30,8 @@ namespace Abp.Runtime.Caching
         /// Constructor.
         /// </summary>
         /// <param name="name"></param>
-        protected AbpCacheBase(string name) : base(name)
+        protected AbpCacheBase(string name)
+            : base(name)
         {
             DefaultSlidingExpireTime = TimeSpan.FromHours(1);
         }
@@ -296,9 +300,18 @@ namespace Abp.Runtime.Caching
             return results.Select(result => result.Value).ToArray();
         }
 
-        public abstract void Set(TKey key, TValue value, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null);
+        public abstract void Set(
+            TKey key,
+            TValue value,
+            TimeSpan? slidingExpireTime = null,
+            DateTimeOffset? absoluteExpireTime = null
+        );
 
-        public virtual void Set(KeyValuePair<TKey, TValue>[] pairs, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null)
+        public virtual void Set(
+            KeyValuePair<TKey, TValue>[] pairs,
+            TimeSpan? slidingExpireTime = null,
+            DateTimeOffset? absoluteExpireTime = null
+        )
         {
             foreach (var pair in pairs)
             {
@@ -306,15 +319,26 @@ namespace Abp.Runtime.Caching
             }
         }
 
-        public virtual Task SetAsync(TKey key, TValue value, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null)
+        public virtual Task SetAsync(
+            TKey key,
+            TValue value,
+            TimeSpan? slidingExpireTime = null,
+            DateTimeOffset? absoluteExpireTime = null
+        )
         {
             Set(key, value, slidingExpireTime, absoluteExpireTime);
             return Task.CompletedTask;
         }
 
-        public virtual Task SetAsync(KeyValuePair<TKey, TValue>[] pairs, TimeSpan? slidingExpireTime = null, DateTimeOffset? absoluteExpireTime = null)
+        public virtual Task SetAsync(
+            KeyValuePair<TKey, TValue>[] pairs,
+            TimeSpan? slidingExpireTime = null,
+            DateTimeOffset? absoluteExpireTime = null
+        )
         {
-            return Task.WhenAll(pairs.Select(p => SetAsync(p.Key, p.Value, slidingExpireTime, absoluteExpireTime)));
+            return Task.WhenAll(
+                pairs.Select(p => SetAsync(p.Key, p.Value, slidingExpireTime, absoluteExpireTime))
+            );
         }
 
         public abstract void Remove(TKey key);
@@ -367,8 +391,6 @@ namespace Abp.Runtime.Caching
             return Task.CompletedTask;
         }
 
-        public virtual void Dispose()
-        {
-        }
+        public virtual void Dispose() { }
     }
 }

@@ -5,12 +5,10 @@ using JetBrains.Annotations;
 namespace Abp.Runtime.Caching
 {
     /// <summary>
-    /// An upper level container for <see cref="ICache"/> objects. 
+    /// An upper level container for <see cref="ICache"/> objects.
     /// A cache manager should work as Singleton and track and manage <see cref="ICache"/> objects.
     /// </summary>
-    public interface ICacheManager : ICacheManager<ICache>
-    {
-    }
+    public interface ICacheManager : ICacheManager<ICache> { }
 
     public interface ICacheManager<TCache> : IDisposable
         where TCache : class
@@ -29,6 +27,7 @@ namespace Abp.Runtime.Caching
         /// Unique and case sensitive name of the cache.
         /// </param>
         /// <returns>The cache reference</returns>
-        [NotNull] TCache GetCache([NotNull] string name);
+        [NotNull]
+        TCache GetCache([NotNull] string name);
     }
 }
