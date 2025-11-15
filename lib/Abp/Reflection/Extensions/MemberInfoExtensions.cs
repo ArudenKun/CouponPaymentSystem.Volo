@@ -1,6 +1,4 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
+﻿using System.Reflection;
 
 namespace Abp.Reflection.Extensions;
 
@@ -16,7 +14,7 @@ public static class MemberInfoExtensions
     /// <param name="memberInfo">The member that will be checked for the attribute</param>
     /// <param name="inherit">Include inherited attributes</param>
     /// <returns>Returns the attribute object if found. Returns null if not found.</returns>
-    public static TAttribute GetSingleAttributeOrNull<TAttribute>(
+    public static TAttribute? GetSingleAttributeOrNull<TAttribute>(
         this MemberInfo memberInfo,
         bool inherit = true
     )
@@ -33,10 +31,10 @@ public static class MemberInfoExtensions
             return (TAttribute)attrs[0];
         }
 
-        return default(TAttribute);
+        return default;
     }
 
-    public static TAttribute GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(
+    public static TAttribute? GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(
         this Type type,
         bool inherit = true
     )
@@ -54,6 +52,6 @@ public static class MemberInfoExtensions
         }
 
         return type.GetTypeInfo()
-            .BaseType.GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(inherit);
+            .BaseType?.GetSingleAttributeOfTypeOrBaseTypesOrNull<TAttribute>(inherit);
     }
 }

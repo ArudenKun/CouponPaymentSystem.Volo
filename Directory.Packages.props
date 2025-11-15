@@ -39,10 +39,12 @@
     <PackageVersion Include="Nito.AsyncEx.Context" Version="5.1.2" />
     <PackageVersion Include="Polly" Version="8.6.4" />
     <PackageVersion Include="PolyfillLib" Version="9.0.3" />
+    <PackageVersion Include="Riok.Mapperly" Version="4.3.0" />
     <PackageVersion Include="System.Collections.Immutable" Version="10.0.0" />
     <PackageVersion Include="System.Linq.Dynamic.Core" Version="1.6.10" />
     <PackageVersion Include="System.Text.Json" Version="10.0.0" />
     <PackageVersion Include="TimeZoneConverter" Version="7.2.0" />
+    <PackageVersion Include="Volo.Abp.Mapperly" Version="10.0.0-rc.3" />
     <PackageVersion Include="ZLinq" Version="1.5.4" />
   </ItemGroup>
 </Project>

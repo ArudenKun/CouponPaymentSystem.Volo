@@ -74,7 +74,7 @@ public abstract class EntityCacheBase<TEntity, TCacheItem, TPrimaryKey>
             );
         }
 
-        return ObjectMapper.Map<TCacheItem>(entity);
+        return ObjectMapper.Map<TEntity, TCacheItem>(entity);
     }
 
     protected virtual string GenerateDefaultCacheName()

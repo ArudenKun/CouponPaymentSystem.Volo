@@ -117,7 +117,7 @@ public abstract class CrudAppServiceBase<
     /// </summary>
     protected virtual TEntityDto MapToEntityDto(TEntity entity)
     {
-        return ObjectMapper.Map<TEntityDto>(entity);
+        return ObjectMapper.Map<TEntity, TEntityDto>(entity);
     }
 
     /// <summary>
@@ -127,7 +127,7 @@ public abstract class CrudAppServiceBase<
     /// </summary>
     protected virtual TEntity MapToEntity(TCreateInput createInput)
     {
-        return ObjectMapper.Map<TEntity>(createInput);
+        return ObjectMapper.Map<TCreateInput, TEntity>(createInput);
     }
 
     /// <summary>

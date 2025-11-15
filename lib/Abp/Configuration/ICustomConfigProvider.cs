@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Abp.Configuration.Startup;
+﻿namespace Abp.Configuration;
 
 public interface ICustomConfigProvider
 {

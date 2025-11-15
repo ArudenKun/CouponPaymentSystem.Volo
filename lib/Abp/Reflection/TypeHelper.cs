@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
+using System.Globalization;
 using System.Linq;
 using System.Reflection;
 using System.Text;
@@ -17,7 +19,53 @@ internal static class TypeHelper
         "System.Private.CoreLib",
     };
 
-    public static bool IsFunc(object obj)
+    private static readonly HashSet<Type> FloatingTypes = new HashSet<Type>
+    {
+        typeof(float),
+        typeof(double),
+        typeof(decimal),
+    };
+
+    private static readonly HashSet<Type> NonNullablePrimitiveTypes = new HashSet<Type>
+    {
+        typeof(byte),
+        typeof(short),
+        typeof(int),
+        typeof(long),
+        typeof(sbyte),
+        typeof(ushort),
+        typeof(uint),
+        typeof(ulong),
+        typeof(bool),
+        typeof(float),
+        typeof(decimal),
+        typeof(DateTime),
+        typeof(DateTimeOffset),
+        typeof(TimeSpan),
+        typeof(Guid),
+    };
+
+    public static T? GetDefaultValue<T>()
+    {
+        return default;
+    }
+
+    public static object? GetDefaultValue(Type type)
+    {
+        if (type.IsValueType)
+        {
+            return Activator.CreateInstance(type);
+        }
+
+        return null;
+    }
+
+    public static bool IsNonNullablePrimitiveType(Type type)
+    {
+        return NonNullablePrimitiveTypes.Contains(type);
+    }
+
+    public static bool IsFunc(object? obj)
     {
         if (obj == null)
         {
@@ -33,7 +81,7 @@ internal static class TypeHelper
         return type.GetGenericTypeDefinition() == typeof(Func<>);
     }
 
-    public static bool IsFunc<TReturn>(object obj)
+    public static bool IsFunc<TReturn>(object? obj)
     {
         return obj != null && obj.GetType() == typeof(Func<TReturn>);
     }
@@ -116,7 +164,7 @@ internal static class TypeHelper
     }
 
     private static StringBuilder SerializeTypes(
-        Type[] types,
+        Type[]? types,
         char beginTypeDelimiter = '"',
         char endTypeDelimiter = '"',
         StringBuilder? typeNamesBuilder = null
@@ -147,5 +195,68 @@ internal static class TypeHelper
         }
 
         return typeNamesBuilder.Append(']');
+    }
+
+    public static Type GetFirstGenericArgumentIfNullable(this Type t)
+    {
+        if (
+            t.GetGenericArguments().Length > 0
+            && t.GetGenericTypeDefinition() == typeof(Nullable<>)
+        )
+        {
+            return t.GetGenericArguments().First();
+        }
+
+        return t;
+    }
+
+    public static TProperty? ChangeTypePrimitiveExtended<TProperty>(object? value)
+    {
+        if (value == null)
+        {
+            return default;
+        }
+
+        if (IsPrimitiveExtended(typeof(TProperty), includeEnums: true))
+        {
+            var conversionType = typeof(TProperty);
+            if (IsNullable(conversionType))
+            {
+                conversionType = conversionType.GetFirstGenericArgumentIfNullable();
+            }
+
+            if (conversionType == typeof(Guid))
+            {
+                return (TProperty)
+                    TypeDescriptor
+                        .GetConverter(conversionType)
+                        .ConvertFromInvariantString(value.ToString()!)!;
+            }
+
+            if (conversionType.IsEnum)
+            {
+                return (TProperty)Enum.Parse(conversionType, value.ToString()!);
+            }
+
+            return (TProperty)
+                Convert.ChangeType(value, conversionType, CultureInfo.InvariantCulture);
+        }
+
+        throw new AbpException(
+            "ChangeTypePrimitiveExtended<TProperty> does not support non-primitive types. Use non-generic GetProperty method and handle type casting manually."
+        );
+    }
+
+    public static bool IsNullable(Type type)
+    {
+        return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
+    }
+
+    public static bool IsNullableEnum(Type type)
+    {
+        return type.IsGenericType
+            && type.GetGenericTypeDefinition() == typeof(Nullable<>)
+            && type.GenericTypeArguments.Length == 1
+            && type.GenericTypeArguments[0].IsEnum;
     }
 }

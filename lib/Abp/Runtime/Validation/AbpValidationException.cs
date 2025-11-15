@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
 using Abp.Logging;
 
@@ -55,6 +53,16 @@ public class AbpValidationException : AbpException, IHasLogSeverity
         : base(message)
     {
         ValidationErrors = new List<ValidationResult>();
+        Severity = DefaultLogSeverity;
+    }
+
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    /// <param name="validationErrors">Validation errors</param>
+    public AbpValidationException(IList<ValidationResult> validationErrors)
+    {
+        ValidationErrors = validationErrors;
         Severity = DefaultLogSeverity;
     }
 

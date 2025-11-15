@@ -4,6 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Abp.Domain.Entities;
 using Abp.Domain.Entities.Auditing;
 using Abp.MultiTenancy;
+using Abp.Webhooks.Extensions;
 
 namespace Abp.Webhooks;
 

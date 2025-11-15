@@ -17,6 +17,13 @@ public sealed class NullObjectMapper : IObjectMapper, ISingletonDependency
         );
     }
 
+    public IAutoObjectMappingProvider AutoObjectMappingProvider { get; }
+
+    public TDestination Map<TSource, TDestination>(TSource source)
+    {
+        throw new NotImplementedException();
+    }
+
     public TDestination Map<TSource, TDestination>(TSource source, TDestination destination)
     {
         throw new AbpException(

@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using Abp.Extensions;
+﻿using Abp.Extensions;
 using Abp.Json;
 
-namespace Abp.Webhooks;
+namespace Abp.Webhooks.Extensions;
 
 public static class WebhookSubscriptionInfoExtensions
 {

@@ -1,0 +1,22 @@
+﻿using Abp.Collections.Extensions;
+using JetBrains.Annotations;
+
+namespace Abp.ObjectExtending.Modularity;
+
+public static class ModuleExtensionConfigurationDictionaryExtensions
+{
+    public static ModuleExtensionConfigurationDictionary ConfigureModule<T>(
+        this ModuleExtensionConfigurationDictionary configurationDictionary,
+        string moduleName,
+        Action<T> configureAction
+    )
+        where T : ModuleExtensionConfiguration, new()
+    {
+        Check.NotNull(moduleName, nameof(moduleName));
+        Check.NotNull(configureAction, nameof(configureAction));
+
+        configureAction((T)configurationDictionary.GetOrAdd(moduleName, () => new T()));
+
+        return configurationDictionary;
+    }
+}

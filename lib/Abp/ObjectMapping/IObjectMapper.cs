@@ -1,18 +1,22 @@
-﻿using System.Linq;
-
-namespace Abp.ObjectMapping;
+﻿namespace Abp.ObjectMapping;
 
 /// <summary>
-/// Defines a simple interface to map objects.
+/// Defines a simple interface to automatically map objects.
 /// </summary>
 public interface IObjectMapper
 {
     /// <summary>
-    /// Converts an object to another. Creates a new object of <typeparamref name="TDestination"/>.
+    /// Gets the underlying <see cref="IAutoObjectMappingProvider"/> object that is used for auto object mapping.
+    /// </summary>
+    IAutoObjectMappingProvider AutoObjectMappingProvider { get; }
+
+    /// <summary>
+    /// Converts an object to another. Creates a new object of <typeparamref name="TDestination" />.
     /// </summary>
     /// <typeparam name="TDestination">Type of the destination object</typeparam>
+    /// <typeparam name="TSource">Type of the source object</typeparam>
     /// <param name="source">Source object</param>
-    TDestination Map<TDestination>(object source);
+    TDestination Map<TSource, TDestination>(TSource source);
 
     /// <summary>
     /// Execute a mapping from the source object to the existing destination object
@@ -21,15 +25,29 @@ public interface IObjectMapper
     /// <typeparam name="TDestination">Destination type</typeparam>
     /// <param name="source">Source object</param>
     /// <param name="destination">Destination object</param>
-    /// <returns>Returns the same <paramref name="destination"/> object after mapping operation</returns>
+    /// <returns>Returns the same <paramref name="destination" /> object after mapping operation</returns>
     TDestination Map<TSource, TDestination>(TSource source, TDestination destination);
+}
+
+/// <summary>
+/// Maps an object to another.
+/// Implement this interface to override object to object mapping for specific types.
+/// </summary>
+/// <typeparam name="TSource"></typeparam>
+/// <typeparam name="TDestination"></typeparam>
+public interface IObjectMapper<in TSource, TDestination>
+{
+    /// <summary>
+    /// Converts an object to another. Creates a new object of <typeparamref name="TDestination"/>.
+    /// </summary>
+    /// <param name="source">Source object</param>
+    TDestination Map(TSource source);
 
     /// <summary>
-    /// Project the input queryable.
+    /// Execute a mapping from the source object to the existing destination object
     /// </summary>
-    /// <remarks>Projections are only calculated once and cached</remarks>
-    /// <typeparam name="TDestination">Destination type</typeparam>
-    /// <param name="source">Queryable source</param>
-    /// <returns>Queryable result, use queryable extension methods to project and execute result</returns>
-    IQueryable<TDestination> ProjectTo<TDestination>(IQueryable source);
+    /// <param name="source">Source object</param>
+    /// <param name="destination">Destination object</param>
+    /// <returns>Returns the same <paramref name="destination"/> object after mapping operation</returns>
+    TDestination Map(TSource source, TDestination destination);
 }
