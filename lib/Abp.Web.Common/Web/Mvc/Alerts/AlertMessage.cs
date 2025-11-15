@@ -14,8 +14,7 @@ namespace Abp.Web.Mvc.Alerts
 
         public AlertType Type { get; set; }
 
-        [CanBeNull]
-        public string Title { get; set; }
+        public string? Title { get; set; }
 
         public bool Dismissible { get; set; }
 

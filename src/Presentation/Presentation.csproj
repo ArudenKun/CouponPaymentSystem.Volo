@@ -28,7 +28,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="BundleTransformer.NUglify" />
-    <PackageReference Include="Microsoft.AspNet.Mvc" />
+    <PackageReference Include="Hangfire.AspNet" />
+    <PackageReference Include="Microsoft.Owin.Security.Cookies" />
     <PackageReference Include="Microsoft.Web.LibraryManager.Build" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Abp.Castle.Log4Net\Abp.Castle.Log4Net.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.Owin\Abp.Owin.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.Web.Api\Abp.Web.Api.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.Web.Mvc\Abp.Web.Mvc.csproj" />
+    <ProjectReference Include="..\..\lib\Abp.Web.SignalR\Abp.Web.SignalR.csproj" />
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
   </ItemGroup>
 </Project>

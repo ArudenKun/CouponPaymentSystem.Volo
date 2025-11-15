@@ -5,5 +5,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\lib\Abp.Mapperly\Abp.Mapperly.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
   </ItemGroup>
 </Project>

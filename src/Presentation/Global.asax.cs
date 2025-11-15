@@ -1,13 +1,49 @@
+using System.Web.Hosting;
 using System.Web.Mvc;
-using System.Web.Routing;
+using Abp.HangFire;
+using Abp.HangFire.Configuration;
+using Abp.Owin;
+using Abp.Web;
+using Hangfire;
+using Microsoft.Owin;
+using Microsoft.Owin.Security.Cookies;
+using Owin;
+using Presentation;
 
-namespace Presentation
+[assembly: OwinStartup(typeof(MvcApplication), nameof(MvcApplication.Configuration))]
+
+namespace Presentation;
+
+public class MvcApplication : AbpWebApplication<PresentationModule>
 {
-    public class MvcApplication : System.Web.HttpApplication
+    public void Configuration(IAppBuilder app)
     {
-        protected void Application_Start()
-        {
-            AreaRegistration.RegisterAllAreas();
-        }
+        app.UseAbp();
+        app.UseCookieAuthentication(
+            new CookieAuthenticationOptions
+            {
+                AuthenticationType = CookieAuthenticationDefaults.AuthenticationType,
+                LoginPath = new PathString("/authentication/sign-in"),
+                CookieName = CookieAuthenticationDefaults.CookiePrefix + "CouponPaymentSystem",
+            }
+        );
+        app.MapSignalR();
+        app.UseHangfireAspNet(() =>
+            [AbpBootstrapper.IocManager.Resolve<IAbpHangfireConfiguration>().Server]
+        );
+        app.UseHangfireDashboard(
+            "/hangfire",
+            new DashboardOptions
+            {
+                Authorization = [new AbpHangfireAuthorizationFilter()],
+                AsyncAuthorization = [new AbpHangfireAsyncAuthorizationFilter()],
+                AppPath = HostingEnvironment.ApplicationVirtualPath,
+            }
+        );
+    }
+
+    protected void Application_Start()
+    {
+        AreaRegistration.RegisterAllAreas();
     }
 }

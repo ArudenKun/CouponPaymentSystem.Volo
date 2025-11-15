@@ -13,8 +13,7 @@ namespace Abp.Web.EntityHistory
         : EntityChangeSetReasonProviderBase,
             ISingletonDependency
     {
-        [CanBeNull]
-        public override string Reason
+        public override string? Reason
         {
             get
             {

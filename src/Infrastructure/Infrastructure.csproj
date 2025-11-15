@@ -2,4 +2,8 @@
   <PropertyGroup>
     <TargetFrameworks>net472;net48</TargetFrameworks>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\lib\Abp.HangFire\Abp.HangFire.csproj" />
+    <ProjectReference Include="..\Application\Application.csproj" />
+  </ItemGroup>
 </Project>
