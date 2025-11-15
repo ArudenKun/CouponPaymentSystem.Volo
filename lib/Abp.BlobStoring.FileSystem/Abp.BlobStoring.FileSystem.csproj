@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFrameworks>net472;net48</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Polly" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Abp.BlobStoring\Abp.BlobStoring.csproj" />
+  </ItemGroup>
+</Project>

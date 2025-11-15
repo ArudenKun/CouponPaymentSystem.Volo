@@ -1,0 +1,261 @@
+﻿using System.Linq.Expressions;
+using Abp.Collections.Extensions;
+using Abp.Domain.Entities;
+using Abp.Domain.Repositories;
+using NHibernate;
+using NHibernate.Linq;
+
+namespace Abp.NHibernate.Repositories;
+
+/// <summary>
+/// Base class for all repositories those uses NHibernate.
+/// </summary>
+/// <typeparam name="TEntity">Entity type</typeparam>
+/// <typeparam name="TPrimaryKey">Primary key type of the entity</typeparam>
+public class NhNhRepositoryBase<TEntity, TPrimaryKey>
+    : AbpRepositoryBase<TEntity, TPrimaryKey>,
+        INhRepositoryWithSession
+    where TEntity : class, IEntity<TPrimaryKey>
+{
+    /// <summary>
+    /// Gets the NHibernate session object to perform database operations.
+    /// </summary>
+    public virtual ISession Session => _sessionProvider.Session;
+
+    private readonly ISessionProvider _sessionProvider;
+
+    /// <summary>
+    /// Creates a new <see cref="NhNhRepositoryBase{TEntity,TPrimaryKey}"/> object.
+    /// </summary>
+    /// <param name="sessionProvider">A session provider to obtain session for database operations</param>
+    public NhNhRepositoryBase(ISessionProvider sessionProvider)
+    {
+        _sessionProvider = sessionProvider;
+    }
+
+    public ISession GetSession() => Session;
+
+    public override IQueryable<TEntity> GetAll()
+    {
+        return Session.Query<TEntity>();
+    }
+
+    public override IQueryable<TEntity> GetAllReadonly()
+    {
+        return GetAll().WithOptions(o => o.SetReadOnly(true));
+    }
+
+    public override Task<IQueryable<TEntity>> GetAllAsync()
+    {
+        return Task.FromResult(Session.Query<TEntity>());
+    }
+
+    public override IQueryable<TEntity> GetAllIncluding(
+        params Expression<Func<TEntity, object>>[] propertySelectors
+    )
+    {
+        if (propertySelectors.IsNullOrEmpty())
+        {
+            return GetAll();
+        }
+
+        var query = GetAll();
+
+        foreach (var propertySelector in propertySelectors)
+        {
+            //TODO: Test if NHibernate supports multiple fetch.
+            query = query.Fetch(propertySelector);
+        }
+
+        return query;
+    }
+
+    public override IQueryable<TEntity> GetAllReadonlyIncluding(
+        params Expression<Func<TEntity, object>>[] propertySelectors
+    )
+    {
+        if (propertySelectors.IsNullOrEmpty())
+        {
+            return GetAllReadonly();
+        }
+
+        var query = GetAllReadonly();
+
+        foreach (var propertySelector in propertySelectors)
+        {
+            //TODO: Test if NHibernate supports multiple fetch.
+            query = query.Fetch(propertySelector);
+        }
+
+        return query;
+    }
+
+    public override async Task<IQueryable<TEntity>> GetAllReadonlyIncludingAsync(
+        params Expression<Func<TEntity, object>>[] propertySelectors
+    )
+    {
+        if (propertySelectors.IsNullOrEmpty())
+        {
+            return await GetAllReadonlyAsync();
+        }
+
+        var query = await GetAllReadonlyAsync();
+
+        foreach (var propertySelector in propertySelectors)
+        {
+            //TODO: Test if NHibernate supports multiple fetch.
+            query = query.Fetch(propertySelector);
+        }
+
+        return query;
+    }
+
+    public override Task<List<TEntity>> GetAllListAsync()
+    {
+        return GetAll().ToListAsync(CancellationTokenProvider.Token);
+    }
+
+    public override Task<List<TEntity>> GetAllListAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return GetAll().Where(predicate).ToListAsync(CancellationTokenProvider.Token);
+    }
+
+    public override Task<TEntity> SingleAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return GetAll().SingleAsync(predicate, CancellationTokenProvider.Token);
+    }
+
+    public override TEntity? FirstOrDefault(TPrimaryKey id)
+    {
+        var entityType = typeof(TEntity);
+
+        if (
+            typeof(ISoftDelete).IsAssignableFrom(entityType)
+            || typeof(IMayHaveTenant).IsAssignableFrom(entityType)
+            || typeof(IMustHaveTenant).IsAssignableFrom(entityType)
+        )
+        {
+            return GetAll().SingleOrDefault(CreateEqualityExpressionForId(id));
+        }
+
+        return Session.Get<TEntity>(id);
+    }
+
+    public override async Task<TEntity?> FirstOrDefaultAsync(TPrimaryKey id)
+    {
+        var entityType = typeof(TEntity);
+
+        if (
+            typeof(ISoftDelete).IsAssignableFrom(entityType)
+            || typeof(IMayHaveTenant).IsAssignableFrom(entityType)
+            || typeof(IMustHaveTenant).IsAssignableFrom(entityType)
+        )
+        {
+            return await GetAll()
+                .FirstOrDefaultAsync(
+                    CreateEqualityExpressionForId(id),
+                    CancellationTokenProvider.Token
+                );
+        }
+
+        return await Session.GetAsync<TEntity>(id, CancellationTokenProvider.Token);
+    }
+
+    public override async Task<TEntity> FirstOrDefaultAsync(
+        Expression<Func<TEntity, bool>> predicate
+    )
+    {
+        var query = await GetAllAsync();
+        return await query.FirstOrDefaultAsync(predicate, CancellationTokenProvider.Token);
+    }
+
+    public override TEntity Insert(TEntity entity)
+    {
+        Session.Save(entity);
+        return entity;
+    }
+
+    public override async Task<TEntity> InsertAsync(TEntity entity)
+    {
+        await Session.SaveAsync(entity, CancellationTokenProvider.Token);
+        return entity;
+    }
+
+    public override TEntity InsertOrUpdate(TEntity entity)
+    {
+        Session.SaveOrUpdate(entity);
+        return entity;
+    }
+
+    public override async Task<TEntity> InsertOrUpdateAsync(TEntity entity)
+    {
+        await Session.SaveOrUpdateAsync(entity, CancellationTokenProvider.Token);
+        return entity;
+    }
+
+    public override TEntity Update(TEntity entity)
+    {
+        Session.Update(entity);
+        return entity;
+    }
+
+    public override async Task<TEntity> UpdateAsync(TEntity entity)
+    {
+        await Session.UpdateAsync(entity, CancellationTokenProvider.Token);
+        return entity;
+    }
+
+    public override void Delete(TEntity entity)
+    {
+        Session.Delete(entity);
+    }
+
+    public override void Delete(TPrimaryKey id)
+    {
+        var entity = Load(id);
+
+        Delete(entity);
+    }
+
+    public override async Task DeleteAsync(TEntity entity)
+    {
+        await Session.DeleteAsync(entity, CancellationTokenProvider.Token);
+    }
+
+    public override async Task DeleteAsync(TPrimaryKey id)
+    {
+        var entity = Load(id);
+
+        await DeleteAsync(entity);
+    }
+
+    public override async Task DeleteAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        var entities = await GetAllListAsync(predicate);
+
+        foreach (var entity in entities)
+        {
+            await DeleteAsync(entity);
+        }
+    }
+
+    public override Task<int> CountAsync()
+    {
+        return GetAll().CountAsync(CancellationTokenProvider.Token);
+    }
+
+    public override Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return GetAll().CountAsync(predicate, CancellationTokenProvider.Token);
+    }
+
+    public override Task<long> LongCountAsync()
+    {
+        return GetAll().LongCountAsync(CancellationTokenProvider.Token);
+    }
+
+    public override Task<long> LongCountAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return GetAll().LongCountAsync(predicate, CancellationTokenProvider.Token);
+    }
+}

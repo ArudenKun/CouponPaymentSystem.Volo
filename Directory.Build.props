@@ -7,9 +7,9 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="ConfigureAwait.Fody" PrivateAssets="all" />
-    <!--    <PackageReference-->
-    <!--      Include="PolyfillLib"-->
-    <!--      Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFrameworkIdentifier)' == '.NETFramework'"-->
-    <!--    />-->
+    <PackageReference
+      Include="PolyfillLib"
+      Condition="'$(TargetFramework)' == 'netstandard2.0' OR '$(TargetFrameworkIdentifier)' == '.NETFramework'"
+    />
   </ItemGroup>
 </Project>
