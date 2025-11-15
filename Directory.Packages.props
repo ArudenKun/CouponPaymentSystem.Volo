@@ -12,12 +12,14 @@
     <PackageVersion Include="Castle.Core" Version="5.2.1" />
     <PackageVersion Include="Castle.Core.AsyncInterceptor" Version="2.1.0" />
     <PackageVersion Include="Castle.Facilities.AspNet.SystemWeb" Version="6.0.0" />
+    <PackageVersion Include="Castle.LoggingFacility" Version="6.0.0" />
     <PackageVersion Include="Castle.Windsor" Version="6.0.0" />
     <PackageVersion Include="ConfigureAwait.Fody" Version="3.3.2" />
     <PackageVersion Include="FluentNHibernate" Version="3.4.1" />
     <PackageVersion Include="Hangfire.Core" Version="1.8.22" />
     <PackageVersion Include="JetBrains.Annotations" Version="2025.2.2" />
     <PackageVersion Include="linq2db" Version="5.4.1.9" />
+    <PackageVersion Include="log4net" Version="3.2.0" />
     <PackageVersion Include="Microsoft.AspNet.Mvc" Version="5.3.0" />
     <PackageVersion Include="Microsoft.AspNet.SignalR" Version="2.4.3" />
     <PackageVersion Include="Microsoft.AspNet.WebApi" Version="5.3.0" />

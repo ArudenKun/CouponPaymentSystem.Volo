@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Castle.Core" />
     <PackageReference Include="Castle.Core.AsyncInterceptor" />
+    <PackageReference Include="Castle.LoggingFacility" />
     <PackageReference Include="JetBrains.Annotations" />
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" />
     <PackageReference Include="Microsoft.Extensions.Configuration.CommandLine" />
